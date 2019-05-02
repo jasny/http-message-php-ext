@@ -52,6 +52,10 @@ ZEND_END_ARG_INFO()
 
 zend_class_entry *request_ce;
 
+/*
+HTTP_MESSAGE_GET_METHOD(Request, getRequestTarget, request_ce, "requestTarget")
+*/
+
 PHP_METHOD(Request, getRequestTarget)
 {
     zval rv, *obj, *value;
