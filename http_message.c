@@ -44,7 +44,7 @@ zend_module_entry http_message_module_entry = {
     STANDARD_MODULE_HEADER,
     PHP_HTTP_MESSAGE_EXTNAME,
     NULL,
-    NULL,
+    PHP_MINIT(http_message),
     NULL,
     NULL,
     NULL,
@@ -55,7 +55,7 @@ zend_module_entry http_message_module_entry = {
 
 PHP_MINIT_FUNCTION(http_message)
 {
-    PHP_MINIT(http_message_request);
+    PHP_MINIT(http_message_request)(INIT_FUNC_ARGS_PASSTHRU);
 
     return SUCCESS;
 }
@@ -65,4 +65,3 @@ ZEND_GET_MODULE(http_message)
 #endif
 
 #endif
-

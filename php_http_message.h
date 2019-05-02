@@ -1,8 +1,8 @@
 /*
   +----------------------------------------------------------------------+
-  | Skeleton PHP extension                                               |
+  | HTTP Message PHP extension - Request class                           |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2018 NAME                                              |
+  | Copyright (c) 2019 Arnold Daniels                                    |
   +----------------------------------------------------------------------+
   | Permission is hereby granted, free of charge, to any person          |
   | obtaining a copy of this software and associated documentation files |
@@ -24,7 +24,7 @@
   | CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE     |
   | SOFTWARE.                                                            |
   +----------------------------------------------------------------------+
-  | Author: NAME <EMAIL@EXAMPLE.COM>                                     |
+  | Author: Arnold Daniels <arnold@jasny.net>                            |
   +----------------------------------------------------------------------+
 */
 
@@ -43,8 +43,12 @@
 #endif
 
 static PHP_MINFO_FUNCTION(http_message);
+static PHP_MINIT_FUNCTION(http_message);
+
+extern PHP_MINIT_FUNCTION(http_message_request);
 
 extern zend_module_entry http_message_module_entry;
+
 #define phpext_http_message_ptr &http_message_module_entry
 
 #endif
