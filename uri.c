@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | HTTP Message PHP extension                                           |
+  | HTTP Message PHP extension - uri class                           |
   +----------------------------------------------------------------------+
   | Copyright (c) 2019 Arnold Daniels                                    |
   +----------------------------------------------------------------------+
@@ -37,33 +37,75 @@
 #include "php_http_message.h"
 #include "zend_exceptions.h"
 #include "ext/standard/info.h"
+#include "ext/psr/psr_http_message.h"
 
 #if HAVE_HTTP_MESSAGE
 
-zend_module_entry http_message_module_entry = {
-    STANDARD_MODULE_HEADER,
-    PHP_HTTP_MESSAGE_EXTNAME,
-    NULL,
-    PHP_MINIT(http_message),
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    PHP_HTTP_MESSAGE_VERSION,
-    STANDARD_MODULE_PROPERTIES
+zend_class_entry *HttpMessage_Uri_ce;
+
+
+/* __construct */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUri_construct, 0, 0, 1)
+        ZEND_ARG_TYPE_INFO(0, value, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(Uri, __construct)
+{
+}
+
+
+/* scheme */
+
+PHP_METHOD(Uri, getScheme)
+{
+    zval rv, *value;
+
+    if (zend_parse_parameters_none() == FAILURE) {
+        return;
+    }
+
+    value = zend_read_property(HttpMessage_Uri_ce, getThis(), "schema", sizeof("schema") - 1, 0, &rv);
+
+    RETURN_ZVAL(value, 1, 0);
+}
+
+PHP_METHOD(Uri, withScheme)
+{
+    char *value;
+    size_t value_len;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+            Z_PARAM_STRING(value, value_len)
+    ZEND_PARSE_PARAMETERS_END_EX();
+
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+
+    zend_update_property_stringl(HttpMessage_Uri_ce, return_value, "schema", sizeof("schema") - 1, value, value_len);
+}
+
+
+/* Define HttpMessage\Uri class */
+
+static const zend_function_entry uri_functions[] = {
+    PHP_ME(Uri, __construct, arginfo_HttpMessageUri_construct, ZEND_ACC_PROTECTED)
+    PHP_ME(Uri, getScheme, arginfo_PsrHttpMessageUriInterface_getScheme, ZEND_ACC_PUBLIC)
+    PHP_ME(Uri, withScheme, arginfo_PsrHttpMessageUriInterface_withScheme, ZEND_ACC_PUBLIC)
+    PHP_FE_END
 };
 
-PHP_MINIT_FUNCTION(http_message)
+PHP_MINIT_FUNCTION(http_message_uri)
 {
-    PHP_MINIT(http_message_message)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_request)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_uri)(INIT_FUNC_ARGS_PASSTHRU);
+    zend_class_entry ce;
+    INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Uri", uri_functions);
+
+    HttpMessage_Uri_ce = zend_register_internal_class(&ce);
+    /*zend_class_implements(HttpMessage_Uri_ce, 1, PsrHttpMessageUriInterface_ce_ptr);*/
+
+    /* Properties */
+    zend_declare_property_string(HttpMessage_Uri_ce, "scheme", sizeof("scheme") - 1, "", ZEND_ACC_PROTECTED);
 
     return SUCCESS;
 }
-
-#ifdef COMPILE_DL_HTTP_MESSAGE
-ZEND_GET_MODULE(http_message)
-#endif
 
 #endif

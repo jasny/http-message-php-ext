@@ -31,6 +31,9 @@
 #ifndef PHP_HTTP_MESSAGE_H
 #define PHP_HTTP_MESSAGE_H 1
 
+/* Temp for cmake */
+#define HAVE_HTTP_MESSAGE 1
+
 #define PHP_HTTP_MESSAGE_VERSION "0.0.1"
 #define PHP_HTTP_MESSAGE_EXTNAME "http_message"
 
@@ -45,11 +48,18 @@
 static PHP_MINFO_FUNCTION(http_message);
 static PHP_MINIT_FUNCTION(http_message);
 
+extern PHP_MINIT_FUNCTION(http_message_message);
 extern PHP_MINIT_FUNCTION(http_message_request);
+extern PHP_MINIT_FUNCTION(http_message_uri);
 
 extern zend_module_entry http_message_module_entry;
 
-#define phpext_http_message_ptr &http_message_module_entry
+extern zend_class_entry *HttpMessage_Message_ce;
+extern zend_class_entry *HttpMessage_Request_ce;
+extern zend_class_entry *HttpMessage_Uri_ce;
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 #endif
 
