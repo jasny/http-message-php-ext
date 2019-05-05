@@ -73,11 +73,6 @@ static const char *get_status_string(int code)
 }
 
 
-/* __construct */
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_Response_construct, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
 /* status */
 
 PHP_METHOD(Response, getStatusCode)
@@ -106,8 +101,8 @@ PHP_METHOD(Response, withStatus)
     const char *suggested_phrase;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_LONG(code)
-            Z_PARAM_STRING(phrase, phrase_len)
+        Z_PARAM_LONG(code)
+        Z_PARAM_STRING(phrase, phrase_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));

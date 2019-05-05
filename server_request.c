@@ -48,12 +48,12 @@ zend_class_entry *HttpMessage_ServerRequest_ce;
 
 /* __construct */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_ServerRequest_construct, 0, 0, 0)
-        ZEND_ARG_TYPE_INFO(0, serverParams, IS_ARRAY, 0)
-        ZEND_ARG_TYPE_INFO(0, cookieParams, IS_ARRAY, 0)
-        ZEND_ARG_TYPE_INFO(0, queryParams, IS_ARRAY, 0)
-        ZEND_ARG_INFO(0, parsedBody)
-        ZEND_ARG_TYPE_INFO(0, files, IS_ARRAY, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageServerRequest_construct, 0, 0, 0)
+    ZEND_ARG_TYPE_INFO(0, serverParams, IS_ARRAY, 0)
+    ZEND_ARG_TYPE_INFO(0, cookieParams, IS_ARRAY, 0)
+    ZEND_ARG_TYPE_INFO(0, queryParams, IS_ARRAY, 0)
+    ZEND_ARG_INFO(0, parsedBody)
+    ZEND_ARG_TYPE_INFO(0, files, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(ServerRequest, __construct)
@@ -65,11 +65,11 @@ PHP_METHOD(ServerRequest, __construct)
             getThis(), HttpMessage_Request_ce, &HttpMessage_Request_ce->constructor, "__construct", NULL
     );
 
-    INIT_ARRAY_PROPERTY("serverParams");
-    INIT_ARRAY_PROPERTY("cookieParams");
-    INIT_ARRAY_PROPERTY("queryParams");
-    INIT_ARRAY_PROPERTY("uploadedFiles");
-    INIT_ARRAY_PROPERTY("attributes");
+    INIT_ARRAY_PROPERTY("serverParams", rv);
+    INIT_ARRAY_PROPERTY("cookieParams", rv);
+    INIT_ARRAY_PROPERTY("queryParams", rv);
+    INIT_ARRAY_PROPERTY("uploadedFiles", rv);
+    INIT_ARRAY_PROPERTY("attributes", rv);
 }
 
 
@@ -101,7 +101,7 @@ PHP_METHOD(ServerRequest, withCookieParams)
     zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_ARRAY(value);
+        Z_PARAM_ARRAY(value);
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -126,7 +126,7 @@ PHP_METHOD(ServerRequest, withQueryParams)
     zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_ARRAY(value);
+        Z_PARAM_ARRAY(value);
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -151,7 +151,7 @@ PHP_METHOD(ServerRequest, withUploadedFiles)
     zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_ARRAY(value);
+        Z_PARAM_ARRAY(value);
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -176,7 +176,7 @@ PHP_METHOD(ServerRequest, withParsedBody)
     zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_ARRAY_OR_OBJECT(value, 0, 0);
+        Z_PARAM_ARRAY_OR_OBJECT(value, 0, 0);
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -203,8 +203,8 @@ PHP_METHOD(ServerRequest, getAttribute)
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
-            Z_PARAM_ZVAL(default_value)
+        Z_PARAM_STRING(name, name_len)
+        Z_PARAM_ZVAL(default_value)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
@@ -222,8 +222,8 @@ PHP_METHOD(ServerRequest, withAttribute)
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-            Z_PARAM_STRING(name, name_len)
-            Z_PARAM_ZVAL(value)
+        Z_PARAM_STRING(name, name_len)
+        Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
@@ -243,7 +243,7 @@ PHP_METHOD(ServerRequest, withoutAttribute)
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
@@ -258,7 +258,7 @@ PHP_METHOD(ServerRequest, withoutAttribute)
 /* Define HttpMessage\ServerRequest class */
 
 static const zend_function_entry request_functions[] = {
-        PHP_ME(ServerRequest, __construct, arginfo_ServerRequest_construct, ZEND_ACC_PUBLIC)
+        PHP_ME(ServerRequest, __construct, arginfo_HttpMessageServerRequest_construct, ZEND_ACC_PUBLIC)
         HTTP_MESSAGE_ME(ServerRequest, getServerParams)
         HTTP_MESSAGE_ME(ServerRequest, getCookieParams)
         HTTP_MESSAGE_ME(ServerRequest, withCookieParams)

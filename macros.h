@@ -32,11 +32,11 @@
 #ifndef HTTP_MESSAGE_MACROS_H
 #define HTTP_MESSAGE_MACROS_H
 
-#define INIT_ARRAY_PROPERTY(property) \
-        array_init(zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL(property), 0, &rv));
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
 ZEND_END_ARG_INFO()
+
+#define INIT_ARRAY_PROPERTY(property, rv) \
+        array_init(zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL(property), 0, &rv));
 
 #define HTTP_MESSAGE_ME(className, method) \
         PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)

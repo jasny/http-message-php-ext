@@ -54,7 +54,7 @@ PHP_METHOD(Message, __construct)
 {
     zval rv;
 
-    INIT_ARRAY_PROPERTY("headers");
+    INIT_ARRAY_PROPERTY("headers", rv);
 }
 
 
@@ -75,7 +75,7 @@ PHP_METHOD(Message, withProtocolVersion)
     size_t value_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(value, value_len)
+        Z_PARAM_STRING(value, value_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -105,7 +105,7 @@ PHP_METHOD(Message, hasHeader)
     zend_bool exists;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -122,7 +122,7 @@ PHP_METHOD(Message, getHeader)
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -143,7 +143,7 @@ PHP_METHOD(Message, getHeaderLine)
     zend_string *glue;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -165,8 +165,8 @@ PHP_METHOD(Message, withHeader)
     zend_string *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-            Z_PARAM_STRING(name, name_len)
-            Z_PARAM_STR(value)
+        Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -190,8 +190,8 @@ PHP_METHOD(Message, withAddedHeader)
     zend_string *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-            Z_PARAM_STRING(name, name_len)
-            Z_PARAM_STR(value)
+        Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -216,7 +216,7 @@ PHP_METHOD(Message, withoutHeader)
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_STRING(name, name_len)
+        Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
@@ -244,7 +244,7 @@ PHP_METHOD(Message, withBody)
     zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-            Z_PARAM_OBJECT_OF_CLASS(value, PsrHttpMessageStreamInterface_ce_ptr)
+        Z_PARAM_OBJECT_OF_CLASS(value, PsrHttpMessageStreamInterface_ce_ptr)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
