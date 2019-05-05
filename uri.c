@@ -48,7 +48,7 @@ zend_class_entry *HttpMessage_Uri_ce;
 /* __construct */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUri_construct, 0, 0, 1)
-        ZEND_ARG_TYPE_INFO(0, value, IS_STRING, 0)
+        ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(Uri, __construct)

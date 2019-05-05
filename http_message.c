@@ -57,6 +57,7 @@ PHP_MINIT_FUNCTION(http_message)
 {
     PHP_MINIT(http_message_message)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(http_message_request)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(http_message_serverrequest)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(http_message_uri)(INIT_FUNC_ARGS_PASSTHRU);
 
     return SUCCESS;

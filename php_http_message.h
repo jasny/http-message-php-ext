@@ -50,6 +50,7 @@ static PHP_MINIT_FUNCTION(http_message);
 
 extern PHP_MINIT_FUNCTION(http_message_message);
 extern PHP_MINIT_FUNCTION(http_message_request);
+extern PHP_MINIT_FUNCTION(http_message_serverrequest);
 extern PHP_MINIT_FUNCTION(http_message_uri);
 
 extern zend_module_entry http_message_module_entry;
