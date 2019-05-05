@@ -35,6 +35,7 @@
 #include "php.h"
 #include "php_ini.h"
 #include "php_http_message.h"
+#include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "ext/standard/info.h"
@@ -151,12 +152,12 @@ PHP_METHOD(Request, withUri)
 
 static const zend_function_entry request_functions[] = {
     PHP_ME(Request, __construct, arginfo_none, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, getRequestTarget, arginfo_PsrHttpMessageRequestInterface_getRequestTarget, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, withRequestTarget, arginfo_PsrHttpMessageRequestInterface_withRequestTarget, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, getMethod, arginfo_PsrHttpMessageRequestInterface_getMethod, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, withMethod, arginfo_PsrHttpMessageRequestInterface_withMethod, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, getUri, arginfo_PsrHttpMessageRequestInterface_getUri, ZEND_ACC_PUBLIC)
-    PHP_ME(Request, withUri, arginfo_PsrHttpMessageRequestInterface_withUri, ZEND_ACC_PUBLIC)
+    HTTP_MESSAGE_ME(Request, getRequestTarget)
+    HTTP_MESSAGE_ME(Request, withRequestTarget)
+    HTTP_MESSAGE_ME(Request, getMethod)
+    HTTP_MESSAGE_ME(Request, withMethod)
+    HTTP_MESSAGE_ME(Request, getUri)
+    HTTP_MESSAGE_ME(Request, withUri)
     PHP_FE_END
 };
 
@@ -169,9 +170,7 @@ PHP_MINIT_FUNCTION(http_message_request)
     zend_class_implements(HttpMessage_Request_ce, 1, PsrHttpMessageRequestInterface_ce_ptr);
 
     /* Properties */
-    zend_declare_property_string(
-            HttpMessage_Request_ce, ZEND_STRL("requestTarget"), "/", ZEND_ACC_PROTECTED
-    );
+    zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), "/", ZEND_ACC_PROTECTED);
     zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("method"), "", ZEND_ACC_PROTECTED);
     zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("uri"), ZEND_ACC_PROTECTED);
 

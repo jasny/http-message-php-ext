@@ -28,35 +28,17 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_HTTP_MESSAGE_H
-#define PHP_HTTP_MESSAGE_H 1
 
-/* Temp for cmake */
-#define HAVE_HTTP_MESSAGE 1
+#ifndef HTTP_MESSAGE_MACROS_H
+#define HTTP_MESSAGE_MACROS_H
 
-#define PHP_HTTP_MESSAGE_VERSION "0.0.1"
-#define PHP_HTTP_MESSAGE_EXTNAME "http_message"
+#define INIT_ARRAY_PROPERTY(property) \
+        array_init(zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL(property), 0, &rv));
 
-#ifdef PHP_WIN32
-# define PHP_HTTP_MESSAGE_API __declspec(dllexport)
-#elif defined(__GNUC__) && __GNUC__ >= 4
-# define PHP_HTTP_MESSAGE_API __attribute__ ((visibility("default")))
-#else
-# define PHP_HTTP_MESSAGE_API
-#endif
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
-static PHP_MINFO_FUNCTION(http_message);
-static PHP_MINIT_FUNCTION(http_message);
+#define HTTP_MESSAGE_ME(className, method) \
+        PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
 
-extern PHP_MINIT_FUNCTION(http_message_message);
-extern PHP_MINIT_FUNCTION(http_message_request);
-extern PHP_MINIT_FUNCTION(http_message_uri);
-
-extern zend_module_entry http_message_module_entry;
-
-extern zend_class_entry *HttpMessage_Message_ce;
-extern zend_class_entry *HttpMessage_Request_ce;
-extern zend_class_entry *HttpMessage_Uri_ce;
-
-#endif
-
+#endif //HTTP_MESSAGE_MACROS_H

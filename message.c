@@ -35,6 +35,7 @@
 #include "php.h"
 #include "php_ini.h"
 #include "php_http_message.h"
+#include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "zend_string.h"
@@ -51,10 +52,9 @@ zend_class_entry *HttpMessage_Message_ce;
 
 PHP_METHOD(Message, __construct)
 {
-    zval rv, *headers;
+    zval rv;
 
-    headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
-    array_init(headers);
+    INIT_ARRAY_PROPERTY("headers");
 }
 
 
@@ -257,17 +257,17 @@ PHP_METHOD(Message, withBody)
 
 static const zend_function_entry message_functions[] = {
     PHP_ME(Message, __construct, arginfo_none, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, getProtocolVersion, arginfo_PsrHttpMessageMessageInterface_getProtocolVersion, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, withProtocolVersion, arginfo_PsrHttpMessageMessageInterface_withProtocolVersion, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, getHeaders, arginfo_PsrHttpMessageMessageInterface_getHeaders, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, hasHeader, arginfo_PsrHttpMessageMessageInterface_hasHeader, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, getHeader, arginfo_PsrHttpMessageMessageInterface_getHeader, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, getHeaderLine, arginfo_PsrHttpMessageMessageInterface_getHeaderLine, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, withHeader, arginfo_PsrHttpMessageMessageInterface_withHeader, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, withAddedHeader, arginfo_PsrHttpMessageMessageInterface_withAddedHeader, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, withoutHeader, arginfo_PsrHttpMessageMessageInterface_withoutHeader, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, getBody, arginfo_PsrHttpMessageMessageInterface_getBody, ZEND_ACC_PUBLIC)
-    PHP_ME(Message, withBody, arginfo_PsrHttpMessageMessageInterface_withBody, ZEND_ACC_PUBLIC)
+    HTTP_MESSAGE_ME(Message, getProtocolVersion)
+    HTTP_MESSAGE_ME(Message, withProtocolVersion)
+    HTTP_MESSAGE_ME(Message, getHeaders)
+    HTTP_MESSAGE_ME(Message, hasHeader)
+    HTTP_MESSAGE_ME(Message, getHeader)
+    HTTP_MESSAGE_ME(Message, getHeaderLine)
+    HTTP_MESSAGE_ME(Message, withHeader)
+    HTTP_MESSAGE_ME(Message, withAddedHeader)
+    HTTP_MESSAGE_ME(Message, withoutHeader)
+    HTTP_MESSAGE_ME(Message, getBody)
+    HTTP_MESSAGE_ME(Message, withBody)
     PHP_FE_END
 };
 

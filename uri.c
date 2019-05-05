@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | HTTP Message PHP extension - uri class                           |
+  | HTTP Message PHP extension - Uri class                               |
   +----------------------------------------------------------------------+
   | Copyright (c) 2019 Arnold Daniels                                    |
   +----------------------------------------------------------------------+
@@ -35,6 +35,7 @@
 #include "php.h"
 #include "php_ini.h"
 #include "php_http_message.h"
+#include "macros.h"
 #include "zend_exceptions.h"
 #include "ext/standard/info.h"
 #include "ext/psr/psr_http_message.h"
@@ -89,8 +90,8 @@ PHP_METHOD(Uri, withScheme)
 
 static const zend_function_entry uri_functions[] = {
     PHP_ME(Uri, __construct, arginfo_HttpMessageUri_construct, ZEND_ACC_PROTECTED)
-    PHP_ME(Uri, getScheme, arginfo_PsrHttpMessageUriInterface_getScheme, ZEND_ACC_PUBLIC)
-    PHP_ME(Uri, withScheme, arginfo_PsrHttpMessageUriInterface_withScheme, ZEND_ACC_PUBLIC)
+    HTTP_MESSAGE_ME(Uri, getScheme)
+    HTTP_MESSAGE_ME(Uri, withScheme)
     PHP_FE_END
 };
 
