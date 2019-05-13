@@ -59,6 +59,9 @@ extern zend_module_entry http_message_module_entry;
 
 extern zend_class_entry *HttpMessage_Message_ce;
 extern zend_class_entry *HttpMessage_Request_ce;
+extern zend_class_entry *HttpMessage_ServerRequest_ce;
+extern zend_class_entry *HttpMessage_Response_ce;
+extern zend_class_entry *HttpMessage_Stream_ce;
 extern zend_class_entry *HttpMessage_Uri_ce;
 
 #endif

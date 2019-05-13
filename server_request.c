@@ -65,11 +65,11 @@ PHP_METHOD(ServerRequest, __construct)
             getThis(), HttpMessage_Request_ce, &HttpMessage_Request_ce->constructor, "__construct", NULL
     );
 
-    INIT_ARRAY_PROPERTY("serverParams", rv);
-    INIT_ARRAY_PROPERTY("cookieParams", rv);
-    INIT_ARRAY_PROPERTY("queryParams", rv);
-    INIT_ARRAY_PROPERTY("uploadedFiles", rv);
-    INIT_ARRAY_PROPERTY("attributes", rv);
+    INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "serverParams", rv);
+    INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "cookieParams", rv);
+    INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "queryParams", rv);
+    INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "uploadedFiles", rv);
+    INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "attributes", rv);
 }
 
 

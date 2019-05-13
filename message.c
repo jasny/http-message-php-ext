@@ -52,9 +52,18 @@ zend_class_entry *HttpMessage_Message_ce;
 
 PHP_METHOD(Message, __construct)
 {
-    zval rv;
+    zval rv, *body;
 
-    INIT_ARRAY_PROPERTY("headers", rv);
+    /* $this->body = new Stream() */
+    body = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("body"), 0, &rv);
+    object_init_ex(body, HttpMessage_Stream_ce);
+    if (body != NULL && Z_TYPE_P(body) == IS_OBJECT) { /* Should always be true */
+        zend_call_method_with_0_params(
+                body, HttpMessage_Stream_ce, &HttpMessage_Stream_ce->constructor, "__construct", NULL
+        );
+    }
+
+    INIT_ARRAY_PROPERTY(HttpMessage_Message_ce, "headers", rv);
 }
 
 

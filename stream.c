@@ -48,31 +48,38 @@
 
 zend_class_entry *HttpMessage_Stream_ce;
 
-zend_bool *string_contains_char(char *haystack, char chr)
+zend_bool string_contains_char(char *haystack, char chr)
 {
     char *p = strchr(haystack, chr);
-    return p != NULL;
+
+    return (p != NULL);
 }
 
 /* __construct */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageStream_construct, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageStream_construct, 0, 0, 0)
         ZEND_ARG_TYPE_INFO(0, uri, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(Stream, __construct)
 {
-    zval *zstream;
+    zval rv, *zstream = NULL, newstream;
+    php_stream *stream;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
+        Z_PARAM_OPTIONAL
         Z_PARAM_RESOURCE(zstream)
     ZEND_PARSE_PARAMETERS_END_EX();
 
-    if (zend_fetch_resource2_ex(zstream, "stream", php_file_le_stream(), php_file_le_pstream()) == NULL) {
+    if (zstream == NULL) {
+        stream = php_stream_fopen("php://temp", "r+", NULL);
+        ZVAL_RES(&newstream, (stream)->res); // php_stream_to_zval(stream, &newstream); // segfault ?
+        zstream = &newstream;
+    } else if (Z_RES_P(zstream)->type != php_file_le_stream() && Z_RES_P(zstream)->type != php_file_le_pstream()) {
         zend_throw_exception_ex(spl_ce_UnexpectedValueException, 0, "Resource is not a stream");
     }
 
-    zend_update_property_long(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), zstream);
+    zend_update_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), zstream);
 }
 
 PHP_METHOD(Stream, __toString)
@@ -291,11 +298,11 @@ PHP_MINIT_FUNCTION(http_message_stream)
     zend_class_entry ce;
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Stream", stream_functions);
 
-    HttpMessage_Stream_ce = zend_register_internal_class_ex(&ce, HttpMessage_Message_ce);
+    HttpMessage_Stream_ce = zend_register_internal_class(&ce);
     zend_class_implements(HttpMessage_Stream_ce, 1, PsrHttpMessageStreamInterface_ce_ptr);
 
     /* Properties */
-    zend_declare_property(HttpMessage_Stream_ce, ZEND_STRL("stream"), 0, ZEND_ACC_PROTECTED);
+    zend_declare_property_null(HttpMessage_Stream_ce, ZEND_STRL("stream"), ZEND_ACC_PROTECTED);
 
     return SUCCESS;
 }
