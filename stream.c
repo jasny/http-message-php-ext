@@ -72,6 +72,8 @@ PHP_METHOD(Stream, __construct)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     if (zstream == NULL) {
+        RETURN_NULL();
+
         stream = php_stream_fopen("php://temp", "r+", NULL);
         ZVAL_RES(&newstream, (stream)->res); // php_stream_to_zval(stream, &newstream); // segfault ?
         zstream = &newstream;
