@@ -32,3 +32,5 @@ http_message.loT
 *.loT
 configure.ac
 cmake-build-*
+vendor
+composer.lock
