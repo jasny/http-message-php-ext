@@ -19,6 +19,7 @@ mkinstalldirs
 run-tests.php
 Makefile
 Makefile.*
+!Makefile.frag
 libtool
 *~
 modules/
