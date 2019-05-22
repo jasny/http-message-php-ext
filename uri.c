@@ -37,6 +37,7 @@
 #include "php_http_message.h"
 #include "macros.h"
 #include "zend_exceptions.h"
+#include "zend_smart_str.h"
 #include "ext/standard/info.h"
 #include "ext/standard/url.h"
 #include "ext/psr/psr_http_message.h"
@@ -44,7 +45,6 @@
 #if HAVE_HTTP_MESSAGE
 
 zend_class_entry *HttpMessage_Uri_ce;
-
 
 /* __construct */
 
@@ -55,12 +55,12 @@ ZEND_END_ARG_INFO()
 PHP_METHOD(Uri, __construct)
 {
     php_url *info;
-    char *value;
+    char *value, *userinfo;
     size_t value_len = 0;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
-            Z_PARAM_OPTIONAL
-            Z_PARAM_STRING(value, value_len)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STRING(value, value_len)
     ZEND_PARSE_PARAMETERS_END();
 
     if (value_len > 0) {
@@ -68,7 +68,6 @@ PHP_METHOD(Uri, __construct)
 
         SET_STRING_PROPERTY(HttpMessage_Uri_ce, "scheme", info->scheme);
         SET_STRING_PROPERTY(HttpMessage_Uri_ce, "host", info->host);
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "userInfo", info->user);
         SET_STRING_PROPERTY(HttpMessage_Uri_ce, "path", info->path);
         SET_STRING_PROPERTY(HttpMessage_Uri_ce, "query", info->query);
         SET_STRING_PROPERTY(HttpMessage_Uri_ce, "fragment", info->fragment);
@@ -76,18 +75,73 @@ PHP_METHOD(Uri, __construct)
         if (info->port > 0) {
             zend_update_property_long(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), info->port);
         }
+
+        if (info->pass == NULL) {
+            SET_STRING_PROPERTY(HttpMessage_Uri_ce, "userInfo", info->user);
+        } else {
+            userinfo = emalloc(strlen(info->user) + strlen(info->pass) + 2);
+            sprintf(userinfo, "%s:%s", info->user, info->pass);
+            SET_STRING_PROPERTY(HttpMessage_Uri_ce, "userInfo", userinfo);
+            efree(userinfo);
+        }
     }
 }
 
 
 /* __toString */
 
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUri_toString, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(Uri, __toString)
 {
+    zval rv, *scheme, *userinfo, *host, *port, *path, *query, *fragment;
+    smart_str buf = {0};
+
+    scheme = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("scheme"), 0, &rv);
+    userinfo = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("userInfo"), 0, &rv);
+    host = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("host"), 0, &rv);
+    port = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), 0, &rv);
+    path = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("path"), 0, &rv);
+    query = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("query"), 0, &rv);
+    fragment = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("fragment"), 0, &rv);
+
+    if (Z_STRLEN(*scheme) > 0) {
+        smart_str_appendl(&buf, Z_STRVAL(*scheme), Z_STRLEN(*scheme));
+        smart_str_appends(&buf, ":");
+    }
+
+    if (Z_STRLEN(*host) > 0) {
+        smart_str_appends(&buf, "//");
+
+        if (Z_STRLEN(*userinfo) > 0) {
+            smart_str_appendl(&buf, Z_STRVAL(*userinfo), Z_STRLEN(*userinfo));
+            smart_str_appends(&buf, "@");
+        }
+
+        smart_str_appendl(&buf, Z_STRVAL(*host), Z_STRLEN(*host));
+
+        if (Z_TYPE(*port) == IS_LONG) {
+            smart_str_appends(&buf, ":");
+            smart_str_append_long(&buf, Z_LVAL(*port));
+        }
+    }
+
+    // Todo sanitize path
+    smart_str_appendl(&buf, Z_STRVAL(*path), Z_STRLEN(*path));
+
+    if (Z_STRLEN(*query) > 0) {
+        smart_str_appends(&buf, "?");
+        smart_str_appendl(&buf, Z_STRVAL(*query), Z_STRLEN(*query));
+    }
+
+    if (Z_STRLEN(*fragment) > 0) {
+        smart_str_appends(&buf, "#");
+        smart_str_appendl(&buf, Z_STRVAL(*fragment), Z_STRLEN(*fragment));
+    }
+
+    RETVAL_STR_COPY(buf.s);
+    zend_string_release(buf.s);
 }
 
 
@@ -121,11 +175,7 @@ PHP_METHOD(Uri, withScheme)
 
 PHP_METHOD(Uri, getAuthority)
 {
-    zval rv, *value;
-
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("userInfo"), 0, &rv);
-
-    RETURN_ZVAL(value, 1, 0);
+    zval rv;
 }
 
 

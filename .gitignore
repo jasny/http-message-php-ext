@@ -25,9 +25,9 @@ modules/
 .libs/
 *.la
 *.lo
+tests/**/*.*
+!tests/**/*.phpt
 php_test_results_*.txt
-tests/*
-!tests/*.phpt
 http_message.loT
 *.loT
 configure.ac

@@ -36,10 +36,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 #define INIT_ARRAY_PROPERTY(className, property, rv) \
-        array_init(zend_read_property(className, getThis(), ZEND_STRL(property), 0, &rv));
+        array_init(zend_read_property(className, getThis(), ZEND_STRL(property), 0, &rv))
 
-#define SET_STRING_PROPERTY(className, property, value) \
-        zend_update_property_stringl(className, getThis(), ZEND_STRL(property), value ?: "", value ? strlen(value) : 0);
+#define SET_STRING_PROPERTY(className, property, val) \
+        if (val != NULL) \
+            zend_update_property_stringl(className, getThis(), ZEND_STRL(property), val, strlen(val))
 
 #define HTTP_MESSAGE_ME(className, method) \
         PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
