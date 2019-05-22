@@ -20,4 +20,6 @@ if test "$PHP_HTTP_MESSAGE" != "no"; then
           $ext_shared)
 
 	PHP_ADD_EXTENSION_DEP([http_message], [psr], true)
+
+	PHP_ADD_MAKEFILE_FRAGMENT
 fi

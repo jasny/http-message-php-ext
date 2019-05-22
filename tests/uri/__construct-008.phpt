@@ -5,19 +5,19 @@ Create Uri with a relative path
 var_dump(new HttpMessage\Uri('foo'));
 ?>
 --EXPECT--
-class HttpMessage\Uri#1 (7) {
-  protected $scheme =>
+object(HttpMessage\Uri)#1 (7) {
+  ["scheme":protected]=>
   string(0) ""
-  protected $userInfo =>
+  ["userInfo":protected]=>
   string(0) ""
-  protected $host =>
+  ["host":protected]=>
   string(0) ""
-  protected $port =>
+  ["port":protected]=>
   NULL
-  protected $path =>
-  string(0) "foo"
-  protected $query =>
+  ["path":protected]=>
+  string(3) "foo"
+  ["query":protected]=>
   string(0) ""
-  protected $fragment =>
+  ["fragment":protected]=>
   string(0) ""
 }

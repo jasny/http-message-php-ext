@@ -40,8 +40,14 @@
 
 #if HAVE_HTTP_MESSAGE
 
+static const zend_module_dep deps[] = {
+    ZEND_MOD_REQUIRED("psr")
+};
+
 zend_module_entry http_message_module_entry = {
-    STANDARD_MODULE_HEADER,
+    STANDARD_MODULE_HEADER_EX,
+    NULL,
+    deps,
     PHP_HTTP_MESSAGE_EXTNAME,
     NULL,
     PHP_MINIT(http_message),

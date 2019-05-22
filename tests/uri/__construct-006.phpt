@@ -5,19 +5,19 @@ Create Uri with a domain name
 var_dump(new HttpMessage\Uri('www.example.com'));
 ?>
 --EXPECT--
-class HttpMessage\Uri#1 (7) {
-  protected $scheme =>
+object(HttpMessage\Uri)#1 (7) {
+  ["scheme":protected]=>
   string(0) ""
-  protected $userInfo =>
+  ["userInfo":protected]=>
   string(0) ""
-  protected $host =>
-  string(0) "www.example.com"
-  protected $port =>
+  ["host":protected]=>
+  string(0) ""
+  ["port":protected]=>
   NULL
-  protected $path =>
+  ["path":protected]=>
+  string(15) "www.example.com"
+  ["query":protected]=>
   string(0) ""
-  protected $query =>
-  string(0) ""
-  protected $fragment =>
+  ["fragment":protected]=>
   string(0) ""
 }

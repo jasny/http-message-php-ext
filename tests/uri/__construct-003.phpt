@@ -5,19 +5,19 @@ Create Uri with a full url
 var_dump(new HttpMessage\Uri('http://acme@www.example.com:8000/foo?answer=42#question'));
 ?>
 --EXPECT--
-class HttpMessage\Uri#1 (7) {
-  protected $scheme =>
+object(HttpMessage\Uri)#1 (7) {
+  ["scheme":protected]=>
   string(4) "http"
-  protected $userInfo =>
+  ["userInfo":protected]=>
   string(4) "acme"
-  protected $host =>
+  ["host":protected]=>
   string(15) "www.example.com"
-  protected $port =>
+  ["port":protected]=>
   int(8000)
-  protected $path =>
+  ["path":protected]=>
   string(4) "/foo"
-  protected $query =>
+  ["query":protected]=>
   string(9) "answer=42"
-  protected $fragment =>
+  ["fragment":protected]=>
   string(8) "question"
 }
