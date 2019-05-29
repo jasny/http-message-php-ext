@@ -1,5 +1,5 @@
 --TEST--
-Uri::withPath() errors
+Uri::withPath() error: invalid argument
 --FILE--
 <?php
 try {
@@ -7,13 +7,6 @@ try {
 } catch (TypeError $e) {
     echo $e->getMessage(), "\n";
 }
-
-try {
-    (new HttpMessage\Uri)->withPath();
-} catch (Error $e) {
-    echo $e->getMessage(), "\n";
-}
 ?>
 --EXPECT--
 HttpMessage\Uri::withPath() expects parameter 1 to be string, array given
-HttpMessage\Uri::withPath() expects exactly 1 parameter, 0 given
