@@ -58,12 +58,12 @@ zend_bool string_contains_char(char *haystack, char chr)
 /* __construct */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageStream_construct, 0, 0, 0)
-        ZEND_ARG_TYPE_INFO(0, uri, IS_RESOURCE, 0)
+    ZEND_ARG_TYPE_INFO(0, uri, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(Stream, __construct)
 {
-    zval rv, *zstream = NULL, newstream;
+    zval *zstream = NULL, newstream;
     php_stream *stream;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
@@ -72,13 +72,17 @@ PHP_METHOD(Stream, __construct)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     if (zstream == NULL) {
-        RETURN_NULL();
+        stream = php_stream_open_wrapper("php://temp", "w+", 0, NULL);
 
-        stream = php_stream_fopen("php://temp", "r+", NULL);
-        ZVAL_RES(&newstream, (stream)->res); // php_stream_to_zval(stream, &newstream); // segfault ?
+        if (stream == NULL) {
+            zend_throw_error(NULL, "Failed to open 'php://temp' stream");
+            return;
+        }
+
+        php_stream_to_zval(stream, &newstream);
         zstream = &newstream;
-    } else if (Z_RES_P(zstream)->type != php_file_le_stream() && Z_RES_P(zstream)->type != php_file_le_pstream()) {
-        zend_throw_exception_ex(spl_ce_UnexpectedValueException, 0, "Resource is not a stream");
+    } else if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Resource is not a stream");
     }
 
     zend_update_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), zstream);
@@ -95,11 +99,13 @@ PHP_METHOD(Stream, close)
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
     if (Z_TYPE_P(zstream) != IS_RESOURCE) {
-        RETURN_NULL();
+        return;
     }
 
-    php_stream_from_zval(stream, zstream);
-    php_stream_close(stream);
+    if (IS_STREAM_RESOURCE(zstream)) {
+        php_stream_from_zval(stream, zstream);
+        php_stream_close(stream);
+    }
 }
 
 PHP_METHOD(Stream, detach)
@@ -107,10 +113,9 @@ PHP_METHOD(Stream, detach)
     zval rv, *zstream;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    ZVAL_COPY(return_value, zstream);
 
     zend_update_property_null(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"));
-
-    RETURN_ZVAL(zstream, 1, 0);
 }
 
 PHP_METHOD(Stream, getSize)
@@ -120,7 +125,7 @@ PHP_METHOD(Stream, getSize)
     php_stream_statbuf ssb;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
+    if (!IS_STREAM_RESOURCE(zstream)) {
         RETURN_NULL();
     }
 
@@ -137,8 +142,10 @@ PHP_METHOD(Stream, tell)
     size_t pos;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "The stream has been detached");
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "The stream has been %s",
+                Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
+        return;
     }
 
     php_stream_from_zval(stream, zstream);
@@ -154,7 +161,7 @@ PHP_METHOD(Stream, eof)
     zend_bool eof;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
+    if (!IS_STREAM_RESOURCE(zstream)) {
         RETURN_TRUE;
     }
 

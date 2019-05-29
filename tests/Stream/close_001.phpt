@@ -1,16 +1,20 @@
 --TEST--
-Create Stream with resource
+Stream::close()
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
-
 $stream = new HttpMessage\Stream($resource);
+
+$stream->close();
 var_dump($stream);
-var_dump($stream->detach() === $resource);
+
+var_dump(get_resource_type($resource));
+
+$stream->close(); // No error
 ?>
---EXPECTF--
+--EXPECT--
 object(HttpMessage\Stream)#1 (1) {
   ["stream":protected]=>
-  resource(%d) of type (stream)
+  resource(5) of type (Unknown)
 }
-bool(true)
+string(7) "Unknown"

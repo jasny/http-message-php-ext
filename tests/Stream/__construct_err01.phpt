@@ -1,16 +1,15 @@
 --TEST--
-Create Stream with resource
+Create Stream error: closed stream
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
+fclose($resource);
 
-$stream = new HttpMessage\Stream($resource);
-var_dump($stream);
-var_dump($stream->detach() === $resource);
-?>
---EXPECTF--
-object(HttpMessage\Stream)#1 (1) {
-  ["stream":protected]=>
-  resource(%d) of type (stream)
+try {
+    new HttpMessage\Stream($resource);
+} catch (InvalidArgumentException $e) {
+    echo $e->getMessage();
 }
-bool(true)
+?>
+--EXPECT--
+Resource is not a stream

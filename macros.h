@@ -45,5 +45,10 @@ ZEND_END_ARG_INFO()
 #define HTTP_MESSAGE_ME(className, method) \
         PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
 
+#define IS_STREAM_RESOURCE(zstream) \
+        ( \
+            Z_TYPE_P(zstream) == IS_RESOURCE && \
+            (Z_RES_P(zstream)->type == php_file_le_stream() || Z_RES_P(zstream)->type == php_file_le_pstream()) \
+        )
 
 #endif //HTTP_MESSAGE_MACROS_H
