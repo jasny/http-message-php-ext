@@ -1,17 +1,15 @@
 --TEST--
-Stream::tell() error: closed stream
+Stream::seek() error: invalid whence
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
 $stream = new HttpMessage\Stream($resource);
 
-fclose($resource);
-
 try {
-    $stream->tell();
+    $stream->seek(1, 999);
 } catch (RuntimeException $e) {
-    echo $e->getMessage();
+    echo $e->getMessage(), "\n";
 }
 ?>
 --EXPECT--
-The stream has been closed
+Invalid value for whence

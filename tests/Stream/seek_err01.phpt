@@ -1,17 +1,15 @@
 --TEST--
-Stream::tell() error: detached stream
+Stream::seek() error: no arguments
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
 $stream = new HttpMessage\Stream($resource);
 
-$stream->detach();
-
 try {
-    $stream->tell();
-} catch (RuntimeException $e) {
+    $stream->seek();
+} catch (Error $e) {
     echo $e->getMessage();
 }
 ?>
 --EXPECT--
-The stream has been detached
+HttpMessage\Stream::seek() expects at least 1 parameter, 0 given

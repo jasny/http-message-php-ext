@@ -1,13 +1,9 @@
 --TEST--
-Stream::isSeekable()
+Stream::isSeekable() with seekable stream
 --FILE--
 <?php
-$seekableStream = new HttpMessage\Stream(fopen('php://memory', 'r'));
-var_dump($seekableStream->isSeekable());
-
-$unseekableStream = new HttpMessage\Stream(fopen('php://stdin', 'r'));
-var_dump($unseekableStream->isSeekable());
+$stream = new HttpMessage\Stream(fopen('php://memory', 'r'));
+var_dump($stream->isSeekable());
 ?>
 --EXPECT--
 bool(true)
-bool(false)

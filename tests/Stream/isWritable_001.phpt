@@ -1,16 +1,11 @@
 --TEST--
-Stream::eof() call all methods
+Stream::isWritable() with writable stream
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
 $stream = new HttpMessage\Stream($resource);
 
-var_dump($stream->eof());
-
-fclose($resource);
-var_dump($stream->eof());
-
+var_dump($stream->isWritable());
 ?>
 --EXPECT--
-bool(false)
 bool(true)

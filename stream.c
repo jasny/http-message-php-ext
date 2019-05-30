@@ -178,7 +178,7 @@ PHP_METHOD(Stream, isSeekable)
     zend_bool seekable;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
+    if (!IS_STREAM_RESOURCE(zstream)) {
         RETURN_FALSE;
     }
 
@@ -192,16 +192,24 @@ PHP_METHOD(Stream, seek)
 {
     zval rv, *zstream;
     php_stream *stream;
-    size_t offset, whence;
+    size_t offset, whence = SEEK_SET;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_LONG(offset)
+        Z_PARAM_OPTIONAL
         Z_PARAM_LONG(whence)
     ZEND_PARSE_PARAMETERS_END_EX();
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
-        RETURN_FALSE;
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "The stream has been %s",
+                                Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
+        return;
+    }
+
+    if (whence > 3) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Invalid value for whence");
+        return;
     }
 
     php_stream_from_zval(stream, zstream);
@@ -225,7 +233,7 @@ PHP_METHOD(Stream, isWritable)
     zend_bool writable;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
+    if (!IS_STREAM_RESOURCE(zstream)) {
         RETURN_FALSE;
     }
 
@@ -246,7 +254,7 @@ PHP_METHOD(Stream, isReadable)
     zend_bool writable;
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
-    if (Z_TYPE_P(zstream) != IS_RESOURCE) {
+    if (!IS_STREAM_RESOURCE(zstream)) {
         RETURN_FALSE;
     }
 
@@ -266,17 +274,37 @@ PHP_METHOD(Stream, getContents)
 
 PHP_METHOD(Stream, getMetadata)
 {
-    zval fname, zkey;
-    zend_string *key;
+    zval rv, fname, *zstream, *zvalue;
+    zend_string *key = NULL;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
+        Z_PARAM_OPTIONAL
         Z_PARAM_STR(key)
     ZEND_PARSE_PARAMETERS_END_EX();
 
-    ZVAL_STRING(&fname, "stream_get_meta_data");
-    ZVAL_STR(&zkey, key);
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        if (key == NULL) {
+            array_init(return_value);
+        } else {
+            RETVAL_NULL();
+        }
+        return;
+    }
 
-    call_user_function(NULL, NULL, &fname, return_value, 1, &zkey);
+    ZVAL_STRING(&fname, "stream_get_meta_data");
+
+    call_user_function(NULL, NULL, &fname, return_value, 1, zstream);
+
+    if (key != NULL) {
+        zvalue = zend_hash_find(Z_ARR(*return_value), key);
+
+        if (zvalue == NULL) {
+            ZVAL_NULL(return_value);
+        } else {
+            ZVAL_COPY(return_value, zvalue);
+        }
+    }
 }
 
 
