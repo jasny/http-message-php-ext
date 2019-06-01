@@ -112,7 +112,7 @@ PHP_METHOD(Stream, __toString)
     // Special case for 'php://input'. Need to reopen the resource, because seek doesn't work.
     if (strcmp(stream->wrapper->wops->label, "PHP") == 0 && strcmp(stream->ops->label, "Input") == 0) {
         stream = php_stream_open_wrapper(stream->orig_path, stream->mode, 0, NULL);
-        php_stream_to_zval(stream, &zstream);
+        php_stream_to_zval(stream, zstream);
     }
 
     if ((contents = php_stream_copy_to_mem(stream, (ssize_t)PHP_STREAM_COPY_ALL, 0))) {
