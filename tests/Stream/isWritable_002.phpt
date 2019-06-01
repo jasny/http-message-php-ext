@@ -2,10 +2,8 @@
 Stream::isWritable() with non-writable stream
 --FILE--
 <?php
-$fp = fopen(sys_get_temp_dir() . '/isreadable.tmp', "a");
-
-$stream = new HttpMessage\Stream($fp);
+$stream = new HttpMessage\Stream(fopen(__FILE__, 'r'));
 var_dump($stream->isWritable());
 ?>
 --EXPECT--
-bool(true)
+bool(false)

@@ -69,7 +69,7 @@ PHP_METHOD(Stream, __construct)
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_RESOURCE(zstream)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     if (zstream == NULL) {
         stream = php_stream_open_wrapper("php://temp", "w+", 0, NULL);
@@ -90,6 +90,36 @@ PHP_METHOD(Stream, __construct)
 
 PHP_METHOD(Stream, __toString)
 {
+    zval rv, *zstream;
+    php_stream *stream;
+    zend_string *contents;
+
+    zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        RETURN_EMPTY_STRING();
+    }
+
+    php_stream_from_zval(stream, zstream);
+
+    if (!string_contains_char(stream->mode, 'r') && !string_contains_char(stream->mode, '+')) {
+        RETURN_EMPTY_STRING();
+    }
+
+    if ((stream->ops->seek) && (stream->flags & PHP_STREAM_FLAG_NO_SEEK) == 0) {
+        php_stream_seek(stream, 0, SEEK_SET);
+    }
+
+    // Special case for 'php://input'. Need to reopen the resource, because seek doesn't work.
+    if (strcmp(stream->wrapper->wops->label, "PHP") == 0 && strcmp(stream->ops->label, "Input") == 0) {
+        stream = php_stream_open_wrapper(stream->orig_path, stream->mode, 0, NULL);
+        php_stream_to_zval(stream, &zstream);
+    }
+
+    if ((contents = php_stream_copy_to_mem(stream, (ssize_t)PHP_STREAM_COPY_ALL, 0))) {
+        RETURN_STR(contents);
+    } else {
+        RETURN_EMPTY_STRING();
+    }
 }
 
 PHP_METHOD(Stream, close)
@@ -143,7 +173,7 @@ PHP_METHOD(Stream, tell)
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
     if (!IS_STREAM_RESOURCE(zstream)) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "The stream has been %s",
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is %s",
                 Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
         return;
     }
@@ -198,11 +228,11 @@ PHP_METHOD(Stream, seek)
         Z_PARAM_LONG(offset)
         Z_PARAM_OPTIONAL
         Z_PARAM_LONG(whence)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
     if (!IS_STREAM_RESOURCE(zstream)) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "The stream has been %s",
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is %s",
                                 Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
         return;
     }
@@ -213,6 +243,11 @@ PHP_METHOD(Stream, seek)
     }
 
     php_stream_from_zval(stream, zstream);
+
+    if (!stream->ops->seek || (stream->flags & PHP_STREAM_FLAG_NO_SEEK) != 0) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is not seekable");
+        return;
+    };
 
     php_stream_seek(stream, offset, whence);
 }
@@ -245,6 +280,36 @@ PHP_METHOD(Stream, isWritable)
 
 PHP_METHOD(Stream, write)
 {
+    zval rv, *zstream;
+    char *input;
+    size_t len, ret;
+    php_stream *stream;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_STRING(input, len)
+    ZEND_PARSE_PARAMETERS_END();
+
+    zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is %s",
+                Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
+        return;
+    }
+
+    php_stream_from_zval(stream, zstream);
+
+    if (string_contains_char(stream->mode, 'r') && !string_contains_char(stream->mode, '+')) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream not writable");
+        return;
+    }
+
+    if (len == 0) {
+        RETURN_LONG(0);
+    }
+
+    ret = php_stream_write(stream, input, len);
+
+    RETURN_LONG(ret);
 }
 
 PHP_METHOD(Stream, isReadable)
@@ -266,10 +331,66 @@ PHP_METHOD(Stream, isReadable)
 
 PHP_METHOD(Stream, read)
 {
+    zval rv, *zstream;
+    php_stream *stream;
+    zend_long len = 0;
+    zend_string *contents;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_LONG(len)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (len < 0) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Length parameter must be equal or greater than 0");
+        return;
+    }
+
+    zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is %s",
+                Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
+        return;
+    }
+
+    php_stream_from_zval(stream, zstream);
+
+    if (!string_contains_char(stream->mode, 'r') && !string_contains_char(stream->mode, '+')) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream not readable");
+        return;
+    }
+
+    if ((contents = php_stream_copy_to_mem(stream, (size_t)len, 0))) {
+        RETURN_STR(contents);
+    } else {
+        RETURN_EMPTY_STRING();
+    }
 }
 
 PHP_METHOD(Stream, getContents)
 {
+    zval rv, *zstream;
+    php_stream *stream;
+    zend_string *contents;
+
+    zstream = zend_read_property(HttpMessage_Stream_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
+    if (!IS_STREAM_RESOURCE(zstream)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream is %s",
+                                Z_TYPE_P(zstream) == IS_RESOURCE ? "closed" : "detached");
+        return;
+    }
+
+    php_stream_from_zval(stream, zstream);
+
+    if (!string_contains_char(stream->mode, 'r') && !string_contains_char(stream->mode, '+')) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Stream not readable");
+        return;
+    }
+
+    if ((contents = php_stream_copy_to_mem(stream, (size_t)PHP_STREAM_COPY_ALL, 0))) {
+        RETURN_STR(contents);
+    } else {
+        RETURN_EMPTY_STRING();
+    }
 }
 
 PHP_METHOD(Stream, getMetadata)
@@ -281,7 +402,7 @@ PHP_METHOD(Stream, getMetadata)
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_STR(key)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     if (!IS_STREAM_RESOURCE(zstream)) {
         if (key == NULL) {

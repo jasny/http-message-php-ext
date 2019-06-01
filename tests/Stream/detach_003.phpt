@@ -1,11 +1,12 @@
 --TEST--
-Stream::close()
+Stream::detach() call all methods
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');
+fwrite($resource, "abc");
 $stream = new HttpMessage\Stream($resource);
 
-$stream->close();
+$stream->detach();
 
 try {
     $stream->tell();
@@ -55,12 +56,12 @@ var_dump($stream->getMetadata());
 var_dump($stream->getMetadata('uri'));
 ?>
 --EXPECT--
-Stream is closed
-Stream is closed
-Stream is closed
-Stream is closed
-Stream is closed
-Stream is closed
+Stream is detached
+Stream is detached
+Stream is detached
+Stream is detached
+Stream is detached
+Stream is detached
 string(0) ""
 NULL
 bool(true)

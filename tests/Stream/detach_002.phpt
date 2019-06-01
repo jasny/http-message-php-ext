@@ -37,9 +37,9 @@ var_dump($stream->getMetadata());
 var_dump($stream->getMetadata('uri'));
 ?>
 --EXPECT--
-The stream has been detached
-The stream has been detached
-The stream has been detached
+Stream is detached
+Stream is detached
+Stream is detached
 NULL
 bool(true)
 bool(false)
