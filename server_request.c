@@ -45,7 +45,6 @@
 
 zend_class_entry *HttpMessage_ServerRequest_ce;
 
-
 /* __construct */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageServerRequest_construct, 0, 0, 0)
@@ -258,21 +257,21 @@ PHP_METHOD(ServerRequest, withoutAttribute)
 /* Define HttpMessage\ServerRequest class */
 
 static const zend_function_entry request_functions[] = {
-        PHP_ME(ServerRequest, __construct, arginfo_HttpMessageServerRequest_construct, ZEND_ACC_PUBLIC)
-        HTTP_MESSAGE_ME(ServerRequest, getServerParams)
-        HTTP_MESSAGE_ME(ServerRequest, getCookieParams)
-        HTTP_MESSAGE_ME(ServerRequest, withCookieParams)
-        HTTP_MESSAGE_ME(ServerRequest, getQueryParams)
-        HTTP_MESSAGE_ME(ServerRequest, withQueryParams)
-        HTTP_MESSAGE_ME(ServerRequest, getUploadedFiles)
-        HTTP_MESSAGE_ME(ServerRequest, withUploadedFiles)
-        HTTP_MESSAGE_ME(ServerRequest, getParsedBody)
-        HTTP_MESSAGE_ME(ServerRequest, withParsedBody)
-        HTTP_MESSAGE_ME(ServerRequest, getAttributes)
-        HTTP_MESSAGE_ME(ServerRequest, getAttribute)
-        HTTP_MESSAGE_ME(ServerRequest, withAttribute)
-        HTTP_MESSAGE_ME(ServerRequest, withoutAttribute)
-        PHP_FE_END
+    PHP_ME(ServerRequest, __construct, arginfo_HttpMessageServerRequest_construct, ZEND_ACC_PUBLIC)
+    HTTP_MESSAGE_ME(ServerRequest, getServerParams)
+    HTTP_MESSAGE_ME(ServerRequest, getCookieParams)
+    HTTP_MESSAGE_ME(ServerRequest, withCookieParams)
+    HTTP_MESSAGE_ME(ServerRequest, getQueryParams)
+    HTTP_MESSAGE_ME(ServerRequest, withQueryParams)
+    HTTP_MESSAGE_ME(ServerRequest, getUploadedFiles)
+    HTTP_MESSAGE_ME(ServerRequest, withUploadedFiles)
+    HTTP_MESSAGE_ME(ServerRequest, getParsedBody)
+    HTTP_MESSAGE_ME(ServerRequest, withParsedBody)
+    HTTP_MESSAGE_ME(ServerRequest, getAttributes)
+    HTTP_MESSAGE_ME(ServerRequest, getAttribute)
+    HTTP_MESSAGE_ME(ServerRequest, withAttribute)
+    HTTP_MESSAGE_ME(ServerRequest, withoutAttribute)
+    PHP_FE_END
 };
 
 PHP_MINIT_FUNCTION(http_message_serverrequest)

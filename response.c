@@ -97,11 +97,12 @@ PHP_METHOD(Response, withStatus)
 {
     zend_long code;
     char *phrase;
-    size_t phrase_len;
+    size_t phrase_len = 0;
     const char *suggested_phrase;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_LONG(code)
+        Z_PARAM_OPTIONAL
         Z_PARAM_STRING(phrase, phrase_len)
     ZEND_PARSE_PARAMETERS_END_EX();
 
@@ -116,7 +117,8 @@ PHP_METHOD(Response, withStatus)
     } else {
         suggested_phrase = get_status_string((int)code);
         zend_update_property_stringl(
-                HttpMessage_Response_ce, return_value, ZEND_STRL("reasonPhrase"), ZEND_STRL(suggested_phrase)
+                HttpMessage_Response_ce, return_value, ZEND_STRL("reasonPhrase"),
+                suggested_phrase, strlen(suggested_phrase)
         );
     }
 }
