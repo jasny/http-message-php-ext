@@ -101,7 +101,7 @@ PHP_METHOD(ServerRequest, withCookieParams)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_ARRAY(value);
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
@@ -126,7 +126,7 @@ PHP_METHOD(ServerRequest, withQueryParams)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_ARRAY(value);
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
@@ -151,7 +151,7 @@ PHP_METHOD(ServerRequest, withUploadedFiles)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_ARRAY(value);
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
@@ -172,15 +172,19 @@ PHP_METHOD(ServerRequest, getParsedBody)
 
 PHP_METHOD(ServerRequest, withParsedBody)
 {
-    zval *value;
+    zval *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_ARRAY_OR_OBJECT(value, 0, 0);
-    ZEND_PARSE_PARAMETERS_END_EX();
+        Z_PARAM_ARRAY_OR_OBJECT_EX(value, 1, 0);
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("parsedBody"), value);
+    if (value != NULL) {
+        zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("parsedBody"), value);
+    } else {
+        zend_update_property_null(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("parsedBody"));
+    }
 }
 
 
@@ -197,21 +201,27 @@ PHP_METHOD(ServerRequest, getAttributes)
 
 PHP_METHOD(ServerRequest, getAttribute)
 {
-    zval rv, *attributes, *value, *default_value;
+    zval rv, *attributes, *value, *default_value = NULL;
     char *name;
     size_t name_len;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_STRING(name, name_len)
         Z_PARAM_ZVAL(default_value)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
 
     value = zend_hash_str_find(Z_ARRVAL_P(attributes), name, name_len);
 
     /* value is only NULL if the entry wasn't found. A null value is still a zval. */
-    RETURN_ZVAL(value != NULL ? value : default_value, 1, 0);
+    if (value != NULL) {
+        RETURN_ZVAL(value, 1, 0);
+    } else if (default_value != NULL) {
+        RETURN_ZVAL(default_value, 1, 0);
+    } else {
+        RETURN_NULL();
+    }
 }
 
 PHP_METHOD(ServerRequest, withAttribute)
@@ -223,7 +233,7 @@ PHP_METHOD(ServerRequest, withAttribute)
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
         Z_PARAM_STRING(name, name_len)
         Z_PARAM_ZVAL(value)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
     ZVAL_COPY(&new_attributes, attributes);
@@ -243,7 +253,7 @@ PHP_METHOD(ServerRequest, withoutAttribute)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_STRING(name, name_len)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
     zend_hash_str_del(Z_ARRVAL_P(attributes), name, name_len);

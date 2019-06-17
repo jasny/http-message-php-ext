@@ -53,7 +53,7 @@ ZEND_END_ARG_INFO()
 
 PHP_METHOD(Request, __construct)
 {
-    zval rv, *uri, uri_string;
+    zval rv, *uri;
 
     /* parent::__construct() */
     zend_call_method_with_0_params(
@@ -63,12 +63,6 @@ PHP_METHOD(Request, __construct)
     /* $this->uri = new Uri() */
     uri = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("uri"), 0, &rv);
     object_init_ex(uri, HttpMessage_Uri_ce);
-    if (uri != NULL && Z_TYPE_P(uri) == IS_OBJECT) { /* Should always be true */
-        ZVAL_EMPTY_STRING(&uri_string);
-        zend_call_method_with_1_params(
-                uri, HttpMessage_Uri_ce, &HttpMessage_Uri_ce->constructor, "__construct", NULL, &uri_string
-        );
-    }
 }
 
 
@@ -80,23 +74,29 @@ PHP_METHOD(Request, getRequestTarget)
 
     value = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("requestTarget"), 0, &rv);
 
+    if (ZVAL_IS_NULL(value)) {
+        RETURN_STRING("/");
+    }
+
     RETURN_ZVAL(value, 1, 0);
 }
 
 PHP_METHOD(Request, withRequestTarget)
 {
-    char *value;
-    size_t value_len;
+    zval *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_STRING(value, value_len)
-    ZEND_PARSE_PARAMETERS_END_EX();
+        Z_PARAM_ZVAL(value)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (Z_TYPE_P(value) != IS_STRING && !ZVAL_IS_NULL(value)) {
+        zend_wrong_parameter_type_error(ZEND_PARSE_PARAMS_THROW, 1, Z_EXPECTED_STRING, value);
+        return;
+    }
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property_stringl(
-            HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"), value, value_len
-    );
+    zend_update_property(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"), value);
 }
 
 
@@ -118,7 +118,7 @@ PHP_METHOD(Request, withMethod)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_STRING(value, value_len)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
@@ -145,7 +145,7 @@ PHP_METHOD(Request, withUri)
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_OBJECT_OF_CLASS(value, PsrHttpMessageUriInterface_ce_ptr)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
@@ -175,7 +175,7 @@ PHP_MINIT_FUNCTION(http_message_request)
     zend_class_implements(HttpMessage_Request_ce, 1, PsrHttpMessageRequestInterface_ce_ptr);
 
     /* Properties */
-    zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), "/", ZEND_ACC_PROTECTED);
+    zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), ZEND_ACC_PROTECTED);
     zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("method"), "", ZEND_ACC_PROTECTED);
     zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("uri"), ZEND_ACC_PROTECTED);
 

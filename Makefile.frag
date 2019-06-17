@@ -11,6 +11,9 @@ PHP_TEST_SHARED_EXTENSIONS =  ` \
 		done; \
 	fi`
 
+clean-tests:
+	rm -f tests/*.diff tests/*.exp tests/*.log tests/*.out tests/*.php tests/*.sh
+
 mrproper: clean
 	rm -rf autom4te.cache build modules vendor
 	rm -f acinclude.m4 aclocal.m4 config.guess config.h config.h.in config.log config.nice config.status config.sub \
