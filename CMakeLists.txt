@@ -5,7 +5,7 @@ add_custom_target(extension COMMAND phpize && ./configure && make && make instal
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 set(SOURCE_FILES php_http_message
-        http_message.c message.c request.c uri.c server_request.c response.c stream.c)
+        http_message.c message.c request.c uri.c server_request.c response.c stream.c uploaded_file.c)
 
 execute_process (
         COMMAND php-config --include-dir

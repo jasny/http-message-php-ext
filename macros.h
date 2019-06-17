@@ -42,6 +42,10 @@ ZEND_END_ARG_INFO()
         if (val != NULL) \
             zend_update_property_stringl(className, getThis(), ZEND_STRL(property), val, strlen(val))
 
+#define SET_STR_PROPERTY(className, property, val) \
+        if (val != NULL) \
+            zend_update_property_str(className, getThis(), ZEND_STRL(property), val)
+
 #define HTTP_MESSAGE_ME(className, method) \
         PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
 
