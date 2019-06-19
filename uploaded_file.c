@@ -48,6 +48,32 @@
 
 zend_class_entry *HttpMessage_UploadedFile_ce;
 
+int assert_file_available(zval *file, zval *moved)
+{
+    if (ZVAL_IS_NULL(file)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "No file was uploaded or uploaded file not available");
+        return FAILURE;
+    }
+
+    if (Z_TYPE_P(moved) == IS_TRUE) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Uploaded file '%s' has already been moved",
+                Z_STRVAL_P(file));
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+zend_bool assert_uploaded_file(char *path, size_t path_len)
+{
+    if (SG(rfc1867_uploaded_files) == NULL || !zend_hash_str_exists(SG(rfc1867_uploaded_files), path, path_len)) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Won't move '%s'; not an uploaded file", path);
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
 void uploaded_file_chmod(char *new_path)
 {
     int oldmask; int ret;
@@ -62,19 +88,15 @@ void uploaded_file_chmod(char *new_path)
     }
 }
 
-zend_bool move_uploaded_file(char *path, size_t path_len, char *new_path, size_t new_path_len)
+int move_uploaded_file(char *path, size_t path_len, char *new_path, size_t new_path_len)
 {
+    HashTable *uploaded_files;
     zend_bool successful = 0;
-
-    if (SG(rfc1867_uploaded_files) && !zend_hash_str_exists(SG(rfc1867_uploaded_files), path, path_len)) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Unable to move '%s'; not an uploaded file", path);
-        return 0;
-    }
 
     if (php_check_open_basedir_ex(new_path, 1)) {
         zend_throw_exception_ex(spl_ce_RuntimeException, 0,
-                "Unable to move '%s' to '%s'; open_basedir restriction in effect", path, new_path);
-        return 0;
+                 "Unable to move uploaded file '%s' to '%s'; open_basedir restriction in effect", path, new_path);
+        return FAILURE;
     }
 
     if (VCWD_RENAME(path, new_path) == 0) {
@@ -88,67 +110,87 @@ zend_bool move_uploaded_file(char *path, size_t path_len, char *new_path, size_t
     }
 
     if (!successful) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Unable to move '%s' to '%s'", path, new_path);
-        return 0;
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Failed to move uploaded file '%s' to '%s'",
+                path, new_path);
+        return FAILURE;
     }
 
-    zend_hash_str_del(SG(rfc1867_uploaded_files), path, path_len);
-    return 1;
+    uploaded_files = SG(rfc1867_uploaded_files);
+    if (uploaded_files != NULL) {
+        zend_hash_str_del(uploaded_files, path, path_len);
+    }
+
+    return SUCCESS;
 }
 
 /* __construct */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUploadedFile_construct, 0, 0, 0)
-    ZEND_ARG_TYPE_INFO(0, uri, IS_STRING, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUploadedFile_construct, 0, 1, 0)
+    ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 1)
+    ZEND_ARG_TYPE_INFO(0, size, IS_LONG, 1)
+    ZEND_ARG_TYPE_INFO(0, error, IS_LONG, 0)
+    ZEND_ARG_TYPE_INFO(0, clientFilename, IS_STRING, 1)
+    ZEND_ARG_TYPE_INFO(0, clientMediaType, IS_STRING, 1)
+    ZEND_ARG_INFO(0, checkUploaded)
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(UploadedFile, __construct)
 {
-    zend_string *file, *clientFilename = NULL, *clientMediaType = NULL;
+    zend_string *file = NULL, *clientFilename = NULL, *clientMediaType = NULL;
     zend_long size = 0, error = 0;
-    zend_bool size_is_null;
+    zend_bool size_is_null, checkUploaded, checkUploaded_is_null;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
-        Z_PARAM_STR(file)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 6)
+        Z_PARAM_STR_EX(file, 1, 0)
         Z_PARAM_OPTIONAL
         Z_PARAM_LONG_EX(size, size_is_null, 1, 0)
         Z_PARAM_LONG(error)
         Z_PARAM_STR_EX(clientFilename, 1, 0)
-        Z_PARAM_STR(clientMediaType)
+        Z_PARAM_STR_EX(clientMediaType, 1, 0)
+        Z_PARAM_BOOL_EX(checkUploaded, checkUploaded_is_null, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    zend_update_property_str(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("file"), file);
+    if (error == 0) {
+        SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "file", file);
+    }
+
+    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientFilename", clientFilename);
+    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientMediaType", clientMediaType);
 
     if (!size_is_null) {
         zend_update_property_long(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("size"), size);
     }
+
+    if (error < 0 || error > 8) {
+        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid error code %d", error);
+    }
     zend_update_property_long(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("error"), error);
 
-    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientFilename", clientFilename);
-    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientMediaType", clientMediaType);
+    if (checkUploaded_is_null) {
+        checkUploaded = SG(rfc1867_uploaded_files) != NULL;
+    }
+    zend_update_property_bool(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("checkUploaded"), checkUploaded);
 }
 
 PHP_METHOD(UploadedFile, getStream)
 {
-    zval rv, *stream, *file, *zmoved, resource;
+    zval rv, *stream, *file, *moved, resource;
     php_stream *resource_stream;
-    zend_bool opened;
 
     stream = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("stream"), 0, &rv);
 
     file = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("file"), 0, &rv);
-    zmoved = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("moved"), 0, &rv);
+    moved = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("moved"), 0, &rv);
 
-    if (Z_TYPE_P(zmoved) == IS_TRUE) {
-        zend_throw_exception(spl_ce_RuntimeException, "File '%s' has already been moved", Z_STRVAL_P(file));
+    if (assert_file_available(file, moved) == FAILURE) {
         return;
     }
 
     // Stream isn't set: create new stream for file
     if (ZVAL_IS_NULL(stream)) {
-        resource_stream = php_stream_fopen(Z_STRVAL_P(file), 'r', &opened);
-        if (!opened) {
-            zend_throw_exception(spl_ce_RuntimeException, "Failed to open stream for '%s'", Z_STRVAL_P(file));
+        resource_stream = php_stream_open_wrapper(Z_STRVAL_P(file), "r", 0, NULL);
+        if (resource_stream == NULL) {
+            zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Failed to open stream for '%s'", Z_STRVAL_P(file));
             return;
         }
 
@@ -167,33 +209,35 @@ PHP_METHOD(UploadedFile, getStream)
 
 PHP_METHOD(UploadedFile, moveTo)
 {
-    zval rv, *file, *zmoved;
+    zval rv, *file, *moved, *checkUploaded;
     char *new_path;
     size_t new_path_len;
-    zend_bool moved;
+    int move_ret;
 
-    ZEND_PARSE_PARAMETERS_START(2, 2)
+    ZEND_PARSE_PARAMETERS_START(1, 1)
         Z_PARAM_PATH(new_path, new_path_len)
     ZEND_PARSE_PARAMETERS_END();
 
     file = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("file"), 0, &rv);
-    zmoved = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("moved"), 0, &rv);
+    moved = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("moved"), 0, &rv);
+    checkUploaded = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("checkUploaded"), 0, &rv);
 
-    if (Z_TYPE_P(zmoved) == IS_TRUE) {
-        zend_throw_exception(spl_ce_RuntimeException, "File '%s' has already been moved", Z_STRVAL_P(file));
+    if (
+        assert_file_available(file, moved) == FAILURE ||
+        (Z_TYPE_P(checkUploaded) == IS_TRUE && assert_uploaded_file(Z_STRVAL_P(file), Z_STRLEN_P(file)) == FAILURE)
+    ) {
         return;
     }
 
-    moved = move_uploaded_file(Z_STRVAL_P(file), Z_STRLEN_P(file), new_path, new_path_len);
-
-    zend_update_property_bool(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("moved"), moved);
+    move_ret = move_uploaded_file(Z_STRVAL_P(file), Z_STRLEN_P(file), new_path, new_path_len);
+    ZVAL_BOOL(moved, move_ret == SUCCESS);
 }
 
 PHP_METHOD(UploadedFile, getSize)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("body"), 0, &rv);
+    value = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("size"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -202,7 +246,7 @@ PHP_METHOD(UploadedFile, getError)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("body"), 0, &rv);
+    value = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("error"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -211,7 +255,7 @@ PHP_METHOD(UploadedFile, getClientFilename)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("body"), 0, &rv);
+    value = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("clientFilename"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -220,14 +264,14 @@ PHP_METHOD(UploadedFile, getClientMediaType)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("body"), 0, &rv);
+    value = zend_read_property(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("clientMediaType"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
 
 /* Define HttpMessage\UploadedFile class */
 
-static const zend_function_entry uri_functions[] = {
+static const zend_function_entry methods[] = {
     PHP_ME(UploadedFile, __construct, arginfo_HttpMessageUploadedFile_construct, ZEND_ACC_PUBLIC)
     HTTP_MESSAGE_ME(UploadedFile, getStream)
     HTTP_MESSAGE_ME(UploadedFile, moveTo)
@@ -238,10 +282,10 @@ static const zend_function_entry uri_functions[] = {
     PHP_FE_END
 };
 
-PHP_MINIT_FUNCTION(http_message_uri)
+PHP_MINIT_FUNCTION(http_message_uploadedfile)
 {
     zend_class_entry ce;
-    INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "UploadedFile", uri_functions);
+    INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "UploadedFile", methods);
 
     HttpMessage_UploadedFile_ce = zend_register_internal_class(&ce);
     zend_class_implements(HttpMessage_UploadedFile_ce, 1, PsrHttpMessageUploadedFileInterface_ce_ptr);
@@ -254,7 +298,8 @@ PHP_MINIT_FUNCTION(http_message_uri)
     zend_declare_property_null(HttpMessage_UploadedFile_ce, ZEND_STRL("clientFilename"), ZEND_ACC_PROTECTED);
     zend_declare_property_null(HttpMessage_UploadedFile_ce, ZEND_STRL("clientMediaType"), ZEND_ACC_PROTECTED);
 
-    zend_declare_property_bool(HttpMessage_UploadedFile_ce, ZEND_STRL("moved"), ZEND_ACC_PRIVATE, 0);
+    zend_declare_property_bool(HttpMessage_UploadedFile_ce, ZEND_STRL("moved"), 0, ZEND_ACC_PROTECTED);
+    zend_declare_property_bool(HttpMessage_UploadedFile_ce, ZEND_STRL("checkUploaded"), 0, ZEND_ACC_PROTECTED);
 
     return SUCCESS;
 }

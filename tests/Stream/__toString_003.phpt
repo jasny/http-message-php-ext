@@ -1,15 +1,19 @@
 --TEST--
-Cast unreadable Stream to string from non-readable stream
+Cast unreadable Stream to string from file
 --FILE--
 <?php
-$resource = fopen(sys_get_temp_dir() . '/nonreadable.tmp', "a");
+$path = sys_get_temp_dir() . '/nonreadable.tmp';
+file_put_contents($path, "foo");
+
+$resource = fopen($path, 'r');
 $stream = new HttpMessage\Stream($resource);
 
 var_dump((string)$stream);
+
 ?>
 --CLEANUP--
 <?php
 unlink(sys_get_temp_dir() . '/nonreadable.tmp');
 ?>
 --EXPECT--
-string(0) ""
+string(3) "foo"

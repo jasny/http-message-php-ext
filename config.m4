@@ -16,8 +16,8 @@ if test "$PHP_HTTP_MESSAGE" != "no"; then
 	])
 
     AC_DEFINE(HAVE_HTTP_MESSAGE, 1, [Whether you have http_message support])
-    PHP_NEW_EXTENSION(http_message, http_message.c message.c request.c server_request.c response.c stream.c uri.c,
-          $ext_shared)
+    PHP_NEW_EXTENSION(http_message, http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c,
+        $ext_shared)
 
 	PHP_ADD_EXTENSION_DEP([http_message], [psr], true)
 
