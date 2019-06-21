@@ -47,6 +47,30 @@
 
 zend_class_entry *HttpMessage_Uri_ce;
 
+void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t pass_len)
+{
+    char *userinfo;
+
+    if (user_len == 0 && pass_len == 0) {
+        return;
+    }
+
+    if (pass_len == 0) {
+        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("userInfo"), user, user_len);
+    } else {
+        userinfo = emalloc(user_len + pass_len + 2);
+        if (UNEXPECTED(userinfo == NULL)) return; // Memory issue
+
+        user[user_len] = '\0';
+        pass[pass_len] = '\0';
+        sprintf(userinfo, "%s:%s", user, pass);
+
+        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("userInfo"), userinfo, user_len + pass_len + 1);
+
+        efree(userinfo);
+    }
+}
+
 /* __construct */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUri_construct, 0, 0, 0)
@@ -56,7 +80,7 @@ ZEND_END_ARG_INFO()
 PHP_METHOD(Uri, __construct)
 {
     php_url *info;
-    char *value, *userinfo;
+    char *value;
     size_t value_len = 0;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
@@ -82,14 +106,7 @@ PHP_METHOD(Uri, __construct)
             zend_update_property_long(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), info->port);
         }
 
-        if (info->pass == NULL) {
-            SET_STRING_PROPERTY(HttpMessage_Uri_ce, "userInfo", info->user);
-        } else {
-            userinfo = emalloc(strlen(info->user) + strlen(info->pass) + 2);
-            sprintf(userinfo, "%s:%s", info->user, info->pass);
-            SET_STRING_PROPERTY(HttpMessage_Uri_ce, "userInfo", userinfo);
-            efree(userinfo);
-        }
+        uri_set_userinfo(getThis(), info->user, STRLEN_NULL(info->user), info->pass, STRLEN_NULL(info->pass));
     }
 }
 
@@ -207,20 +224,20 @@ PHP_METHOD(Uri, getAuthority)
     host = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("host"), 0, &rv);
     port = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), 0, &rv);
 
-    if (Z_STRLEN(*host) == 0) {
+    if (Z_STRLEN_P(host) == 0) {
         RETURN_EMPTY_STRING();
     }
 
-    if (Z_STRLEN(*userinfo) > 0) {
-        smart_str_appendl(&buf, Z_STRVAL(*userinfo), Z_STRLEN(*userinfo));
+    if (Z_STRLEN_P(userinfo) > 0) {
+        smart_str_appendl(&buf, Z_STRVAL_P(userinfo), Z_STRLEN_P(userinfo));
         smart_str_appends(&buf, "@");
     }
 
-    smart_str_appendl(&buf, Z_STRVAL(*host), Z_STRLEN(*host));
+    smart_str_appendl(&buf, Z_STRVAL_P(host), Z_STRLEN_P(host));
 
-    if (Z_TYPE(*port) == IS_LONG) {
+    if (Z_TYPE_P(port) == IS_LONG) {
         smart_str_appends(&buf, ":");
-        smart_str_append_long(&buf, Z_LVAL(*port));
+        smart_str_append_long(&buf, Z_LVAL_P(port));
     }
 
     RETVAL_STR_COPY(buf.s);

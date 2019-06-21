@@ -38,6 +38,7 @@
 #include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
+#include "zend_smart_str.h"
 #include "ext/standard/info.h"
 #include "ext/psr/psr_http_message.h"
 
@@ -70,15 +71,33 @@ PHP_METHOD(Request, __construct)
 
 PHP_METHOD(Request, getRequestTarget)
 {
-    zval rv, *value;
+    zval rv, *value, *uri, path, query;
+    smart_str buf = {0};
 
     value = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("requestTarget"), 0, &rv);
 
-    if (ZVAL_IS_NULL(value)) {
+    if (!ZVAL_IS_NULL(value)) {
+        RETURN_ZVAL(value, 1, 0);
+    }
+
+    uri = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("uri"), 0, &rv);
+    zend_call_method_with_0_params(uri, NULL, NULL, "getPath", &path);
+    zend_call_method_with_0_params(uri, NULL, NULL, "getQuery", &query);
+
+    if (UNEXPECTED(Z_TYPE(path) != IS_STRING) || Z_STRLEN(path) == 0) {
         RETURN_STRING("/");
     }
 
-    RETURN_ZVAL(value, 1, 0);
+    if (Z_TYPE(query) != IS_STRING || Z_STRLEN(query) == 0) {
+        RETURN_ZVAL(&path, 1, 0);
+    }
+
+    smart_str_appendl(&buf, Z_STRVAL(path), Z_STRLEN(path));
+    smart_str_appends(&buf, "?");
+    smart_str_appendl(&buf, Z_STRVAL(query), Z_STRLEN(query));
+
+    RETVAL_STR_COPY(buf.s);
+    zend_string_release(buf.s);
 }
 
 PHP_METHOD(Request, withRequestTarget)

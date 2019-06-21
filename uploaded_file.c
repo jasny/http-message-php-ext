@@ -123,6 +123,121 @@ int move_uploaded_file(char *path, size_t path_len, char *new_path, size_t new_p
     return SUCCESS;
 }
 
+void construct_uploaded_file(
+    zval* object,
+    zend_string *file,
+    zend_long size,
+    zend_bool size_is_null,
+    zend_long error,
+    zend_string *clientFilename,
+    zend_string *clientMediaType,
+    char checkUploaded
+) {
+    if (error == 0 && file != NULL) {
+        zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("file"), file);
+    }
+    if (clientFilename != NULL) {
+        zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("clientFilename"), clientFilename);
+    }
+    if (clientMediaType != NULL) {
+        zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("clientMediaType"), clientMediaType);
+    }
+
+    if (!size_is_null) {
+        zend_update_property_long(HttpMessage_UploadedFile_ce, object, ZEND_STRL("size"), size);
+    }
+    if (error < 0 || error > 8) {
+        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid error code %d", error);
+    }
+    zend_update_property_long(HttpMessage_UploadedFile_ce, object, ZEND_STRL("error"), error);
+
+    if (checkUploaded < 0) {
+        checkUploaded = SG(rfc1867_uploaded_files) != NULL;
+    }
+    zend_update_property_bool(HttpMessage_UploadedFile_ce, object, ZEND_STRL("checkUploaded"), checkUploaded);
+}
+
+void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval *error, zval *name, zval *type)
+{
+    ZVAL_OBJ(uploaded_file, zend_objects_new(HttpMessage_UploadedFile_ce));
+
+    construct_uploaded_file(
+            uploaded_file,
+            tmp_name != NULL ? Z_STR_P(tmp_name) : NULL,
+            size != NULL ? Z_LVAL_P(size) : 0,
+            size == NULL || Z_TYPE_P(size) != IS_LONG,
+            Z_LVAL_P(error),
+            name != NULL ? Z_STR_P(name) : NULL,
+            type != NULL ? Z_STR_P(type) : NULL,
+            -1 // auto-detect check is_uploaded
+    );
+}
+
+void restructure_uploaded_files(
+    zval *objects,
+    HashTable *names,
+    HashTable *types,
+    HashTable *tmp_names,
+    HashTable *errors,
+    HashTable *sizes
+) {
+    zval *name, *type, *tmp_name, *error, *size, *element;
+    zend_ulong index;
+    zend_string *key;
+
+    ZEND_HASH_FOREACH_KEY_VAL(errors, index, key, error) {
+        element = ARRAY_ADD(Z_ARR_P(objects), index, key);
+
+        name = ARRAY_GET(names, index, key);
+        type = ARRAY_GET(types, index, key);
+        tmp_name = ARRAY_GET(tmp_names, index, key);
+        size = ARRAY_GET(sizes, index, key);
+
+        if (Z_TYPE_P(error) == IS_LONG) {
+            create_uploaded_file(element, tmp_name, size, error, name, type);
+        } else if (EXPECTED(Z_TYPE_P(error) == IS_ARRAY)) {
+            array_init(element);
+            restructure_uploaded_files(element, Z_ARR_P_NULL(name), Z_ARR_P_NULL(type), Z_ARR_P_NULL(tmp_name),
+                                       Z_ARR_P_NULL(error), Z_ARR_P_NULL(size)); // recursion
+        }
+    } ZEND_HASH_FOREACH_END();
+}
+
+void create_uploaded_files(zval *objects, HashTable *files)
+{
+    zval *zentry, *name, *type, *tmp_name, *error, *size, *element;
+    HashTable *entry;
+    zend_ulong index;
+    zend_string *key;
+
+    array_init(objects);
+
+    ZEND_HASH_FOREACH_KEY_VAL(files, index, key, zentry) {
+        if (UNEXPECTED(Z_TYPE_P(zentry) != IS_ARRAY)) continue;
+
+        entry = Z_ARR_P(zentry);
+        error = zend_hash_str_find(entry, ZEND_STRL("error"));
+
+        if (UNEXPECTED(error == NULL)) continue;
+
+        name = zend_hash_str_find(entry, ZEND_STRL("name"));
+        type = zend_hash_str_find(entry, ZEND_STRL("type"));
+        tmp_name = zend_hash_str_find(entry, ZEND_STRL("tmp_name"));
+        size = zend_hash_str_find(entry, ZEND_STRL("size"));
+
+        element = ARRAY_ADD(Z_ARR_P(objects), index, key);
+
+        if (Z_TYPE_P(error) == IS_LONG) {
+            create_uploaded_file(element, tmp_name, size, error, name, type);
+        } else if (EXPECTED(Z_TYPE_P(error) == IS_ARRAY)) {
+            array_init(element);
+            restructure_uploaded_files(element, Z_ARR_P(name), Z_ARR_P(type), Z_ARR_P(tmp_name), Z_ARR_P(error)
+                    , Z_ARR_P(size));
+        }
+    } ZEND_HASH_FOREACH_END();
+}
+
+
 /* __construct */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUploadedFile_construct, 0, 1, 0)
@@ -150,26 +265,8 @@ PHP_METHOD(UploadedFile, __construct)
         Z_PARAM_BOOL_EX(checkUploaded, checkUploaded_is_null, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    if (error == 0) {
-        SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "file", file);
-    }
-
-    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientFilename", clientFilename);
-    SET_STR_PROPERTY(HttpMessage_UploadedFile_ce, "clientMediaType", clientMediaType);
-
-    if (!size_is_null) {
-        zend_update_property_long(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("size"), size);
-    }
-
-    if (error < 0 || error > 8) {
-        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid error code %d", error);
-    }
-    zend_update_property_long(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("error"), error);
-
-    if (checkUploaded_is_null) {
-        checkUploaded = SG(rfc1867_uploaded_files) != NULL;
-    }
-    zend_update_property_bool(HttpMessage_UploadedFile_ce, getThis(), ZEND_STRL("checkUploaded"), checkUploaded);
+    construct_uploaded_file(getThis(), file, size, size_is_null, error, clientFilename, clientMediaType,
+            checkUploaded_is_null ? -1 : (char)checkUploaded);
 }
 
 PHP_METHOD(UploadedFile, getStream)

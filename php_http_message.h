@@ -66,5 +66,7 @@ extern zend_class_entry *HttpMessage_Stream_ce;
 extern zend_class_entry *HttpMessage_Uri_ce;
 extern zend_class_entry *HttpMessage_UploadedFile_ce;
 
-#endif
+void create_uploaded_files(zval *objects, HashTable *files);
+void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t pass_len);
 
+#endif
