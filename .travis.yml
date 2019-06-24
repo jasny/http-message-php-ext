@@ -1,22 +1,21 @@
 language: php
 php:
-  - 7.0
-  - 7.1
   - 7.2
+  - 7.3
+  - 7.4snapshot
   - nightly
 
 matrix:
   allow_failures:
-    - php: 7.0
+    - php: 7.4snapshot
     - php: nightly
-
 
 branches:
   only:
   - master
 
 before_install:
-  # Install external libraries
+  - pecl install psr
 
 install:
   - phpize

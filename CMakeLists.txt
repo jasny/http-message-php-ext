@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(http_message C)
 
+add_compile_definitions(HAVE_HTTP_MESSAGE)
+
 add_custom_target(extension COMMAND phpize && ./configure && make && make install
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 

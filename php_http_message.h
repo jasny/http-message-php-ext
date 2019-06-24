@@ -31,9 +31,6 @@
 #ifndef PHP_HTTP_MESSAGE_H
 #define PHP_HTTP_MESSAGE_H 1
 
-/* Temp for cmake */
-#define HAVE_HTTP_MESSAGE 1
-
 #define PHP_HTTP_MESSAGE_VERSION "0.0.1"
 #define PHP_HTTP_MESSAGE_EXTNAME "http_message"
 

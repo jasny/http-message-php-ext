@@ -2,8 +2,6 @@
 
 setlocal enableextensions enabledelayedexpansion
 
-	REM TODO: build external libraries
-
 	REM set up PHP
 	mkdir C:\projects\php-sdk >NUL 2>NUL
 	cd C:\projects\php-sdk
@@ -22,12 +20,14 @@ setlocal enableextensions enabledelayedexpansion
 	popd
 	popd
 
+  REM download and install the psr extension from PECL
+	mkdir c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\psr
+	wget %PECL_PSR_URL% --no-check-certificate -q -O psr.tgz
+  7z x -y psr.tgz -oc:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\psr
+
 	REM copy the extension into the PHP tree
-	mkdir c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\skeleton
-	xcopy c:\projects\skeleton-php-ext\*.* c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\skeleton /s/e/v
-	pushd c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\skeleton
-	del /q CREDITS
-	popd
+	mkdir c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\http_message
+	xcopy c:\projects\http_message-php-ext\*.* c:\projects\php-sdk\phpdev\vc14\x64\php-src\ext\http_message /s/e/v
 	
 	REM The bison utility is needed for the PHP build, so add MSYS to the path.
 	REM Note: Add to the end to ensure MSVC tools are found firts.
@@ -37,13 +37,12 @@ setlocal enableextensions enabledelayedexpansion
 	cmd /c bin\phpsdk_setvars.bat
 	pushd phpdev\vc14\x64\php-src
 	cmd /c buildconf --force
-	cmd /c configure --disable-all --enable-cli --with-skeleton=shared
+	cmd /c configure --disable-all --enable-cli --with-extra-includes=c:\projects\libhttp_message --with-extra-libs=c:\projects\libhttp_message --with-psr=shared --with-http_message=shared
 	nmake
 	popd
 
-	REM TODO: debugging
-
-	dir php_skeleton.dll /s
+	REM TODO:debugging
+	dir php_http_message.dll /s
 	dir php.exe /s
 	dir php*.dll /s
 
