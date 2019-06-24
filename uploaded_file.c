@@ -159,6 +159,7 @@ void construct_uploaded_file(
 void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval *error, zval *name, zval *type)
 {
     ZVAL_OBJ(uploaded_file, zend_objects_new(HttpMessage_UploadedFile_ce));
+    return;
 
     construct_uploaded_file(
             uploaded_file,
@@ -226,7 +227,7 @@ void create_uploaded_files(zval *objects, HashTable *files)
         element = ARRAY_ADD(Z_ARR_P(objects), index, key);
 
         if (Z_TYPE_P(error) == IS_LONG) {
-            //create_uploaded_file(element, tmp_name, size, error, name, type);
+            create_uploaded_file(element, tmp_name, size, error, name, type);
         } else if (EXPECTED(Z_TYPE_P(error) == IS_ARRAY)) {
             array_init(element);
             restructure_uploaded_files(element, Z_ARR_P(name), Z_ARR_P(type), Z_ARR_P(tmp_name), Z_ARR_P(error)
