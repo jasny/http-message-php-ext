@@ -392,7 +392,8 @@ PHP_METHOD(ServerRequest, getAttribute)
 
 PHP_METHOD(ServerRequest, withAttribute)
 {
-    zval rv, *value, *attributes, new_attributes;
+    zval rv, *value, *attributes_prop;
+    HashTable *attributes;
     char *name;
     size_t name_len;
 
@@ -401,19 +402,19 @@ PHP_METHOD(ServerRequest, withAttribute)
         Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
-    ZVAL_COPY(&new_attributes, attributes);
-
-    add_assoc_zval_ex(&new_attributes, name, name_len, value);
-
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Message_ce, return_value, ZEND_STRL("attributes"), &new_attributes);
+    attributes_prop = zend_read_property(HttpMessage_Message_ce, return_value, ZEND_STRL("attributes"), 0, &rv);
+    attributes = zend_array_dup(Z_ARR_P(attributes_prop));
+
+    zend_symtable_str_update(attributes, name, name_len, value);
+    ZVAL_ARR(attributes_prop, attributes);
 }
 
 PHP_METHOD(ServerRequest, withoutAttribute)
 {
-    zval rv, *attributes;
+    zval rv, *attributes_prop;
+    HashTable *attributes;
     char *name;
     size_t name_len;
 
@@ -421,12 +422,13 @@ PHP_METHOD(ServerRequest, withoutAttribute)
         Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END();
 
-    attributes = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
-    zend_hash_str_del(Z_ARRVAL_P(attributes), name, name_len);
-
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Message_ce, return_value, ZEND_STRL("attributes"), attributes);
+    attributes_prop = zend_read_property(HttpMessage_Message_ce, return_value, ZEND_STRL("attributes"), 0, &rv);
+    attributes = zend_array_dup(Z_ARR_P(attributes_prop));
+
+    zend_symtable_str_del(attributes, name, name_len);
+    ZVAL_ARR(attributes_prop, attributes);
 }
 
 

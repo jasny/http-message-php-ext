@@ -47,6 +47,32 @@
 
 zend_class_entry *HttpMessage_Message_ce;
 
+void add_header(zval *object, char *name, size_t name_len, zend_string *value, zend_bool added)
+{
+    zval rv, *headers_prop, *header_values;
+    HashTable *headers;
+
+    headers_prop = zend_read_property(HttpMessage_Message_ce, object, ZEND_STRL("headers"), 0, &rv);
+
+    if (UNEXPECTED(Z_TYPE_P(headers_prop) != IS_ARRAY && Z_TYPE_P(headers_prop) != IS_ARRAY_EX)) {
+        return; // Shouldn't happen
+    }
+
+    headers = zend_array_dup(Z_ARR_P(headers_prop));
+
+    header_values = zend_hash_str_find(headers, name, name_len);
+    if (header_values == NULL) {
+        header_values = zend_hash_str_add_empty_element(headers, name, name_len);
+        array_init(header_values);
+    } else if (!added) {
+        ZVAL_DEREF(header_values);
+        array_init(header_values);
+    }
+    add_next_index_str(header_values, value);
+
+    ZVAL_ARR(headers_prop, headers);
+
+}
 
 /* __construct */
 
@@ -171,7 +197,6 @@ PHP_METHOD(Message, getHeaderLine)
 
 PHP_METHOD(Message, withHeader)
 {
-    zval rv, *headers, new_headers, header_values;
     char *name;
     size_t name_len = 0;
     zend_string *value;
@@ -181,49 +206,30 @@ PHP_METHOD(Message, withHeader)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
-    ZVAL_COPY(&new_headers, headers);
-
-    array_init(&header_values);
-    add_next_index_str(&header_values, value);
-
-    add_assoc_zval_ex(&new_headers, name, name_len, &header_values);
-
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Message_ce, return_value, ZEND_STRL("headers"), &new_headers);
+    add_header(return_value, name, name_len, value, 0);
 }
 
-PHP_METHOD(Message, withAddedHeader)
-{
-    zval rv, *headers, *header_values;
+PHP_METHOD(Message, withAddedHeader) {
     char *name;
     size_t name_len = 0;
     zend_string *value;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-        Z_PARAM_STRING(name, name_len)
-        Z_PARAM_STR(value)
+            Z_PARAM_STRING(name, name_len)
+            Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
-
-    headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
-
-    header_values = zend_hash_str_find(Z_ARRVAL_P(headers), name, name_len);
-    if (header_values == NULL) {
-        array_init(header_values);
-    }
-    add_next_index_str(header_values, value);
-
-    add_assoc_zval_ex(headers, name, name_len, header_values);
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Message_ce, return_value, ZEND_STRL("headers"), headers);
+    add_header(return_value, name, name_len, value, 1);
 }
 
 PHP_METHOD(Message, withoutHeader)
 {
-    zval rv, *headers;
+    zval rv, *headers_prop;
+    HashTable *headers;
     char *name;
     size_t name_len = 0;
 
@@ -231,12 +237,14 @@ PHP_METHOD(Message, withoutHeader)
         Z_PARAM_STRING(name, name_len)
     ZEND_PARSE_PARAMETERS_END();
 
-    headers = zend_read_property(HttpMessage_Message_ce, getThis(), ZEND_STRL("headers"), 0, &rv);
-    zend_hash_str_del(Z_ARRVAL_P(headers), name, name_len);
-
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Message_ce, return_value, ZEND_STRL("headers"), headers);
+    headers_prop = zend_read_property(HttpMessage_Message_ce, return_value, ZEND_STRL("headers"), 0, &rv);
+
+    headers = zend_array_dup(Z_ARR_P(headers_prop));
+    zend_hash_str_del(headers, name, name_len);
+
+    ZVAL_ARR(headers_prop, headers);
 }
 
 

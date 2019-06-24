@@ -9,9 +9,9 @@ $request = (new HttpMessage\ServerRequest)
         'user' => 22,
     ]);
 
-var_dump($request->getQueryParams());
-
 $newRequest = $request->withQueryParams(['user' => 32]);
+
+var_dump($request->getQueryParams());
 var_dump($newRequest->getQueryParams());
 
 ?>

@@ -3,6 +3,8 @@ Message headers
 --FILE--
 <?php
 $response = new HttpMessage\Response();
+$fooResponse = $response->withHeader('Foo', 'bar');
+$moreResponse = $fooResponse->withHeader('More', 'red');
 
 var_dump($response->getHeaders());
 var_dump($response->hasHeader('Foo'));
@@ -10,19 +12,17 @@ var_dump($response->getHeader('Foo'));
 var_dump($response->getHeaderLine('Foo'));
 
 echo "\n";
-$fooResponse = $response->withHeader('Foo', 'bar');
 var_dump($fooResponse->getHeaders());
 var_dump($fooResponse->hasHeader('Foo'));
 var_dump($fooResponse->getHeader('Foo'));
 var_dump($fooResponse->getHeaderLine('Foo'));
 
 echo "\n";
-$moreResponse = $fooResponse->withHeader('More', 'red');
 var_dump($moreResponse->getHeaders());
-var_dump($fooResponse->hasHeader('More'));
-var_dump($fooResponse->getHeader('More'));
-var_dump($fooResponse->getHeaderLine('More'));
-var_dump($fooResponse->getHeaderLine('Foo'));
+var_dump($moreResponse->hasHeader('More'));
+var_dump($moreResponse->getHeader('More'));
+var_dump($moreResponse->getHeaderLine('More'));
+var_dump($moreResponse->getHeaderLine('Foo'));
 
 ?>
 --EXPECT--

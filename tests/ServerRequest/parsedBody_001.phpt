@@ -9,15 +9,16 @@ $arrRequest = $request->withParsedBody([
     'color' => 'green',
     'user' => 22,
 ]);
-var_dump($arrRequest->getParsedBody());
 
 $objRequest = $request->withParsedBody((object)[
     'color' => 'red',
     'user' => 42,
 ]);
-var_dump($objRequest->getParsedBody());
 
 $nullRequest = $objRequest->withParsedBody(null);
+
+var_dump($arrRequest->getParsedBody());
+var_dump($objRequest->getParsedBody());
 var_dump($nullRequest->getParsedBody());
 
 ?>

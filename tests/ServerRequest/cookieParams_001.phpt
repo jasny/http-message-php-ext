@@ -9,9 +9,9 @@ $request = (new HttpMessage\ServerRequest)
         'user' => 22,
     ]);
 
-var_dump($request->getCookieParams());
-
 $newRequest = $request->withCookieParams(['user' => 32]);
+
+var_dump($request->getCookieParams());
 var_dump($newRequest->getCookieParams());
 
 ?>

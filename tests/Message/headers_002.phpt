@@ -6,21 +6,19 @@ Message headers; added header / without header
 $foofooResponse = (new HttpMessage\Response())
     ->withHeader('Foo', 'bar')
     ->withAddedHeader('Foo', 'baz');
+$fooResponse = $foofooResponse->withHeader('Foo', 'box');
+$response = $foofooResponse->withoutHeader('Foo');
 
 var_dump($foofooResponse->getHeaders());
 var_dump($foofooResponse->hasHeader('Foo'));
 var_dump($foofooResponse->getHeader('Foo'));
 var_dump($foofooResponse->getHeaderLine('Foo'));
 
-$fooResponse = $foofooResponse->withHeader('Foo', 'box');
-
 echo "\n";
 var_dump($fooResponse->getHeaders());
 var_dump($fooResponse->hasHeader('Foo'));
 var_dump($fooResponse->getHeader('Foo'));
 var_dump($fooResponse->getHeaderLine('Foo'));
-
-$response = $foofooResponse->withoutHeader('Foo');
 
 echo "\n";
 var_dump($response->getHeaders());
