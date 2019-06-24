@@ -191,7 +191,7 @@ ZEND_END_ARG_INFO()
 
 PHP_METHOD(ServerRequest, __construct)
 {
-    zval rv, uploadedFiles, *val;
+    zval rv, *uploadedFiles, *val;
     zval *serverParams = NULL, *cookieParams = NULL, *queryParams = NULL, *post = NULL, *files = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 5)
@@ -213,8 +213,8 @@ PHP_METHOD(ServerRequest, __construct)
     SET_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "queryParams", queryParams, rv);
 
     if (files != NULL) {
-        create_uploaded_files(&uploadedFiles, Z_ARR_P(files));
-        zend_update_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("uploadedFiles"), &uploadedFiles);
+        uploadedFiles = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("uploadedFiles"), 0, &rv);
+        create_uploaded_files(uploadedFiles, Z_ARR_P(files));
     } else {
         INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "uploadedFiles", rv);
     }
