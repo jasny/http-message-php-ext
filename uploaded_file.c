@@ -158,8 +158,12 @@ void construct_uploaded_file(
 
 void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval *error, zval *name, zval *type)
 {
-    ZVAL_OBJ(uploaded_file, zend_objects_new(HttpMessage_UploadedFile_ce));
-    return;
+    zend_object *new_object;
+
+    new_object = zend_objects_new(HttpMessage_UploadedFile_ce);
+    object_properties_init(new_object, HttpMessage_UploadedFile_ce);
+
+    ZVAL_OBJ(uploaded_file, new_object);
 
     construct_uploaded_file(
             uploaded_file,

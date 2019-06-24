@@ -15,7 +15,7 @@ branches:
   - travis
 
 before_install:
-  - pecl install --nodeps psr
+  - pecl install --nodeps psr-0.6.1
 
 install:
   - phpize
