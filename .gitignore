@@ -35,3 +35,4 @@ configure.ac
 cmake-build-*
 vendor
 composer.lock
+tmp-php.ini

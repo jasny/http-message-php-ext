@@ -12,6 +12,7 @@ matrix:
 branches:
   only:
   - master
+  - travis
 
 before_install:
   - pecl install --nodeps psr

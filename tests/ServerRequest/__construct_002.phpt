@@ -87,7 +87,9 @@ object(HttpMessage\ServerRequest)#1 (12) {
   ["uploadedFiles":protected]=>
   array(1) {
     ["document"]=>
-    object(HttpMessage\UploadedFile)#4 (6) {
+    object(HttpMessage\UploadedFile)#4 (8) {
+      ["stream":protected]=>
+      NULL
       ["file":protected]=>
       string(17) "/tmp/uploadedfile"
       ["size":protected]=>
@@ -98,6 +100,8 @@ object(HttpMessage\ServerRequest)#1 (12) {
       string(12) "document.pdf"
       ["clientMediaType":protected]=>
       string(15) "application/pdf"
+      ["moved":protected]=>
+      bool(false)
       ["checkUploaded":protected]=>
       bool(false)
     }
