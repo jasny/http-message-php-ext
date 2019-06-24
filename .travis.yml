@@ -28,3 +28,11 @@ before_script:
 script:
   make test
 
+after_failure:
+  - |
+    for LOG in $(find tests -name '*.log'); do
+      echo $LOG
+      tail -n +2 $LOG
+      echo
+    done
+
