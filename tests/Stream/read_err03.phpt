@@ -11,7 +11,7 @@ try {
     echo $e->getMessage();
 }
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 unlink(sys_get_temp_dir() . '/nonreadable.tmp');
 ?>

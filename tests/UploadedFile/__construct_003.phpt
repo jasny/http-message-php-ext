@@ -14,7 +14,7 @@ var_dump($upload->getClientFilename());
 var_dump($upload->getClientMediaType());
 
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 unlink(sys_get_temp_dir() . '/uploadedfile');
 ?>

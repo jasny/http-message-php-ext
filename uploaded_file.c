@@ -127,7 +127,6 @@ void construct_uploaded_file(
     zval* object,
     zend_string *file,
     zend_long size,
-    zend_bool size_is_null,
     zend_long error,
     zend_string *clientFilename,
     zend_string *clientMediaType,
@@ -143,11 +142,11 @@ void construct_uploaded_file(
         zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("clientMediaType"), clientMediaType);
     }
 
-    if (!size_is_null) {
+    if (size > 0) {
         zend_update_property_long(HttpMessage_UploadedFile_ce, object, ZEND_STRL("size"), size);
     }
     if (error < 0 || error > 8) {
-        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid error code %d", error);
+        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid error code %ld", error);
     }
     zend_update_property_long(HttpMessage_UploadedFile_ce, object, ZEND_STRL("error"), error);
 
@@ -164,8 +163,7 @@ void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval 
     construct_uploaded_file(
             uploaded_file,
             tmp_name != NULL ? Z_STR_P(tmp_name) : NULL,
-            size != NULL ? Z_LVAL_P(size) : 0,
-            size == NULL || Z_TYPE_P(size) != IS_LONG,
+            size != NULL ? Z_LVAL_P(size) : -1,
             Z_LVAL_P(error),
             name != NULL ? Z_STR_P(name) : NULL,
             type != NULL ? Z_STR_P(type) : NULL,
@@ -252,8 +250,8 @@ ZEND_END_ARG_INFO()
 PHP_METHOD(UploadedFile, __construct)
 {
     zend_string *file = NULL, *clientFilename = NULL, *clientMediaType = NULL;
-    zend_long size = 0, error = 0;
-    zend_bool size_is_null, checkUploaded, checkUploaded_is_null;
+    zend_long size = -1, error = 0;
+    zend_bool size_is_null = 1, checkUploaded = 0, checkUploaded_is_null = 1;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 6)
         Z_PARAM_STR_EX(file, 1, 0)
@@ -265,8 +263,8 @@ PHP_METHOD(UploadedFile, __construct)
         Z_PARAM_BOOL_EX(checkUploaded, checkUploaded_is_null, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    construct_uploaded_file(getThis(), file, size, size_is_null, error, clientFilename, clientMediaType,
-            checkUploaded_is_null ? -1 : (char)checkUploaded);
+    construct_uploaded_file(getThis(), file, size_is_null ? -1 : size, error, clientFilename, clientMediaType,
+            checkUploaded_is_null ? -1 : checkUploaded);
 }
 
 PHP_METHOD(UploadedFile, getStream)

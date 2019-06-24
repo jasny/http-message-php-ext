@@ -43,8 +43,16 @@ ZEND_END_ARG_INFO()
         else zend_update_property(className, getThis(), ZEND_STRL(property), zval)
 
 #define SET_STRING_PROPERTY(className, property, val) \
-        if (val != NULL) \
-            zend_update_property_stringl(className, getThis(), ZEND_STRL(property), val, strlen(val))
+        if (val != NULL) zend_update_property_stringl(className, getThis(), ZEND_STRL(property), val, strlen(val))
+
+#define SET_STR_PROPERTY(className, property, val) \
+        if (val != NULL) zend_update_property_str(className, getThis(), ZEND_STRL(property), val)
+
+#if PHP_VERSION_ID < 70300
+#define SET_URI_PROPERTY(className, property, val) SET_STRING_PROPERTY(className, property, val)
+#else
+#define SET_URI_PROPERTY(className, property, val) SET_STR_PROPERTY(className, property, val)
+#endif
 
 #define HTTP_MESSAGE_ME(className, method) \
         PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
@@ -75,6 +83,8 @@ ZEND_END_ARG_INFO()
 
 #define Z_STRVAL_P_NULL(zval) zval != NULL ? Z_STRVAL_P(zval) : NULL
 #define Z_STRLEN_P_NULL(zval) zval != NULL ? Z_STRLEN_P(zval) : 0
+
+#define ZSTR_VAL_LEN(zstr) zstr != NULL ? ZSTR_VAL(zstr) : NULL, zstr != NULL ? ZSTR_LEN(zstr) : 0
 
 #define STRLEN_NULL(str) str != NULL ? strlen(str) : 0
 

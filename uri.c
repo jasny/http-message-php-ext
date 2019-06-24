@@ -96,17 +96,21 @@ PHP_METHOD(Uri, __construct)
             return;
         }
 
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "scheme", info->scheme);
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "host", info->host);
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "path", info->path);
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "query", info->query);
-        SET_STRING_PROPERTY(HttpMessage_Uri_ce, "fragment", info->fragment);
+        SET_URI_PROPERTY(HttpMessage_Uri_ce, "scheme", info->scheme);
+        SET_URI_PROPERTY(HttpMessage_Uri_ce, "host", info->host);
+        SET_URI_PROPERTY(HttpMessage_Uri_ce, "path", info->path);
+        SET_URI_PROPERTY(HttpMessage_Uri_ce, "query", info->query);
+        SET_URI_PROPERTY(HttpMessage_Uri_ce, "fragment", info->fragment);
 
         if (info->port > 0) {
             zend_update_property_long(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), info->port);
         }
 
+#if PHP_VERSION_ID < 70300
         uri_set_userinfo(getThis(), info->user, STRLEN_NULL(info->user), info->pass, STRLEN_NULL(info->pass));
+#else
+        uri_set_userinfo(getThis(), ZSTR_VAL_LEN(info->user), ZSTR_VAL_LEN(info->pass));
+#endif
     }
 }
 

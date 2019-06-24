@@ -19,7 +19,7 @@ $upload->moveTo($target);
 var_dump(file_get_contents($target));
 
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 if (file_exists(sys_get_temp_dir() . '/uploadedfile') {
     unlink(sys_get_temp_dir() . '/uploadedfile');

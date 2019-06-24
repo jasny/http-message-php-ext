@@ -13,7 +13,7 @@ try {
 try {
     $response->withStatus('ok');
 } catch (TypeError $e) {
-    echo $e->getMessage(), "\n";
+    echo strtr($e->getMessage(), ['integer' => 'int']), "\n";
 }
 
 try {
@@ -25,5 +25,5 @@ try {
 ?>
 --EXPECT--
 HttpMessage\Response::withStatus() expects at least 1 parameter, 0 given
-HttpMessage\Response::withStatus() expects parameter 1 to be integer, string given
+HttpMessage\Response::withStatus() expects parameter 1 to be int, string given
 HttpMessage\Response::withStatus() expects parameter 2 to be string, array given

@@ -11,7 +11,7 @@ $stream = new HttpMessage\Stream($resource);
 var_dump((string)$stream);
 
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 unlink(sys_get_temp_dir() . '/nonreadable.tmp');
 ?>

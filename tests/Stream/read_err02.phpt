@@ -8,7 +8,7 @@ $stream = new HttpMessage\Stream($resource);
 try {
     $stream->read('hello');
 } catch (Error $e) {
-    echo $e->getMessage(), "\n";
+    echo strtr($e->getMessage(), ['integer' => 'int']), "\n";
 }
 
 try {
@@ -17,6 +17,6 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Stream::read() expects parameter 1 to be integer, string given
+--EXPECTF--
+HttpMessage\Stream::read() expects parameter 1 to be int, string given
 Length parameter must be equal or greater than 0

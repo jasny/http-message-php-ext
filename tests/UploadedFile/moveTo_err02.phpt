@@ -14,7 +14,7 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 if (file_exists(sys_get_temp_dir() . '/uploadedfile') {
     unlink(sys_get_temp_dir() . '/uploadedfile');

@@ -102,20 +102,19 @@ PHP_METHOD(Request, getRequestTarget)
 
 PHP_METHOD(Request, withRequestTarget)
 {
-    zval *value;
+    zend_string *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_ZVAL(value)
+        Z_PARAM_STR_EX(value, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
-
-    if (Z_TYPE_P(value) != IS_STRING && !ZVAL_IS_NULL(value)) {
-        zend_wrong_parameter_type_error(ZEND_PARSE_PARAMS_THROW, 1, Z_EXPECTED_STRING, value);
-        return;
-    }
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"), value);
+    if (value != NULL) {
+        zend_update_property_str(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"), value);
+    } else {
+        zend_update_property_null(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"));
+    }
 }
 
 

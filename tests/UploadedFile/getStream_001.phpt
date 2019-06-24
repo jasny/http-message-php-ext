@@ -15,7 +15,7 @@ var_dump((string)$stream);
 var_dump($stream == $upload->getStream());
 
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 unlink(sys_get_temp_dir() . '/uploadedfile');
 ?>

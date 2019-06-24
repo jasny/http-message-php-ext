@@ -5,8 +5,8 @@ Uri::withPort() error: invalid argument
 try {
     (new HttpMessage\Uri)->withPort(['port' => 80]);
 } catch (TypeError $e) {
-    echo $e->getMessage(), "\n";
+    echo strtr($e->getMessage(), ['integer' => 'int']), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Uri::withPort() expects parameter 1 to be integer, array given
+--EXPECTF--
+HttpMessage\Uri::withPort() expects parameter 1 to be int, array given

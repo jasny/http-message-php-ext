@@ -7,7 +7,7 @@ $stream = new HttpMessage\Stream($resource);
 
 var_dump($stream->isReadable());
 ?>
---CLEANUP--
+--CLEAN--
 <?php
 unlink(sys_get_temp_dir() . '/isreadable.tmp');
 ?>
