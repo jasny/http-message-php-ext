@@ -7,7 +7,7 @@ branches:
   - w32
 
 platform:
-  - x86
+#  - x86
   - x64
 
 cache:
@@ -24,18 +24,18 @@ environment:
       VC_VER: vc15
       PHP_BUILD_TYPE: Win32
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    - PHP_VER: 7.2
-      VC_VER: vc15
-      PHP_BUILD_TYPE: nts-Win32
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    - PHP_VER: 7.3
-      VC_VER: vc15
-      PHP_BUILD_TYPE: Win32
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    - PHP_VER: 7.3
-      VC_VER: vc15
-      PHP_BUILD_TYPE: nts-Win32
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#    - PHP_VER: 7.2
+#      VC_VER: vc15
+#      PHP_BUILD_TYPE: nts-Win32
+#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#    - PHP_VER: 7.3
+#      VC_VER: vc15
+#      PHP_BUILD_TYPE: Win32
+#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#    - PHP_VER: 7.3
+#      VC_VER: vc15
+#      PHP_BUILD_TYPE: nts-Win32
+#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
 install:
   - ps: Import-Module .\.ci\appveyor.psm1
@@ -47,6 +47,7 @@ install:
   - ps: InstallPhp
   - ps: InstallPecl psr 0.6.1
   - ps: InstallPhpDevPack
+  - ps: InstallPeclHeaders psr 0.6.1
 
 build_script:
   - ps: InitializeBuildVars

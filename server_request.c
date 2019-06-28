@@ -74,9 +74,8 @@ int assert_uploaded_files(HashTable *array)
 void add_header_from_param(HashTable *headers, char *key, size_t keylen, zval *val)
 {
     zval *new_header, valcpy;
-    zend_long index;
     char header[256];
-    char i;
+    size_t i;
     zend_bool lower; // Turn next char to lower case
 
     if (UNEXPECTED(keylen > 255)) {
@@ -138,7 +137,7 @@ void init_headers_from_params(zval *object, HashTable *serverParams)
 void init_uri_from_params(zval *object, HashTable *serverParams)
 {
     zval rv, *uri, *tmp, *request_target, *protocol, *https, *user, *pass;
-    zend_long index, port = -1, default_port = -1;
+    zend_long port = -1, default_port = -1;
     zend_bool is_http;
 
     uri = zend_read_property(HttpMessage_Message_ce, object, ZEND_STRL("uri"), 0, &rv);

@@ -104,7 +104,7 @@ PHP_METHOD(Response, withStatus)
         Z_PARAM_LONG(code)
         Z_PARAM_OPTIONAL
         Z_PARAM_STRING(phrase, phrase_len)
-    ZEND_PARSE_PARAMETERS_END_EX();
+    ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 

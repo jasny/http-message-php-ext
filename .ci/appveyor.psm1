@@ -65,19 +65,42 @@ Function InstallPecl($Extension, $Version) {
 
 	$RemoteUrl = "https://windows.php.net/downloads/pecl/releases/${Extension}/${Version}/php_${Extension}-${Version}-${Env:PHP_VER}-${Env:PHP_BUILD_TYPE}-${Env:VC_VER}-${Env:PLATFORM}.zip"
 	$DestinationPath = "C:\Downloads\php_${Extension}-${Version}-${Env:PHP_VER}-${Env:PHP_BUILD_TYPE}-${Env:VC_VER}-${Env:PLATFORM}.zip"
-	$InstallPath = "C:\Projects\php\extensions"
-  $DllFile = "php_${Extension}.dll"
+	$InstallPath = "C:\Projects\php\ext"
+	$DllFile = "php_${Extension}.dll"
 
-	If (-not (Test-Path "${InstallPath}\${DllFile}")) {
-		If (-not [System.IO.File]::Exists($DestinationPath)) {
-			Write-Host "Downloading PECL extension ${Extension} source code: ${RemoteUrl} ..."
-			DownloadFile $RemoteUrl $DestinationPath
-		}
-
-		Expand-Item7zip $DestinationPath $InstallPath $DllFile
-
-    Add-Content "${InstallPath}\php.ini" "extension=${DllFile}"
+	If (-not [System.IO.File]::Exists($DestinationPath)) {
+		Write-Host "Downloading PECL extension ${Extension}: ${RemoteUrl} ..."
+		DownloadFile $RemoteUrl $DestinationPath
 	}
+
+	Expand-Item7zip $DestinationPath $InstallPath $DllFile
+
+	Add-Content "${InstallPath}\php.ini" "extension=${DllFile}"
+}
+
+
+Function InstallPeclHeaders {
+	Param(
+		[Parameter(Mandatory=$true)][System.String] $Extension,
+		[Parameter(Mandatory=$true)][System.String] $Version
+	)
+
+	Write-Host "Install headers for ${Extension} PECL extension" -foregroundcolor Cyan
+
+	$RemoteUrl = "https://pecl.php.net/get/${Extension}-${Version}.tgz"
+	$DestinationPath = "C:\Downloads\${Extension}-${Version}.tgz"
+	$InstallPath = "C:\Projects\pecl"
+	$InstallPhpDevPath = 'C:\Projects\php-devpack'
+
+	If (-not [System.IO.File]::Exists($DestinationPath)) {
+		Write-Host "Downloading PECL extension ${Extension} source code: ${RemoteUrl} ..."
+		DownloadFile $RemoteUrl $DestinationPath
+	}
+
+	Expand-Tar $DestinationPath $InstallPath "${Extension}-${Version}"
+
+	New-Item -Path "${InstallDevPath}\include\ext" -Name "${Extension}" -ItemType "directory"
+	Copy-Item "${InstallPath}\${Extension}-${Version}\*.h" -Destination "${InstallPhpDevPath}\include\ext\${Extension}" -Recurse
 }
 
 Function InstallSdk {
