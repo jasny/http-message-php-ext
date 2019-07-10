@@ -1,3 +1,5 @@
+# See https://github.com/sergeyklay/php-appveyor
+
 version: '{branch}.{build}'
 
 branches:
@@ -6,69 +8,89 @@ branches:
   - appveyor
   - w32
 
-platform:
-#  - x86
-  - x64
-
-cache:
-  - 'C:\Downloads -> appveyor.yml'
-
 environment:
-  PHP_SDK_BINARY_TOOLS_VER: 2.0.7
-  NO_INTERACTION: 1
-  REPORT_EXIT_STATUS: 1
-  TEST_PHP_EXECUTABLE: C:\projects\php\php.exe
+  EXTNAME: http_message
 
   matrix:
-    - PHP_VER: 7.2
-      VC_VER: vc15
-      PHP_BUILD_TYPE: Win32
+    - PHP_VERSION: 7.3
+      VC_VERSION: 15
+      BUILD_TYPE: nts-Win32
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#    - PHP_VER: 7.2
-#      VC_VER: vc15
-#      PHP_BUILD_TYPE: nts-Win32
-#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#    - PHP_VER: 7.3
-#      VC_VER: vc15
-#      PHP_BUILD_TYPE: Win32
-#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#    - PHP_VER: 7.3
-#      VC_VER: vc15
-#      PHP_BUILD_TYPE: nts-Win32
-#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+  PHP_SDK_VERSION: 2.1.9
+  PHP_AVM: https://raw.githubusercontent.com/sergeyklay/php-appveyor/master/php-appveyor.psm1
+
+  TEST_PHP_EXECUTABLE: C:\php\php.exe
+  NO_INTERACTION: 1
+  REPORT_EXIT_STATUS: 1
+
+matrix:
+  fast_finish: true
+
+cache:
+  - 'C:\Downloads -> .appveyor.yml'
+
+platform:
+  - x86
+#  - x64
+
+init:
+  - ps: $DebugPreference = 'Continue' #'SilentlyContinue' # Continue
 
 install:
-  - ps: Import-Module .\.ci\appveyor.psm1
-  - ps: SetupPhpVersionString
-  - ps: AppendSessionPath
-  - ps: EnsureRequiredDirectoriesPresent
-  - ps: Ensure7ZipIsInstalled
-  - ps: InstallSdk
-  - ps: InstallPhp
-  - ps: InstallPecl psr 0.6.1
-  - ps: InstallPhpDevPack
-  - ps: InstallPeclHeaders psr 0.6.1
+  - ps: Import-Module .\.ci\php-appveyor.psm1
+
+  - ps: InstallPhpSdk     $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
+  - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
+  - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
+
+  - ps: >-
+      InstallPeclExtension `
+        -Name       psr `
+        -Version    0.6.1 `
+        -PhpVersion $Env:PHP_VERSION `
+        -BuildType  $Env:BUILD_TYPE `
+        -VC         $Env:VC_VERSION `
+        -Platform   $Env:PLATFORM `
+        -Headers    $true `
+        -Enable     $true
 
 build_script:
+  - ps: Import-Module .\.ci\appveyor.psm1
   - ps: InitializeBuildVars
-  - '"%VSCOMNTOOLS%\VsDevCmd" %PLATFORM%'
-  - '"%VSCOMNTOOLS%\..\..\VC\vcvarsall.bat" %ARCH%'
-  - phpsdk_setvars
-  - phpize
-  - ps: InitializeReleaseVars
-  - cmd: configure.bat --disable-all --with-http_message=shared --with-prefix=C:\projects\php
+  - cmd: '"%VSCOMNTOOLS%\VsDevCmd" -arch=%PLATFORM%'
+  - cmd: '"%VCVARSALL_FILE%" %ARCH%'
+  - cmd: C:\php-sdk\bin\phpsdk_setvars
+  - cmd: C:\php-devpack\phpize
+  - cmd: configure.bat --with-prefix=C:\php --with-php-build=C:\php-devpack --disable-all --enable-http-message
   - cmd: nmake 2> compile-errors.log 1> compile.log
+  - ps: InitializeReleaseVars
 
 test_script:
   - cmd: nmake test
 
 after_build:
-  - ps: PrepareReleasePackage
-
-on_failure :
-  - ps: PrintLogs
+  - ps: Set-Location "${Env:APPVEYOR_BUILD_FOLDER}"
+  - ps: >-
+      PrepareReleasePackage `
+        -PhpVersion     $Env:PHP_VERSION `
+        -BuildType      $Env:BUILD_TYPE `
+        -Platform       $Env:PLATFORM `
+        -ConverMdToHtml $true `
+        -ReleaseFiles   "${Env:RELEASE_DLL_PATH}",`
+                        "${Env:APPVEYOR_BUILD_FOLDER}\LICENSE"
 
 artifacts:
   - path: '.\$(RELEASE_ZIPBALL).zip'
-    name: http_message
+    name: '$(Env:EXTNAME)'
     type: zip
+
+on_failure :
+  - ps: >-
+      If (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile-errors.log") {
+        Get-Content -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile-errors.log"
+      }
+
+      If (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile.log") {
+        Get-Content -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile.log"
+      }

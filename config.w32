@@ -1,13 +1,10 @@
 // $Id$
 // vim:ft=javascript
 
-ARG_WITH("http_message", "Include http_message support", "no");
+ARG_ENABLE("http-message", "enable http_message", "no");
 
 if (PHP_HTTP_MESSAGE != "no") {
-	ADD_FLAG("LIBS_CLI", "php_psr.lib");
-
 	EXTENSION("http_message", "http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c");
-	AC_DEFINE('HAVE_HTTP_MESSAGE', 1 , 'Have http_message support');
+	AC_DEFINE('HAVE_HTTP_MESSAGE', 1 , 'enable http_message support');
 	PHP_INSTALL_HEADERS("ext/http_message/", "php_http_message.h");
 }
-
