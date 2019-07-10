@@ -46,7 +46,7 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_UploadedFile_ce;
+zend_class_entry *HttpMessage_UploadedFile_ce = NULL;
 
 int assert_file_available(zval *file, zval *moved)
 {
@@ -385,10 +385,14 @@ static const zend_function_entry methods[] = {
 PHP_MINIT_FUNCTION(http_message_uploadedfile)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uploadedfileinterface"));
+
+    if (interface == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "UploadedFile", methods);
 
     HttpMessage_UploadedFile_ce = zend_register_internal_class(&ce);
-    zend_class_implements(HttpMessage_UploadedFile_ce, 1, PsrHttpMessageUploadedFileInterface_ce_ptr);
+    zend_class_implements(HttpMessage_UploadedFile_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_null(HttpMessage_UploadedFile_ce, ZEND_STRL("stream"), ZEND_ACC_PROTECTED);

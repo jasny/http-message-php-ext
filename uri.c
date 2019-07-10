@@ -45,7 +45,7 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_Uri_ce;
+zend_class_entry *HttpMessage_Uri_ce = NULL;
 
 void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t pass_len)
 {
@@ -435,10 +435,14 @@ static const zend_function_entry uri_functions[] = {
 PHP_MINIT_FUNCTION(http_message_uri)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uriinterface"));
+
+    if (interface == NULL) RETURN_HTTP_MESSAGE_INTERFACE_NOT_FOUND("Uri");
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Uri", uri_functions);
 
     HttpMessage_Uri_ce = zend_register_internal_class(&ce);
-    zend_class_implements(HttpMessage_Uri_ce, 1, PsrHttpMessageUriInterface_ce_ptr);
+    zend_class_implements(HttpMessage_Uri_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_string(HttpMessage_Uri_ce, ZEND_STRL("scheme"), "", ZEND_ACC_PROTECTED);

@@ -44,17 +44,20 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_ServerRequest_ce;
+zend_class_entry *HttpMessage_ServerRequest_ce = NULL;
 
 int assert_uploaded_files(HashTable *array)
 {
     zval *entry;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uploadedfileinterface"));
+
+    if (interface == NULL) {
+        zend_throw_error(NULL, "Psr\\Http\\Message\\UploadedFileInterface not foud");
+        return FAILURE;
+    }
 
     ZEND_HASH_FOREACH_VAL(array, entry) {
-        if (
-            Z_TYPE_P(entry) == IS_OBJECT &&
-            EXPECTED(instanceof_function(Z_OBJCE_P(entry), PsrHttpMessageUploadedFileInterface_ce_ptr))
-        ) {
+        if (Z_TYPE_P(entry) == IS_OBJECT && EXPECTED(instanceof_function(Z_OBJCE_P(entry), interface))) {
             continue;
         }
 
@@ -455,10 +458,15 @@ static const zend_function_entry request_functions[] = {
 PHP_MINIT_FUNCTION(http_message_serverrequest)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\serverrequestinterface"));
+
+    if (interface == NULL) return FAILURE;
+    if (HttpMessage_Request_ce == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "ServerRequest", request_functions);
 
     HttpMessage_ServerRequest_ce = zend_register_internal_class_ex(&ce, HttpMessage_Request_ce);
-    zend_class_implements(HttpMessage_ServerRequest_ce, 1, PsrHttpMessageServerRequestInterface_ce_ptr);
+    zend_class_implements(HttpMessage_ServerRequest_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_null(HttpMessage_ServerRequest_ce, ZEND_STRL("serverParams"), ZEND_ACC_PROTECTED);

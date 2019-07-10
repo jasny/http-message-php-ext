@@ -46,7 +46,7 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_Stream_ce;
+zend_class_entry *HttpMessage_Stream_ce = NULL;
 
 zend_bool string_contains_char(char *haystack, char chr)
 {
@@ -458,10 +458,14 @@ static const zend_function_entry stream_functions[] = {
 PHP_MINIT_FUNCTION(http_message_stream)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
+
+    if (interface == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Stream", stream_functions);
 
     HttpMessage_Stream_ce = zend_register_internal_class(&ce);
-    zend_class_implements(HttpMessage_Stream_ce, 1, PsrHttpMessageStreamInterface_ce_ptr);
+    zend_class_implements(HttpMessage_Stream_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_null(HttpMessage_Stream_ce, ZEND_STRL("stream"), ZEND_ACC_PROTECTED);

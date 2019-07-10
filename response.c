@@ -136,10 +136,15 @@ static const zend_function_entry response_functions[] = {
 PHP_MINIT_FUNCTION(http_message_response)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\responseinterface"));
+
+    if (interface == NULL) return FAILURE;
+    if (HttpMessage_Message_ce == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Response", response_functions);
 
     HttpMessage_Response_ce = zend_register_internal_class_ex(&ce, HttpMessage_Message_ce);
-    zend_class_implements(HttpMessage_Response_ce, 1, PsrHttpMessageResponseInterface_ce_ptr);
+    zend_class_implements(HttpMessage_Response_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_long(HttpMessage_Response_ce, ZEND_STRL("statusCode"), 0, ZEND_ACC_PROTECTED);

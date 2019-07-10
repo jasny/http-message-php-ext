@@ -45,7 +45,7 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_Message_ce;
+zend_class_entry *HttpMessage_Message_ce = NULL;
 
 void add_header(zval *object, char *name, size_t name_len, zend_string *value, zend_bool added)
 {
@@ -262,9 +262,15 @@ PHP_METHOD(Message, getBody)
 PHP_METHOD(Message, withBody)
 {
     zval *value;
+    zend_class_entry *stream_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
+
+    if (stream_interface == NULL) {
+        zend_throw_error(NULL, "Psr\\Http\\Message\\StreamInterface not foud");
+        return;
+    }
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_OBJECT_OF_CLASS(value, PsrHttpMessageStreamInterface_ce_ptr)
+        Z_PARAM_OBJECT_OF_CLASS(value, stream_interface)
     ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -294,11 +300,15 @@ static const zend_function_entry message_functions[] = {
 PHP_MINIT_FUNCTION(http_message_message)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\messageinterface"));
+
+    if (interface == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Message", message_functions);
 
     HttpMessage_Message_ce = zend_register_internal_class(&ce);
     HttpMessage_Message_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
-    zend_class_implements(HttpMessage_Message_ce, 1, PsrHttpMessageMessageInterface_ce_ptr);
+    zend_class_implements(HttpMessage_Message_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_string(

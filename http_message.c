@@ -62,15 +62,16 @@ zend_module_entry http_message_module_entry = {
 
 PHP_MINIT_FUNCTION(http_message)
 {
-    PHP_MINIT(http_message_message)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_request)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_serverrequest)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_response)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_stream)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_uri)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(http_message_uploadedfile)(INIT_FUNC_ARGS_PASSTHRU);
+    int success =
+        PHP_MINIT(http_message_message)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_request)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_serverrequest)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_response)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_stream)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_uri)(INIT_FUNC_ARGS_PASSTHRU) +
+        PHP_MINIT(http_message_uploadedfile)(INIT_FUNC_ARGS_PASSTHRU);
 
-    return SUCCESS;
+    return ZEND_NORMALIZE_BOOL(success);
 }
 
 #ifdef COMPILE_DL_HTTP_MESSAGE

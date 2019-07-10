@@ -44,7 +44,7 @@
 
 #if HAVE_HTTP_MESSAGE
 
-zend_class_entry *HttpMessage_Request_ce;
+zend_class_entry *HttpMessage_Request_ce = NULL;
 
 
 /* __construct */
@@ -160,9 +160,15 @@ PHP_METHOD(Request, getUri)
 PHP_METHOD(Request, withUri)
 {
     zval *value;
+    zend_class_entry *uri_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uriinterface"));
+
+    if (uri_interface == NULL) {
+        zend_throw_error(NULL, "Psr\\Http\\Message\\UriInterface not foud");
+        return;
+    }
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_OBJECT_OF_CLASS(value, PsrHttpMessageUriInterface_ce_ptr)
+        Z_PARAM_OBJECT_OF_CLASS(value, uri_interface)
     ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
@@ -187,10 +193,15 @@ static const zend_function_entry request_functions[] = {
 PHP_MINIT_FUNCTION(http_message_request)
 {
     zend_class_entry ce;
+    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\requestinterface"));
+
+    if (interface == NULL) return FAILURE;
+    if (HttpMessage_Message_ce == NULL) return FAILURE;
+
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Request", request_functions);
 
     HttpMessage_Request_ce = zend_register_internal_class_ex(&ce, HttpMessage_Message_ce);
-    zend_class_implements(HttpMessage_Request_ce, 1, PsrHttpMessageRequestInterface_ce_ptr);
+    zend_class_implements(HttpMessage_Request_ce, 1, interface);
 
     /* Properties */
     zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), ZEND_ACC_PROTECTED);

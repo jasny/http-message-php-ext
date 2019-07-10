@@ -88,4 +88,23 @@ ZEND_END_ARG_INFO()
 
 #define STRLEN_NULL(str) str != NULL ? strlen(str) : 0
 
+static zend_always_inline zend_class_entry* get_internal_ce(const char *class_name, size_t class_name_len)
+{
+    zend_class_entry* temp_ce;
+
+    if ((temp_ce = zend_hash_str_find_ptr(CG(class_table), class_name, class_name_len)) == NULL) {
+        return NULL;
+    }
+
+    return temp_ce;
+}
+
+#define RETURN_HTTP_MESSAGE_INTERFACE_NOT_FOUND(className) \
+    { \
+        zend_error(E_CORE_WARNING, \
+                "Failed to initialize 'HttpMessage\\%s': 'Psr\\Http\\Message\\%sInterace' not found", \
+                className, className); \
+        return FAILURE; \
+    }
+
 #endif //HTTP_MESSAGE_MACROS_H
