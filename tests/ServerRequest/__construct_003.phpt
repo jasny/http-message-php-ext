@@ -82,14 +82,14 @@ $request = new HttpMessage\ServerRequest(
 var_dump($request->getUploadedFiles());
 
 ?>
---EXPECT--
+--EXPECTF--
 array(3) {
   ["document"]=>
   object(HttpMessage\UploadedFile)#4 (8) {
     ["stream":protected]=>
     NULL
     ["file":protected]=>
-    string(19) "/tmp/uploadedfile01"
+    string(%d) "%s/uploadedfile01"
     ["size":protected]=>
     int(2822)
     ["error":protected]=>
@@ -110,7 +110,7 @@ array(3) {
       ["stream":protected]=>
       NULL
       ["file":protected]=>
-      string(19) "/tmp/uploadedfile02"
+      string(%d) "%s/uploadedfile02"
       ["size":protected]=>
       int(3724)
       ["error":protected]=>
@@ -129,7 +129,7 @@ array(3) {
       ["stream":protected]=>
       NULL
       ["file":protected]=>
-      string(19) "/tmp/uploadedfile03"
+      string(%d) "%s/uploadedfile03"
       ["size":protected]=>
       int(263)
       ["error":protected]=>
@@ -151,7 +151,7 @@ array(3) {
       ["stream":protected]=>
       NULL
       ["file":protected]=>
-      string(19) "/tmp/uploadedfile04"
+      string(%d) "%s/uploadedfile04"
       ["size":protected]=>
       int(942)
       ["error":protected]=>
@@ -172,7 +172,7 @@ array(3) {
         ["stream":protected]=>
         NULL
         ["file":protected]=>
-        string(19) "/tmp/uploadedfile05"
+        string(%d) "%s/uploadedfile05"
         ["size":protected]=>
         int(2391)
         ["error":protected]=>
@@ -232,7 +232,7 @@ array(3) {
         ["stream":protected]=>
         NULL
         ["file":protected]=>
-        string(19) "/tmp/uploadedfile07"
+        string(%d) "%s/uploadedfile07"
         ["size":protected]=>
         int(4732)
         ["error":protected]=>

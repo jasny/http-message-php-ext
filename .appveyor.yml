@@ -81,7 +81,7 @@ after_build:
                         "${Env:APPVEYOR_BUILD_FOLDER}\LICENSE"
 artifacts:
   - path: '.\$(RELEASE_ZIPBALL).zip'
-    name: '$(Env:EXTNAME)'
+    name: '$(EXTNAME)'
     type: zip
 
 on_failure :

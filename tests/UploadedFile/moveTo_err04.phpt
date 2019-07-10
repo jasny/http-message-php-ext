@@ -23,4 +23,4 @@ if (file_exists(sys_get_temp_dir() . '/movedfile') {
 }
 ?>
 --EXPECTF--
-Won't move '/tmp/uploadedfile'; not an uploaded file
+Won't move '%s/uploadedfile'; not an uploaded file

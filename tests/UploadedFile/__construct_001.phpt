@@ -18,12 +18,12 @@ var_dump($upload->getClientMediaType());
 <?php
 unlink(sys_get_temp_dir() . '/uploadedfile');
 ?>
---EXPECT--
+--EXPECTF--
 object(HttpMessage\UploadedFile)#1 (8) {
   ["stream":protected]=>
   NULL
   ["file":protected]=>
-  string(17) "/tmp/uploadedfile"
+  string(%d) "%s/uploadedfile"
   ["size":protected]=>
   int(99)
   ["error":protected]=>

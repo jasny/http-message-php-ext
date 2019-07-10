@@ -23,5 +23,5 @@ if (file_exists(sys_get_temp_dir() . '/movedfile') {
     unlink(sys_get_temp_dir() . '/movedfile');
 }
 ?>
---EXPECT--
-Uploaded file '/tmp/uploadedfile' has already been moved
+--EXPECTF--
+Uploaded file '%s/uploadedfile' has already been moved

@@ -20,5 +20,5 @@ if (file_exists(sys_get_temp_dir() . '/uploadedfile') {
 }
 ?>
 --EXPECTF--
-Warning: HttpMessage\UploadedFile::moveTo(/tmp/nosuchdir/movedfile): failed to open stream: No such file or directory in %s/moveTo_err03.php on line %d
-Failed to move uploaded file '/tmp/uploadedfile' to '/tmp/nosuchdir/movedfile'
+Warning: HttpMessage\UploadedFile::moveTo(%s/nosuchdir/movedfile): failed to open stream: No such file or directory in %smoveTo_err03.php on line %d
+Failed to move uploaded file '%s/uploadedfile' to '%s/nosuchdir/movedfile'

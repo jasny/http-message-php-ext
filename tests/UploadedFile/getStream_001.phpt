@@ -24,6 +24,6 @@ object(HttpMessage\Stream)#2 (1) {
   ["stream":protected]=>
   resource(%d) of type (stream)
 }
-string(17) "/tmp/uploadedfile"
+string(%d) "%s/uploadedfile"
 string(3) "foo"
 bool(true)

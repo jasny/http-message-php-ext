@@ -91,7 +91,7 @@ object(HttpMessage\ServerRequest)#1 (12) {
       ["stream":protected]=>
       NULL
       ["file":protected]=>
-      string(17) "/tmp/uploadedfile"
+      string(%d) "%s/uploadedfile"
       ["size":protected]=>
       int(2822)
       ["error":protected]=>
