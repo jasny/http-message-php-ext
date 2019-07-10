@@ -93,7 +93,7 @@ after_build:
         -Platform       $Env:PLATFORM `
         -ConverMdToHtml $true `
         -ReleaseFiles   "${Env:RELEASE_FOLDER}\php_${Env:EXTNAME}.dll",`
-                        "${Env:APPVEYOR_BUILD_FOLDER}\CREDITS",\
+                        "${Env:APPVEYOR_BUILD_FOLDER}\CREDITS",`
                         "${Env:APPVEYOR_BUILD_FOLDER}\LICENSE"
 
 on_failure :
