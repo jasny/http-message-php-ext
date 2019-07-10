@@ -1,7 +1,5 @@
 # See https://github.com/sergeyklay/php-appveyor
 
-version: '{branch}.{build}'
-
 branches:
   only:
   - master
@@ -51,6 +49,12 @@ platform:
 
 init:
   - ps: $DebugPreference = 'SilentlyContinue' # Continue
+  - ps: >-
+      if ($env:APPVEYOR_REPO_TAG -eq "true") {
+        Update-AppveyorBuild -Version "$($Env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
+      } else {
+        Update-AppveyorBuild -Version "${Env:APPVEYOR_REPO_BRANCH}-$($Env:APPVEYOR_REPO_COMMIT.Substring(0, 7))"
+      }
 
 install:
   - ps: Import-Module .\.ci\php-appveyor.psm1
