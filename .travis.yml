@@ -13,6 +13,7 @@ branches:
   only:
   - master
   - travis
+  - /^v\d+\.\d+\.\d+$/
 
 before_install:
   - pecl install --nodeps psr
@@ -41,7 +42,7 @@ before_deploy:
   - gpg --import sign.gpg
   - rm sign.gpg
   - pecl package
-  - export RELEASE_PACKAGE=$(ls "http_message-*.tgz")
+  - export RELEASE_PACKAGE=$(ls http_message-*.tgz)
   - pecl sign "$RELEASE_PACKAGE"
 
 deploy:
