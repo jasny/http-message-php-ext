@@ -42,6 +42,7 @@
 
 static const zend_module_dep deps[] = {
     ZEND_MOD_REQUIRED("psr")
+    {NULL, NULL, NULL}
 };
 
 zend_module_entry http_message_module_entry = {
