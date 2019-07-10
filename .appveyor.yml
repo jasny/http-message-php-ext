@@ -35,7 +35,7 @@ platform:
 #  - x64
 
 init:
-  - ps: $DebugPreference = 'Continue' #'SilentlyContinue' # Continue
+  - ps: $DebugPreference = 'SilentlyContinue' # Continue
 
 install:
   - ps: Import-Module .\.ci\php-appveyor.psm1
@@ -77,9 +77,8 @@ after_build:
         -BuildType      $Env:BUILD_TYPE `
         -Platform       $Env:PLATFORM `
         -ConverMdToHtml $true `
-        -ReleaseFiles   "${Env:RELEASE_DLL_PATH}",`
+        -ReleaseFiles   "${Env:RELEASE_FOLDER}\php_${Env:EXTNAME}.dll",`
                         "${Env:APPVEYOR_BUILD_FOLDER}\LICENSE"
-
 artifacts:
   - path: '.\$(RELEASE_ZIPBALL).zip'
     name: '$(Env:EXTNAME)'
@@ -93,4 +92,10 @@ on_failure :
 
       If (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile.log") {
         Get-Content -Path "${Env:APPVEYOR_BUILD_FOLDER}\compile.log"
+      }
+
+      Get-ChildItem "${Env:APPVEYOR_BUILD_FOLDER}\tests" -Recurse -Filter *.diff | Foreach-Object {
+        [Environment]::NewLine
+        Write-Output $_.FullName
+        Get-Content -Path $_.FullName
       }

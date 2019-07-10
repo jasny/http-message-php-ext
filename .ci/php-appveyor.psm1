@@ -181,10 +181,10 @@ Function InstallPeclHeaders {
 
 	Expand-Item7zip $DownloadFile "${Env:Temp}"
 
+	Write-Debug "Copy header files to ${InstallPath}\${Name}"
+
 	New-Item -Path "${InstallPath}" -Name "${Name}" -ItemType "directory" | Out-Null
 	Copy-Item "${Env:Temp}\${Name}-${Version}\*.h" -Destination "${InstallPath}\${Name}" -Recurse
-
-	Get-ChildItem -Path "${InstallPath}\${Name}"
 }
 
 function InstallComposer {

@@ -35,13 +35,13 @@ Function InitializeBuildVars {
 
 Function InitializeReleaseVars {
 	If ($Env:PLATFORM -eq 'x86') {
-		If ($Env:PHP_BUILD_TYPE -Match "nts-Win32") {
+		If ($Env:BUILD_TYPE -Match "nts-Win32") {
 			$Env:RELEASE_SUBFOLDER = "Release"
 		} Else {
 			$Env:RELEASE_SUBFOLDER = "Release_TS"
 		}
 	} Else {
-		If ($Env:PHP_BUILD_TYPE -Match "nts-Win32") {
+		If ($Env:BUILD_TYPE -Match "nts-Win32") {
 			$Env:RELEASE_SUBFOLDER = "${Env:PLATFORM}\Release"
 		} Else {
 			$Env:RELEASE_SUBFOLDER = "${Env:PLATFORM}\Release_TS"
