@@ -36,3 +36,5 @@ cmake-build-*
 vendor
 composer.lock
 tmp-php.ini
+*.gpg
+/*.tgz

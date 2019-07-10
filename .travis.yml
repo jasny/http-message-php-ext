@@ -30,9 +30,27 @@ script:
 
 after_failure:
   - |
-    for LOG in $(find tests -name '*.log'); do
-      echo $LOG
-      tail -n +2 $LOG
+    for FILE in $(find tests -name '*.diff'); do
+      echo $FILE
+      cat FILE
       echo
     done
 
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_36ea4391f664_key -iv $encrypted_36ea4391f664_iv -in sign.gpg.enc -out sign.gpg -d
+  - gpg --import sign.gpg
+  - rm sign.gpg
+  - pecl package
+  - export RELEASE_PACKAGE=$(ls "http_message-*.tgz")
+  - pecl sign "$RELEASE_PACKAGE"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "HuYxK89LGMINNzDyrA9xXVzQB7YKo563Q1EVkAOrrv7cDKbfVLTPHfI9huB8XnzDJgp1EhrXA3hMKeJdpbtzoEhiaVDc/eeFcCubhf+VEsMbke9TOYIEx7mSNDpV0igyWDR1bt+8GrCFkP04NMzzlqU+KoW0ceK/xCaMRhNWiskf3Z+e2Xne3yEVd64A61xtyPMbaOIqqmjkmqCyrN9DT+5g+zZVMz1UssdfRqMCKTyHcaYYFayQwSZgmAxZO3WKoHnd5ydoii2XIBHto7RESqAoyemw/Ksw7YdplxsZMfbCsmiSuwrlmd1t/BX7QIULeJsVwPiv7MWJWjh8VRIiFCw5FdZ+n2kLfL32MY8r4hl7Uo9nEkNaIYRBX0ryV5XXRU/2q1nuz8Knaz++Q+tPodmMp8vzmDGl2cguq9KuKbVEbiFjR+PO96YFlKdtDosUQFjbSbQOFDQdstPFSZr5s/PKPVj5Va33PyyrLI9TMZwgWLPzMEqerGXy8meigeZ0r0m3DG4slzxhxE9y30fFEx9fWPNR3AN/1NGi7WTsqonPQitu1M7YyKCdMqjWJkr++geapJwKVX/poxExQ4i0TEkgqGWmV9nJehGJ5nS8s2tH4PR8+3bA2gvNoqBO+jmd8CLjkPGbCPu8OlvdwXmeKJYsX382iGG8CxrDDPhGlr4="
+  file: "$RELEASE_PACKAGE"
+  skip_cleanup: true
+  name: "v$TRAVIS_TAG"
+  prerelease: true
+  on:
+    tags: true

@@ -12,6 +12,21 @@ environment:
   EXTNAME: http_message
 
   matrix:
+    - PHP_VERSION: 7.2
+      VC_VERSION: 15
+      BUILD_TYPE: Win32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+    - PHP_VERSION: 7.2
+      VC_VERSION: 15
+      BUILD_TYPE: nts-Win32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+    - PHP_VERSION: 7.3
+      VC_VERSION: 15
+      BUILD_TYPE: Win32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
     - PHP_VERSION: 7.3
       VC_VERSION: 15
       BUILD_TYPE: nts-Win32
@@ -32,7 +47,7 @@ cache:
 
 platform:
   - x86
-#  - x64
+  - x64
 
 init:
   - ps: $DebugPreference = 'SilentlyContinue' # Continue
@@ -78,11 +93,8 @@ after_build:
         -Platform       $Env:PLATFORM `
         -ConverMdToHtml $true `
         -ReleaseFiles   "${Env:RELEASE_FOLDER}\php_${Env:EXTNAME}.dll",`
+                        "${Env:APPVEYOR_BUILD_FOLDER}\CREDITS",\
                         "${Env:APPVEYOR_BUILD_FOLDER}\LICENSE"
-artifacts:
-  - path: '.\$(RELEASE_ZIPBALL).zip'
-    name: '$(EXTNAME)'
-    type: zip
 
 on_failure :
   - ps: >-
@@ -99,3 +111,22 @@ on_failure :
         Write-Output $_.FullName
         Get-Content -Path $_.FullName
       }
+
+artifacts:
+  - path: '.\$(RELEASE_ZIPBALL).zip'
+    name: '$(EXTNAME)'
+    type: zip
+
+deploy:
+  release: v$(appveyor_build_version)
+  description: 'v$(appveyor_build_version)'
+  provider: GitHub
+  auth_token:
+    secure: 9kSFTreufYy0WOpd+eYAFa+2IjSxe1idbVAzehcTS/womadyGxVG6qTKpJnXDmTh
+  artifact: '.\$(RELEASE_ZIPBALL).zip'
+  draft: false
+  prerelease: true
+  force_update: true
+  on:
+    branch: master
+    APPVEYOR_REPO_TAG: true
