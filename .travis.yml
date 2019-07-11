@@ -51,7 +51,7 @@ deploy:
     secure: "HuYxK89LGMINNzDyrA9xXVzQB7YKo563Q1EVkAOrrv7cDKbfVLTPHfI9huB8XnzDJgp1EhrXA3hMKeJdpbtzoEhiaVDc/eeFcCubhf+VEsMbke9TOYIEx7mSNDpV0igyWDR1bt+8GrCFkP04NMzzlqU+KoW0ceK/xCaMRhNWiskf3Z+e2Xne3yEVd64A61xtyPMbaOIqqmjkmqCyrN9DT+5g+zZVMz1UssdfRqMCKTyHcaYYFayQwSZgmAxZO3WKoHnd5ydoii2XIBHto7RESqAoyemw/Ksw7YdplxsZMfbCsmiSuwrlmd1t/BX7QIULeJsVwPiv7MWJWjh8VRIiFCw5FdZ+n2kLfL32MY8r4hl7Uo9nEkNaIYRBX0ryV5XXRU/2q1nuz8Knaz++Q+tPodmMp8vzmDGl2cguq9KuKbVEbiFjR+PO96YFlKdtDosUQFjbSbQOFDQdstPFSZr5s/PKPVj5Va33PyyrLI9TMZwgWLPzMEqerGXy8meigeZ0r0m3DG4slzxhxE9y30fFEx9fWPNR3AN/1NGi7WTsqonPQitu1M7YyKCdMqjWJkr++geapJwKVX/poxExQ4i0TEkgqGWmV9nJehGJ5nS8s2tH4PR8+3bA2gvNoqBO+jmd8CLjkPGbCPu8OlvdwXmeKJYsX382iGG8CxrDDPhGlr4="
   file: "$RELEASE_PACKAGE"
   skip_cleanup: true
-  name: "v$TRAVIS_TAG"
+  name: "$TRAVIS_TAG"
   prerelease: true
   on:
     tags: true
