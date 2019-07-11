@@ -12,10 +12,14 @@
 ## Requirements
 
 * PHP 7.2+
+* [psr extension 0.6+](https://github.com/jbboehr/php-psr)
 
 ## Installation
 
-pecl install http_message-beta
+The extension is [available from pecl](https://pecl.php.net/package/http_message).
+
+    pecl install psr-beta
+    pecl install http_message-beta
 
 ### Manual build
 
@@ -34,4 +38,3 @@ Add the following line to your `php.ini`
 To try out the extension, you can run the following command
 
     php -a -d extension=modules/http_message.so
-
