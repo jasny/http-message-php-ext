@@ -43,7 +43,7 @@ before_deploy:
   - rm sign.gpg
   - pecl package
   - export RELEASE_PACKAGE=$(ls http_message-*.tgz)
-  - pecl sign "$RELEASE_PACKAGE"
+  - echo | pecl sign "$RELEASE_PACKAGE"
 
 deploy:
   provider: releases
