@@ -127,7 +127,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: 9kSFTreufYy0WOpd+eYAFa+2IjSxe1idbVAzehcTS/womadyGxVG6qTKpJnXDmTh
-  artifact: '.\$(RELEASE_ZIPBALL).zip'
+  artifact: '$(RELEASE_ZIPBALL).zip'
   draft: false
   prerelease: true
   force_update: true
