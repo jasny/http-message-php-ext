@@ -14,8 +14,6 @@ if test "$PHP_HTTP_MESSAGE" != "no"; then
     PHP_NEW_EXTENSION(http_message, http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c,
         $ext_shared)
 
-	PHP_ADD_EXTENSION_DEP([http_message], [psr], true)
-
 	PHP_ADD_MAKEFILE_FRAGMENT
 	PHP_INSTALL_HEADERS([ext/http_message], [php_http_message.h])
 fi

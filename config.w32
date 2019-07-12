@@ -6,6 +6,6 @@ ARG_ENABLE("http-message", "enable http_message", "no");
 if (PHP_HTTP_MESSAGE != "no") {
 	EXTENSION("http_message", "http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c");
 	AC_DEFINE('HAVE_HTTP_MESSAGE', 1 , 'enable http_message support');
-	ADD_EXTENSION_DEP('http_message', 'psr');
 	PHP_INSTALL_HEADERS("ext/http_message/", "php_http_message.h");
 }
+
