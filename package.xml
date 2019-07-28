@@ -10,9 +10,9 @@
   <email>jasny@php.net</email>
   <active>yes</active>
  </lead>
- <date>2019-07-10</date>
+ <date>2019-07-28</date>
  <version>
-  <release>0.1.0</release>
+  <release>0.1.1</release>
   <api>0.1.0</api>
  </version>
  <stability>
@@ -21,7 +21,7 @@
  </stability>
  <license uri="https://opensource.org/licenses/MIT">MIT License</license>
  <notes>
-   Initial release.
+Fixed default value issue with ServerRequest::getAttribute(). The method only accepted one argument.
  </notes>
  <contents>
   <dir name="/">
@@ -204,5 +204,43 @@
  </dependencies>
  <providesextension>http_message</providesextension>
  <extsrcrelease />
+
+ <changelog>
+  <release>
+   <date>2019-07-28</date>
+   <time>14:50:00</time>
+   <version>
+    <release>0.1.1</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Fixed default value issue with ServerRequest::getAttribute(). The method only accepted one argument.
+   </notes>
+  </release>
+
+  <release>
+   <date>2019-07-10</date>
+   <time>12:00:00</time>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Initial release.
+   </notes>
+  </release>
+
+ </changelog>
+
 </package>
 
