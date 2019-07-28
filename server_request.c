@@ -373,8 +373,9 @@ PHP_METHOD(ServerRequest, getAttribute)
     char *name;
     size_t name_len;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_STRING(name, name_len)
+        Z_PARAM_OPTIONAL
         Z_PARAM_ZVAL(default_value)
     ZEND_PARSE_PARAMETERS_END();
 
