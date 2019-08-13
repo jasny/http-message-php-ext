@@ -138,7 +138,7 @@ PHP_MINIT_FUNCTION(http_message_response)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\responseinterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Response");
     if (HttpMessage_Message_ce == NULL) return FAILURE;
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Response", response_functions);

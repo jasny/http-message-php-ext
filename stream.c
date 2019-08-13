@@ -418,7 +418,6 @@ PHP_METHOD(Stream, getMetadata)
     }
 
     ZVAL_STRING(&fname, "stream_get_meta_data");
-
     call_user_function(NULL, NULL, &fname, return_value, 1, zstream);
 
     if (key != NULL) {
@@ -436,23 +435,23 @@ PHP_METHOD(Stream, getMetadata)
 /* Define HttpMessage\Stream class */
 
 static const zend_function_entry stream_functions[] = {
-        PHP_ME(Stream, __construct, arginfo_HttpMessageStream_construct, ZEND_ACC_PUBLIC)
-        HTTP_MESSAGE_ME(Stream, __toString)
-        HTTP_MESSAGE_ME(Stream, close)
-        HTTP_MESSAGE_ME(Stream, detach)
-        HTTP_MESSAGE_ME(Stream, getSize)
-        HTTP_MESSAGE_ME(Stream, tell)
-        HTTP_MESSAGE_ME(Stream, eof)
-        HTTP_MESSAGE_ME(Stream, isSeekable)
-        HTTP_MESSAGE_ME(Stream, seek)
-        HTTP_MESSAGE_ME(Stream, rewind)
-        HTTP_MESSAGE_ME(Stream, isWritable)
-        HTTP_MESSAGE_ME(Stream, write)
-        HTTP_MESSAGE_ME(Stream, isReadable)
-        HTTP_MESSAGE_ME(Stream, read)
-        HTTP_MESSAGE_ME(Stream, getContents)
-        HTTP_MESSAGE_ME(Stream, getMetadata)
-        PHP_FE_END
+    PHP_ME(Stream, __construct, arginfo_HttpMessageStream_construct, ZEND_ACC_PUBLIC)
+    HTTP_MESSAGE_ME(Stream, __toString)
+    HTTP_MESSAGE_ME(Stream, close)
+    HTTP_MESSAGE_ME(Stream, detach)
+    HTTP_MESSAGE_ME(Stream, getSize)
+    HTTP_MESSAGE_ME(Stream, tell)
+    HTTP_MESSAGE_ME(Stream, eof)
+    HTTP_MESSAGE_ME(Stream, isSeekable)
+    HTTP_MESSAGE_ME(Stream, seek)
+    HTTP_MESSAGE_ME(Stream, rewind)
+    HTTP_MESSAGE_ME(Stream, isWritable)
+    HTTP_MESSAGE_ME(Stream, write)
+    HTTP_MESSAGE_ME(Stream, isReadable)
+    HTTP_MESSAGE_ME(Stream, read)
+    HTTP_MESSAGE_ME(Stream, getContents)
+    HTTP_MESSAGE_ME(Stream, getMetadata)
+    PHP_FE_END
 };
 
 PHP_MINIT_FUNCTION(http_message_stream)
@@ -460,7 +459,7 @@ PHP_MINIT_FUNCTION(http_message_stream)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Stream");
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Stream", stream_functions);
 

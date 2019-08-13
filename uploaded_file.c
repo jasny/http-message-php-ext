@@ -33,13 +33,11 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
 #include "php_http_message.h"
 #include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "SAPI.h"
-#include "ext/standard/info.h"
 #include "ext/standard/file.h"
 #include "ext/psr/psr_http_message.h"
 #include "ext/spl/spl_exceptions.h"
@@ -125,6 +123,7 @@ int move_uploaded_file(char *path, size_t path_len, char *new_path, size_t new_p
 
 void construct_uploaded_file(
     zval* object,
+    zval *stream,
     zend_string *file,
     zend_long size,
     zend_long error,
@@ -132,9 +131,22 @@ void construct_uploaded_file(
     zend_string *clientMediaType,
     char checkUploaded
 ) {
+    zval zfile, zarg1;
+
+    if (error == 0 && stream != NULL) {
+        // Must be verified it's a StreamInterface object before passing it to this function.
+        zend_update_property(HttpMessage_UploadedFile_ce, object, ZEND_STRL("stream"), stream);
+
+        if (file == NULL) {
+            ZVAL_STRINGL(&zarg1, "uri", 3);
+            zend_call_method_with_1_params(stream, NULL, NULL, "getMetadata", &zfile, &zarg1);
+            file = Z_STR_P(&zfile);
+        }
+    }
     if (error == 0 && file != NULL) {
         zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("file"), file);
     }
+
     if (clientFilename != NULL) {
         zend_update_property_str(HttpMessage_UploadedFile_ce, object, ZEND_STRL("clientFilename"), clientFilename);
     }
@@ -166,6 +178,7 @@ void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval 
     ZVAL_OBJ(uploaded_file, new_object);
 
     construct_uploaded_file(
+            NULL,
             uploaded_file,
             tmp_name != NULL ? Z_STR_P(tmp_name) : NULL,
             size != NULL ? Z_LVAL_P(size) : -1,
@@ -201,7 +214,7 @@ void restructure_uploaded_files(
         } else if (EXPECTED(Z_TYPE_P(error) == IS_ARRAY)) {
             array_init(element);
             restructure_uploaded_files(element, Z_ARR_P_NULL(name), Z_ARR_P_NULL(type), Z_ARR_P_NULL(tmp_name),
-                                       Z_ARR_P_NULL(error), Z_ARR_P_NULL(size)); // recursion
+                    Z_ARR_P_NULL(error), Z_ARR_P_NULL(size)); // recursion
         }
     } ZEND_HASH_FOREACH_END();
 }
@@ -234,8 +247,8 @@ void create_uploaded_files(zval *objects, HashTable *files)
             create_uploaded_file(element, tmp_name, size, error, name, type);
         } else if (EXPECTED(Z_TYPE_P(error) == IS_ARRAY)) {
             array_init(element);
-            restructure_uploaded_files(element, Z_ARR_P(name), Z_ARR_P(type), Z_ARR_P(tmp_name), Z_ARR_P(error)
-                    , Z_ARR_P(size));
+            restructure_uploaded_files(element, Z_ARR_P(name), Z_ARR_P(type), Z_ARR_P(tmp_name), Z_ARR_P(error),
+                    Z_ARR_P(size));
         }
     } ZEND_HASH_FOREACH_END();
 }
@@ -243,8 +256,8 @@ void create_uploaded_files(zval *objects, HashTable *files)
 
 /* __construct */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUploadedFile_construct, 0, 1, 0)
-    ZEND_ARG_TYPE_INFO(0, file, IS_STRING, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUploadedFile_construct, 0, 0, 1)
+    ZEND_ARG_INFO(0, fileOrStream)
     ZEND_ARG_TYPE_INFO(0, size, IS_LONG, 1)
     ZEND_ARG_TYPE_INFO(0, error, IS_LONG, 0)
     ZEND_ARG_TYPE_INFO(0, clientFilename, IS_STRING, 1)
@@ -254,12 +267,14 @@ ZEND_END_ARG_INFO()
 
 PHP_METHOD(UploadedFile, __construct)
 {
+    zval *fileOrStream = NULL, *stream = NULL;
     zend_string *file = NULL, *clientFilename = NULL, *clientMediaType = NULL;
     zend_long size = -1, error = 0;
     zend_bool size_is_null = 1, checkUploaded = 0, checkUploaded_is_null = 1;
+    zend_class_entry *stream_interface;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 6)
-        Z_PARAM_STR_EX(file, 1, 0)
+        Z_PARAM_ZVAL(fileOrStream)
         Z_PARAM_OPTIONAL
         Z_PARAM_LONG_EX(size, size_is_null, 1, 0)
         Z_PARAM_LONG(error)
@@ -268,7 +283,23 @@ PHP_METHOD(UploadedFile, __construct)
         Z_PARAM_BOOL_EX(checkUploaded, checkUploaded_is_null, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    construct_uploaded_file(getThis(), file, size_is_null ? -1 : size, error, clientFilename, clientMediaType,
+    if (Z_TYPE_P(fileOrStream) == IS_STRING) {
+        file = Z_STR_P(fileOrStream);
+    } else {
+        stream_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
+
+        if (UNEXPECTED(
+                Z_TYPE_P(fileOrStream) == IS_OBJECT && instanceof_function(Z_OBJ_P(fileOrStream), stream_interface)
+        )) {
+            zend_type_error("Expected parameter 1 to be a string or object that implements "
+                            "Psr\\Http\\Message\\StreamInterface, %s given", zend_zval_type_name(fileOrStream));
+            return;
+        }
+
+        stream = fileOrStream;
+    }
+
+    construct_uploaded_file(getThis(), stream, file, size_is_null ? -1 : size, error, clientFilename, clientMediaType,
             checkUploaded_is_null ? -1 : checkUploaded);
 }
 
@@ -295,13 +326,7 @@ PHP_METHOD(UploadedFile, getStream)
         }
 
         php_stream_to_zval(resource_stream, &resource);
-
-        object_init_ex(stream, HttpMessage_Stream_ce);
-        if (stream != NULL) { /* Should always be true */
-            zend_call_method_with_1_params(
-                    stream, HttpMessage_Stream_ce, &HttpMessage_Stream_ce->constructor, "__construct", NULL, &resource
-            );
-        }
+        NEW_OBJECT_CONSTRUCT_1(stream, HttpMessage_Stream_ce, &resource);
     }
 
     RETURN_ZVAL(stream, 1, 0);
@@ -387,7 +412,7 @@ PHP_MINIT_FUNCTION(http_message_uploadedfile)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uploadedfileinterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "UploadedFile");
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "UploadedFile", methods);
 

@@ -34,12 +34,11 @@
 
 #include <ext/spl/spl_exceptions.h>
 #include "php.h"
-#include "php_ini.h"
 #include "php_http_message.h"
 #include "macros.h"
+#include "uploaded_file.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
-#include "ext/standard/info.h"
 #include "ext/psr/psr_http_message.h"
 
 #if HAVE_HTTP_MESSAGE
@@ -52,7 +51,7 @@ int assert_uploaded_files(HashTable *array)
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uploadedfileinterface"));
 
     if (interface == NULL) {
-        zend_throw_error(NULL, "Psr\\Http\\Message\\UploadedFileInterface not foud");
+        zend_throw_error(NULL, "Psr\\Http\\Message\\UploadedFileInterface not found");
         return FAILURE;
     }
 
@@ -460,7 +459,7 @@ PHP_MINIT_FUNCTION(http_message_serverrequest)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\serverrequestinterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "ServerRequest");
     if (HttpMessage_Request_ce == NULL) return FAILURE;
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "ServerRequest", request_functions);

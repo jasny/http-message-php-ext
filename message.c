@@ -33,13 +33,11 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
 #include "php_http_message.h"
 #include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "zend_string.h"
-#include "ext/standard/info.h"
 #include "ext/standard/php_string.h"
 #include "ext/psr/psr_http_message.h"
 
@@ -54,7 +52,7 @@ void add_header(zval *object, char *name, size_t name_len, zend_string *value, z
 
     headers_prop = zend_read_property(HttpMessage_Message_ce, object, ZEND_STRL("headers"), 0, &rv);
 
-    if (UNEXPECTED(Z_TYPE_P(headers_prop) != IS_ARRAY && Z_TYPE_P(headers_prop) != IS_ARRAY_EX)) {
+    if (UNEXPECTED(Z_TYPE_P(headers_prop) != IS_ARRAY)) {
         return; // Shouldn't happen
     }
 
@@ -71,7 +69,6 @@ void add_header(zval *object, char *name, size_t name_len, zend_string *value, z
     add_next_index_str(header_values, value);
 
     ZVAL_ARR(headers_prop, headers);
-
 }
 
 /* __construct */
@@ -82,12 +79,7 @@ PHP_METHOD(Message, __construct)
 
     /* $this->body = new Stream() */
     body = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("body"), 0, &rv);
-    object_init_ex(body, HttpMessage_Stream_ce);
-    if (body != NULL) { /* Should always be true */
-        zend_call_method_with_0_params(
-                body, HttpMessage_Stream_ce, &HttpMessage_Stream_ce->constructor, "__construct", NULL
-        );
-    }
+    NEW_OBJECT_CONSTRUCT_0(body, HttpMessage_Stream_ce);
 
     INIT_ARRAY_PROPERTY(HttpMessage_Message_ce, "headers", rv);
 }
@@ -302,7 +294,7 @@ PHP_MINIT_FUNCTION(http_message_message)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\messageinterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Message");
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Message", message_functions);
 

@@ -28,40 +28,20 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_HTTP_MESSAGE_H
-#define PHP_HTTP_MESSAGE_H 1
+#ifndef HTTP_MESSAGE_UPLOADED_FILE_H
+#define HTTP_MESSAGE_UPLOADED_FILE_H
 
-#define PHP_HTTP_MESSAGE_VERSION "0.1.1"
-#define PHP_HTTP_MESSAGE_EXTNAME "http_message"
+void construct_uploaded_file(
+    zval* object,
+    zval *stream,
+    zend_string *file,
+    zend_long size,
+    zend_long error,
+    zend_string *clientFilename,
+    zend_string *clientMediaType,
+    char checkUploaded
+);
+void create_uploaded_files(zval *objects, HashTable *files);
+void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t pass_len);
 
-#ifdef PHP_WIN32
-# define PHP_HTTP_MESSAGE_API __declspec(dllexport)
-#elif defined(__GNUC__) && __GNUC__ >= 4
-# define PHP_HTTP_MESSAGE_API __attribute__ ((visibility("default")))
-#else
-# define PHP_HTTP_MESSAGE_API
-#endif
-
-static PHP_MINFO_FUNCTION(http_message);
-static PHP_MINIT_FUNCTION(http_message);
-
-extern PHP_MINIT_FUNCTION(http_message_message);
-extern PHP_MINIT_FUNCTION(http_message_request);
-extern PHP_MINIT_FUNCTION(http_message_serverrequest);
-extern PHP_MINIT_FUNCTION(http_message_response);
-extern PHP_MINIT_FUNCTION(http_message_stream);
-extern PHP_MINIT_FUNCTION(http_message_uri);
-extern PHP_MINIT_FUNCTION(http_message_uploadedfile);
-
-extern zend_module_entry http_message_module_entry;
-
-extern zend_class_entry *HttpMessage_Message_ce;
-extern zend_class_entry *HttpMessage_Request_ce;
-extern zend_class_entry *HttpMessage_ServerRequest_ce;
-extern zend_class_entry *HttpMessage_Response_ce;
-extern zend_class_entry *HttpMessage_Stream_ce;
-extern zend_class_entry *HttpMessage_Uri_ce;
-extern zend_class_entry *HttpMessage_UploadedFile_ce;
-extern zend_class_entry *HttpMessage_Factory_ce;
-
-#endif
+#endif //HTTP_MESSAGE_UPLOADED_FILE_H

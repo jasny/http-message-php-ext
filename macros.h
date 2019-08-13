@@ -54,8 +54,23 @@ ZEND_END_ARG_INFO()
 #define SET_URI_PROPERTY(className, property, val) SET_STR_PROPERTY(className, property, val)
 #endif
 
+#define HTTP_MESSAGE_ME_EX(className, interfaceName, method) \
+        PHP_ME(className, method, arginfo_PsrHttpMessage ## interfaceName ## Interface_ ## method, ZEND_ACC_PUBLIC)
+
 #define HTTP_MESSAGE_ME(className, method) \
-        PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
+        HTTP_MESSAGE_ME_EX(className, className, method)
+
+#define NEW_OBJECT(zval, ce) \
+        object_init_ex(zval, ce); \
+        if (EXPECTED(zval != NULL)) object_properties_init(Z_OBJ_P(zval), ce)
+
+#define NEW_OBJECT_CONSTRUCT_0(zval, ce) \
+        NEW_OBJECT(zval, ce); \
+        if (EXPECTED(zval != NULL)) zend_call_method_with_0_params(zval, ce, &ce->constructor, "__construct", NULL)
+
+#define NEW_OBJECT_CONSTRUCT_1(zval, ce, arg) \
+        NEW_OBJECT(zval, ce); \
+        if (EXPECTED(zval != NULL)) zend_call_method_with_1_params(zval, ce, &ce->constructor, "__construct", NULL, arg)
 
 #define IS_STREAM_RESOURCE(zstream) \
         ( \
@@ -99,12 +114,60 @@ static zend_always_inline zend_class_entry* get_internal_ce(const char *class_na
     return temp_ce;
 }
 
-#define RETURN_HTTP_MESSAGE_INTERFACE_NOT_FOUND(className) \
-    { \
+#define ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(ce, className, psrClassName) \
+    if (UNEXPECTED(ce == NULL)) { \
         zend_error(E_CORE_WARNING, \
                 "Failed to initialize 'HttpMessage\\%s': 'Psr\\Http\\Message\\%sInterace' not found", \
-                className, className); \
+                className, psrClassName); \
         return FAILURE; \
     }
+
+#define ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(ce, className) \
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(ce, className, className)
+
+// Parameter as zval, but with type checking
+
+#define Z_PARAM_ZVAL_STRING_EX(dest, check_null, separate) \
+		Z_PARAM_PROLOGUE(separate, separate); \
+		if (UNEXPECTED(!zend_parse_arg_zval_ceck(_arg, IS_STRING, &dest, check_null))) { \
+			_expected_type = Z_EXPECTED_STRING; \
+			error_code = ZPP_ERROR_WRONG_ARG; \
+			break; \
+		}
+
+#define Z_PARAM_ZVAL_STRING(dest) \
+    	Z_PARAM_ZVAL_STRING_EX(dest, 0, 0)
+
+#define Z_PARAM_ZVAL_LONG_EX(dest, check_null,  separate) \
+		Z_PARAM_PROLOGUE(separate, separate); \
+		if (UNEXPECTED(!zend_parse_arg_zval_ceck(_arg, IS_LONG, &dest, check_null))) { \
+			_expected_type = Z_EXPECTED_LONG; \
+			error_code = ZPP_ERROR_WRONG_ARG; \
+			break; \
+		}
+
+#define Z_PARAM_ZVAL_LONG(dest) \
+    	Z_PARAM_ZVAL_LONG_EX(dest, 0, 0)
+
+#define Z_PARAM_ZVAL_ARRAY_EX(dest, check_null, separate) \
+		Z_PARAM_PROLOGUE(separate, separate); \
+		if (UNEXPECTED(!zend_parse_arg_zval_ceck(_arg, IS_ARRAY, &dest, check_null))) { \
+			_expected_type = Z_EXPECTED_ARRAY; \
+			error_code = ZPP_ERROR_WRONG_ARG; \
+			break; \
+		}
+
+#define Z_PARAM_ZVAL_ARRAY(dest) \
+    	Z_PARAM_ZVAL_ARRAY_EX(dest, 0, 0)
+
+static zend_always_inline int zend_parse_arg_zval_ceck(zval *arg, u_char type, zval **dest, int check_null)
+{
+    if (EXPECTED(Z_TYPE_P(arg) == type)) {
+        *dest = arg;
+    } else if (check_null && Z_TYPE_P(arg) == IS_NULL) {
+        *dest = NULL;
+    }
+    return 1;
+}
 
 #endif //HTTP_MESSAGE_MACROS_H

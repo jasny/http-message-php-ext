@@ -437,7 +437,7 @@ PHP_MINIT_FUNCTION(http_message_uri)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uriinterface"));
 
-    if (interface == NULL) RETURN_HTTP_MESSAGE_INTERFACE_NOT_FOUND("Uri");
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Uri");
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Uri", uri_functions);
 

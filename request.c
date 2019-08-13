@@ -63,7 +63,7 @@ PHP_METHOD(Request, __construct)
 
     /* $this->uri = new Uri() */
     uri = zend_read_property(HttpMessage_Request_ce, getThis(), ZEND_STRL("uri"), 0, &rv);
-    object_init_ex(uri, HttpMessage_Uri_ce);
+    NEW_OBJECT(uri, HttpMessage_Uri_ce);
 }
 
 
@@ -195,7 +195,7 @@ PHP_MINIT_FUNCTION(http_message_request)
     zend_class_entry ce;
     zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\requestinterface"));
 
-    if (interface == NULL) return FAILURE;
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Request");
     if (HttpMessage_Message_ce == NULL) return FAILURE;
 
     INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Request", request_functions);
