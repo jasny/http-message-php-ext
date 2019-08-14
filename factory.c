@@ -190,7 +190,7 @@ static const zend_function_entry request_functions[] = {
         PHP_FE_END
 };
 
-PHP_MINIT_FUNCTION(http_message_serverrequest)
+PHP_MINIT_FUNCTION(http_message_factory)
 {
     zend_class_entry ce;
     zend_class_entry *request_factory = get_internal_ce(ZEND_STRL("psr\\http\\message\\requestfactoryinterface"));

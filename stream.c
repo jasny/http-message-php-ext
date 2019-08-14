@@ -33,14 +33,10 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
-#include "php_http_message.h"
 #include "macros.h"
 #include "php_streams.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
-#include "http_status_codes.h"
-#include "ext/standard/info.h"
 #include "ext/psr/psr_http_message.h"
 #include "ext/spl/spl_exceptions.h"
 

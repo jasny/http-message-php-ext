@@ -33,13 +33,11 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
 #include "php_http_message.h"
 #include "macros.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "zend_smart_str.h"
-#include "ext/standard/info.h"
 #include "ext/psr/psr_http_message.h"
 
 #if HAVE_HTTP_MESSAGE

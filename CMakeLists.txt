@@ -3,9 +3,6 @@ project(http_message C)
 
 add_compile_definitions(HAVE_HTTP_MESSAGE)
 
-add_custom_target(extension COMMAND phpize && ./configure && make && make install
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-
 set(SOURCE_FILES php_http_message
         http_message.c message.c request.c uri.c server_request.c response.c stream.c uploaded_file.c factory.c)
 
@@ -23,4 +20,9 @@ include_directories(${PHP_SOURCE}/Zend)
 include_directories(${PHP_SOURCE}/TSRM)
 include_directories(${PROJECT_SOURCE_DIR})
 
-add_executable(http_message ${SOURCE_FILES})
+add_custom_target(configure
+        COMMAND phpize && ./configure
+        DEPENDS ${SOURCE_FILES}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_library(___ EXCLUDE_FROM_ALL ${SOURCE_FILES})

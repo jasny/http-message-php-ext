@@ -178,8 +178,8 @@ void create_uploaded_file(zval *uploaded_file, zval *tmp_name, zval *size, zval 
     ZVAL_OBJ(uploaded_file, new_object);
 
     construct_uploaded_file(
-            NULL,
             uploaded_file,
+            NULL,
             tmp_name != NULL ? Z_STR_P(tmp_name) : NULL,
             size != NULL ? Z_LVAL_P(size) : -1,
             Z_LVAL_P(error),
@@ -289,7 +289,7 @@ PHP_METHOD(UploadedFile, __construct)
         stream_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
 
         if (UNEXPECTED(
-                Z_TYPE_P(fileOrStream) == IS_OBJECT && instanceof_function(Z_OBJ_P(fileOrStream), stream_interface)
+                Z_TYPE_P(fileOrStream) == IS_OBJECT && instanceof_function(Z_OBJCE_P(fileOrStream), stream_interface)
         )) {
             zend_type_error("Expected parameter 1 to be a string or object that implements "
                             "Psr\\Http\\Message\\StreamInterface, %s given", zend_zval_type_name(fileOrStream));

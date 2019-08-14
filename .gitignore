@@ -28,6 +28,7 @@ modules/
 *.lo
 tests/**/*.*
 !tests/**/*.phpt
+!tests/smoke.php
 php_test_results_*.txt
 http_message.loT
 *.loT

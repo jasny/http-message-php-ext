@@ -52,6 +52,7 @@ extern PHP_MINIT_FUNCTION(http_message_response);
 extern PHP_MINIT_FUNCTION(http_message_stream);
 extern PHP_MINIT_FUNCTION(http_message_uri);
 extern PHP_MINIT_FUNCTION(http_message_uploadedfile);
+extern PHP_MINIT_FUNCTION(http_message_factory);
 
 extern zend_module_entry http_message_module_entry;
 
