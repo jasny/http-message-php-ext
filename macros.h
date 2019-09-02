@@ -68,12 +68,17 @@ ZEND_END_ARG_INFO()
         object_init_ex(zval, ce); \
         if (EXPECTED(zval != NULL)) object_properties_init(Z_OBJ_P(zval), ce)
 
+#ifndef PHP_WIN32
 #define NEW_OBJECT_CONSTRUCT(zval, ce, argc, ...) \
         NEW_OBJECT(zval, ce); \
         if (EXPECTED(zval != NULL)) \
-            zend_call_method_with_## argc ##_params( \
-                    zval, ce, &ce->constructor, "__construct", NULL, ##__VA_ARGS__ \
-            )
+            zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, ## __VA_ARGS__)
+#else
+#define NEW_OBJECT_CONSTRUCT(zval, ce, argc, ...) \
+        NEW_OBJECT(zval, ce); \
+        if (EXPECTED(zval != NULL)) \
+            zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, __VA_ARGS__)
+#endif
 
 #define IS_STREAM_RESOURCE(zstream) \
         ( \
