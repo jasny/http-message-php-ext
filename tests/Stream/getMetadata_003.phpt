@@ -26,5 +26,5 @@ array(9) {
   ["seekable"]=>
   bool(true)
   ["uri"]=>
-  string(71) "%sgetMetadata_003.php"
+  string(%d) "%sgetMetadata_003.php"
 }

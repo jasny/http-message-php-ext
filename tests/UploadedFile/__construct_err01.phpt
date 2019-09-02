@@ -19,7 +19,7 @@ try {
 try {
     new HttpMessage\UploadedFile($stream, [], UPLOAD_ERR_OK, 'myfile.txt', 'text/plain');
 } catch (TypeError $e) {
-    echo $e->getMessage(), "\n";
+    echo strtr($e->getMessage(), ['integer' => 'int']), "\n";
 }
 
 try {
@@ -31,7 +31,7 @@ try {
 try {
     new HttpMessage\UploadedFile($stream, 99, UPLOAD_ERR_OK, [], 'text/plain');
 } catch (TypeError $e) {
-    echo strtr($e->getMessage(), ['integer' => 'int']), "\n";
+    echo $e->getMessage(), "\n";
 }
 
 try {

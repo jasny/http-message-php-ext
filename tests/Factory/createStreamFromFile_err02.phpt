@@ -7,9 +7,9 @@ $factory = new HttpMessage\Factory();
 try {
     $factory->createStreamFromFile(__DIR__ . '/not/exists');
 } catch (RuntimeException $e) {
-    echo $e->getMessage(), "\n";
+    echo strtr($e->getMessage(), [DIRECTORY_SEPARATOR => '/']), "\n";
 }
 
 ?>
---EXPECT--
-Failed to open '/home/arnold/Projects/php/http-message/tests/Factory/not/exists' stream
+--EXPECTF--
+Failed to open '%s/Factory/not/exists' stream
