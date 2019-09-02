@@ -85,184 +85,184 @@ var_dump($request->getUploadedFiles());
 --EXPECTF--
 array(3) {
   ["document"]=>
-  object(HttpMessage\UploadedFile)#4 (8) {
-    ["stream":protected]=>
+  object(HttpMessage\UploadedFile)#%d (8) {
+    ["stream":"HttpMessage\UploadedFile":private]=>
     NULL
-    ["file":protected]=>
-    string(%d) "%s/uploadedfile01"
-    ["size":protected]=>
+    ["file":"HttpMessage\UploadedFile":private]=>
+    string(%d) "%suploadedfile01"
+    ["size":"HttpMessage\UploadedFile":private]=>
     int(2822)
-    ["error":protected]=>
+    ["error":"HttpMessage\UploadedFile":private]=>
     int(0)
-    ["clientFilename":protected]=>
+    ["clientFilename":"HttpMessage\UploadedFile":private]=>
     string(12) "document.pdf"
-    ["clientMediaType":protected]=>
+    ["clientMediaType":"HttpMessage\UploadedFile":private]=>
     string(15) "application/pdf"
-    ["moved":protected]=>
+    ["moved":"HttpMessage\UploadedFile":private]=>
     bool(false)
-    ["checkUploaded":protected]=>
+    ["checkUploaded":"HttpMessage\UploadedFile":private]=>
     bool(false)
   }
   ["attachments"]=>
   array(2) {
     [0]=>
-    object(HttpMessage\UploadedFile)#5 (8) {
-      ["stream":protected]=>
+    object(HttpMessage\UploadedFile)#%d (8) {
+      ["stream":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["file":protected]=>
-      string(%d) "%s/uploadedfile02"
-      ["size":protected]=>
+      ["file":"HttpMessage\UploadedFile":private]=>
+      string(%d) "%suploadedfile02"
+      ["size":"HttpMessage\UploadedFile":private]=>
       int(3724)
-      ["error":protected]=>
+      ["error":"HttpMessage\UploadedFile":private]=>
       int(0)
-      ["clientFilename":protected]=>
+      ["clientFilename":"HttpMessage\UploadedFile":private]=>
       string(11) "copy-id.pdf"
-      ["clientMediaType":protected]=>
+      ["clientMediaType":"HttpMessage\UploadedFile":private]=>
       string(9) "image/jpg"
-      ["moved":protected]=>
+      ["moved":"HttpMessage\UploadedFile":private]=>
       bool(false)
-      ["checkUploaded":protected]=>
+      ["checkUploaded":"HttpMessage\UploadedFile":private]=>
       bool(false)
     }
     [1]=>
-    object(HttpMessage\UploadedFile)#6 (8) {
-      ["stream":protected]=>
+    object(HttpMessage\UploadedFile)#%d (8) {
+      ["stream":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["file":protected]=>
-      string(%d) "%s/uploadedfile03"
-      ["size":protected]=>
+      ["file":"HttpMessage\UploadedFile":private]=>
+      string(%d) "%suploadedfile03"
+      ["size":"HttpMessage\UploadedFile":private]=>
       int(263)
-      ["error":protected]=>
+      ["error":"HttpMessage\UploadedFile":private]=>
       int(0)
-      ["clientFilename":protected]=>
+      ["clientFilename":"HttpMessage\UploadedFile":private]=>
       string(22) "proof-of-residence.pdf"
-      ["clientMediaType":protected]=>
+      ["clientMediaType":"HttpMessage\UploadedFile":private]=>
       string(15) "application/pdf"
-      ["moved":protected]=>
+      ["moved":"HttpMessage\UploadedFile":private]=>
       bool(false)
-      ["checkUploaded":protected]=>
+      ["checkUploaded":"HttpMessage\UploadedFile":private]=>
       bool(false)
     }
   }
   ["forms"]=>
   array(3) {
     ["g201"]=>
-    object(HttpMessage\UploadedFile)#7 (8) {
-      ["stream":protected]=>
+    object(HttpMessage\UploadedFile)#%d (8) {
+      ["stream":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["file":protected]=>
-      string(%d) "%s/uploadedfile04"
-      ["size":protected]=>
+      ["file":"HttpMessage\UploadedFile":private]=>
+      string(%d) "%suploadedfile04"
+      ["size":"HttpMessage\UploadedFile":private]=>
       int(942)
-      ["error":protected]=>
+      ["error":"HttpMessage\UploadedFile":private]=>
       int(0)
-      ["clientFilename":protected]=>
+      ["clientFilename":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["clientMediaType":protected]=>
+      ["clientMediaType":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["moved":protected]=>
+      ["moved":"HttpMessage\UploadedFile":private]=>
       bool(false)
-      ["checkUploaded":protected]=>
+      ["checkUploaded":"HttpMessage\UploadedFile":private]=>
       bool(false)
     }
     ["g202"]=>
     array(3) {
       ["a"]=>
-      object(HttpMessage\UploadedFile)#8 (8) {
-        ["stream":protected]=>
+      object(HttpMessage\UploadedFile)#%d (8) {
+        ["stream":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["file":protected]=>
-        string(%d) "%s/uploadedfile05"
-        ["size":protected]=>
+        ["file":"HttpMessage\UploadedFile":private]=>
+        string(%d) "%suploadedfile05"
+        ["size":"HttpMessage\UploadedFile":private]=>
         int(2391)
-        ["error":protected]=>
+        ["error":"HttpMessage\UploadedFile":private]=>
         int(0)
-        ["clientFilename":protected]=>
+        ["clientFilename":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["clientMediaType":protected]=>
+        ["clientMediaType":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["moved":protected]=>
+        ["moved":"HttpMessage\UploadedFile":private]=>
         bool(false)
-        ["checkUploaded":protected]=>
+        ["checkUploaded":"HttpMessage\UploadedFile":private]=>
         bool(false)
       }
       ["b"]=>
-      object(HttpMessage\UploadedFile)#9 (8) {
-        ["stream":protected]=>
+      object(HttpMessage\UploadedFile)#%d (8) {
+        ["stream":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["file":protected]=>
+        ["file":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["size":protected]=>
+        ["size":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["error":protected]=>
+        ["error":"HttpMessage\UploadedFile":private]=>
         int(4)
-        ["clientFilename":protected]=>
+        ["clientFilename":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["clientMediaType":protected]=>
+        ["clientMediaType":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["moved":protected]=>
+        ["moved":"HttpMessage\UploadedFile":private]=>
         bool(false)
-        ["checkUploaded":protected]=>
+        ["checkUploaded":"HttpMessage\UploadedFile":private]=>
         bool(false)
       }
       ["c"]=>
-      object(HttpMessage\UploadedFile)#10 (8) {
-        ["stream":protected]=>
+      object(HttpMessage\UploadedFile)#%d (8) {
+        ["stream":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["file":protected]=>
+        ["file":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["size":protected]=>
+        ["size":"HttpMessage\UploadedFile":private]=>
         int(485)
-        ["error":protected]=>
+        ["error":"HttpMessage\UploadedFile":private]=>
         int(3)
-        ["clientFilename":protected]=>
+        ["clientFilename":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["clientMediaType":protected]=>
+        ["clientMediaType":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["moved":protected]=>
+        ["moved":"HttpMessage\UploadedFile":private]=>
         bool(false)
-        ["checkUploaded":protected]=>
+        ["checkUploaded":"HttpMessage\UploadedFile":private]=>
         bool(false)
       }
     }
     ["g301"]=>
     array(2) {
       [0]=>
-      object(HttpMessage\UploadedFile)#11 (8) {
-        ["stream":protected]=>
+      object(HttpMessage\UploadedFile)#%d (8) {
+        ["stream":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["file":protected]=>
-        string(%d) "%s/uploadedfile07"
-        ["size":protected]=>
+        ["file":"HttpMessage\UploadedFile":private]=>
+        string(%d) "%suploadedfile07"
+        ["size":"HttpMessage\UploadedFile":private]=>
         int(4732)
-        ["error":protected]=>
+        ["error":"HttpMessage\UploadedFile":private]=>
         int(0)
-        ["clientFilename":protected]=>
+        ["clientFilename":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["clientMediaType":protected]=>
+        ["clientMediaType":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["moved":protected]=>
+        ["moved":"HttpMessage\UploadedFile":private]=>
         bool(false)
-        ["checkUploaded":protected]=>
+        ["checkUploaded":"HttpMessage\UploadedFile":private]=>
         bool(false)
       }
       [1]=>
-      object(HttpMessage\UploadedFile)#12 (8) {
-        ["stream":protected]=>
+      object(HttpMessage\UploadedFile)#%d (8) {
+        ["stream":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["file":protected]=>
+        ["file":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["size":protected]=>
+        ["size":"HttpMessage\UploadedFile":private]=>
         int(124901432)
-        ["error":protected]=>
+        ["error":"HttpMessage\UploadedFile":private]=>
         int(2)
-        ["clientFilename":protected]=>
+        ["clientFilename":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["clientMediaType":protected]=>
+        ["clientMediaType":"HttpMessage\UploadedFile":private]=>
         NULL
-        ["moved":protected]=>
+        ["moved":"HttpMessage\UploadedFile":private]=>
         bool(false)
-        ["checkUploaded":protected]=>
+        ["checkUploaded":"HttpMessage\UploadedFile":private]=>
         bool(false)
       }
     }

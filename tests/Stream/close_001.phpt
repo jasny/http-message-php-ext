@@ -12,9 +12,9 @@ var_dump(get_resource_type($resource));
 
 $stream->close(); // No error
 ?>
---EXPECT--
-object(HttpMessage\Stream)#1 (1) {
-  ["stream":protected]=>
-  resource(5) of type (Unknown)
+--EXPECTF--
+object(HttpMessage\Stream)#%d (1) {
+  ["stream":"HttpMessage\Stream":private]=>
+  resource(%d) of type (Unknown)
 }
 string(7) "Unknown"

@@ -4,20 +4,20 @@ Create Uri with a full url
 <?php
 var_dump(new HttpMessage\Uri('http://acme@www.example.com:8000/foo?answer=42#question'));
 ?>
---EXPECT--
-object(HttpMessage\Uri)#1 (7) {
-  ["scheme":protected]=>
+--EXPECTF--
+object(HttpMessage\Uri)#%d (7) {
+  ["scheme":"HttpMessage\Uri":private]=>
   string(4) "http"
-  ["userInfo":protected]=>
+  ["userInfo":"HttpMessage\Uri":private]=>
   string(4) "acme"
-  ["host":protected]=>
+  ["host":"HttpMessage\Uri":private]=>
   string(15) "www.example.com"
-  ["port":protected]=>
+  ["port":"HttpMessage\Uri":private]=>
   int(8000)
-  ["path":protected]=>
+  ["path":"HttpMessage\Uri":private]=>
   string(4) "/foo"
-  ["query":protected]=>
+  ["query":"HttpMessage\Uri":private]=>
   string(9) "answer=42"
-  ["fragment":protected]=>
+  ["fragment":"HttpMessage\Uri":private]=>
   string(8) "question"
 }

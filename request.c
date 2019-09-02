@@ -108,7 +108,7 @@ PHP_METHOD(Request, withRequestTarget)
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    if (value != NULL) {
+    if (EXPECTED(value != NULL)) {
         zend_update_property_str(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"), value);
     } else {
         zend_update_property_null(HttpMessage_Request_ce, return_value, ZEND_STRL("requestTarget"));
@@ -129,18 +129,17 @@ PHP_METHOD(Request, getMethod)
 
 PHP_METHOD(Request, withMethod)
 {
-    char *value;
-    size_t value_len;
+    int u;
+    zend_string *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_STRING(value, value_len)
+        Z_PARAM_STR(value)
+        u = _i + 5;
     ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property_stringl(
-            HttpMessage_Request_ce, return_value, ZEND_STRL("method"), value, value_len
-    );
+    zend_update_property_str(HttpMessage_Request_ce, return_value, ZEND_STRL("method"), value);
 }
 
 
@@ -157,11 +156,11 @@ PHP_METHOD(Request, getUri)
 
 PHP_METHOD(Request, withUri)
 {
-    zval *value;
-    zend_class_entry *uri_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\uriinterface"));
+    zval *value = NULL;
+    zend_class_entry *uri_interface = HTTP_MESSAGE_PSR_INTERFACE("uri");
 
     if (uri_interface == NULL) {
-        zend_throw_error(NULL, "Psr\\Http\\Message\\UriInterface not foud");
+        zend_throw_error(NULL, "Psr\\Http\\Message\\UriInterface not found");
         return;
     }
 
@@ -191,7 +190,7 @@ static const zend_function_entry request_functions[] = {
 PHP_MINIT_FUNCTION(http_message_request)
 {
     zend_class_entry ce;
-    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\requestinterface"));
+    zend_class_entry *interface = HTTP_MESSAGE_PSR_INTERFACE("request");
 
     ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Request");
     if (HttpMessage_Message_ce == NULL) return FAILURE;
@@ -202,9 +201,9 @@ PHP_MINIT_FUNCTION(http_message_request)
     zend_class_implements(HttpMessage_Request_ce, 1, interface);
 
     /* Properties */
-    zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), ZEND_ACC_PROTECTED);
-    zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("method"), "", ZEND_ACC_PROTECTED);
-    zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("uri"), ZEND_ACC_PROTECTED);
+    zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("requestTarget"), ZEND_ACC_PRIVATE);
+    zend_declare_property_string(HttpMessage_Request_ce, ZEND_STRL("method"), "", ZEND_ACC_PRIVATE);
+    zend_declare_property_null(HttpMessage_Request_ce, ZEND_STRL("uri"), ZEND_ACC_PRIVATE);
 
     return SUCCESS;
 }

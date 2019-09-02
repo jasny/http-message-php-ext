@@ -22,7 +22,7 @@ var_dump($objRequest->getParsedBody());
 var_dump($nullRequest->getParsedBody());
 
 ?>
---EXPECT--
+--EXPECTF--
 array(3) {
   ["foo"]=>
   string(3) "bar"
@@ -31,7 +31,7 @@ array(3) {
   ["user"]=>
   int(22)
 }
-object(stdClass)#5 (2) {
+object(stdClass)#%d (2) {
   ["color"]=>
   string(3) "red"
   ["user"]=>

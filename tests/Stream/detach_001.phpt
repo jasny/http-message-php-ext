@@ -15,9 +15,9 @@ var_dump($stream->detach());
 
 $stream->close(); // Calling close() while detached should be ignored
 ?>
---EXPECT--
-object(HttpMessage\Stream)#1 (1) {
-  ["stream":protected]=>
+--EXPECTF--
+object(HttpMessage\Stream)#%d (1) {
+  ["stream":"HttpMessage\Stream":private]=>
   NULL
 }
 bool(true)

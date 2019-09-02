@@ -1,5 +1,5 @@
 --TEST--
-Create UploadedFile with only a path
+Create UploadedFile with only an error
 --FILE--
 <?php
 $upload = new HttpMessage\UploadedFile(null, null, UPLOAD_ERR_NO_FILE, null, null);
@@ -11,23 +11,23 @@ var_dump($upload->getClientFilename());
 var_dump($upload->getClientMediaType());
 
 ?>
---EXPECT--
-object(HttpMessage\UploadedFile)#1 (8) {
-  ["stream":protected]=>
+--EXPECTF--
+object(HttpMessage\UploadedFile)#%d (8) {
+  ["stream":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["file":protected]=>
+  ["file":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["size":protected]=>
+  ["size":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["error":protected]=>
+  ["error":"HttpMessage\UploadedFile":private]=>
   int(4)
-  ["clientFilename":protected]=>
+  ["clientFilename":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["clientMediaType":protected]=>
+  ["clientMediaType":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["moved":protected]=>
+  ["moved":"HttpMessage\UploadedFile":private]=>
   bool(false)
-  ["checkUploaded":protected]=>
+  ["checkUploaded":"HttpMessage\UploadedFile":private]=>
   bool(false)
 }
 NULL

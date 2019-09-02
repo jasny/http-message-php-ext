@@ -35,111 +35,153 @@
 #include "php.h"
 #include "php_http_message.h"
 #include "macros.h"
+#include "response.h"
+#include "stream.h"
 #include "uploaded_file.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
 #include "zend_string.h"
-#include "ext/standard/php_string.h"
-#include "ext/psr/psr_http_message.h"
 #include "ext/psr/psr_http_factory.h"
 
 #if HAVE_HTTP_MESSAGE
 
 zend_class_entry *HttpMessage_Factory_ce = NULL;
 
+int uri_param_as_object(zval *uri)
+{
+    zval uri_str;
+    zend_class_entry *uri_interface = HTTP_MESSAGE_PSR_INTERFACE("uri");
+
+    if (uri_interface == NULL) {
+        zend_throw_error(NULL, "Psr\\Http\\Message\\UriInterface not found");
+        return FAILURE;
+    }
+
+    if (Z_TYPE_P(uri) == IS_STRING) {
+        ZVAL_COPY(&uri_str, uri);
+        NEW_OBJECT_CONSTRUCT(uri, HttpMessage_Uri_ce, 1, &uri_str);
+    } else if (UNEXPECTED(Z_TYPE_P(uri) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(uri), uri_interface))) {
+        zend_type_error("Expected parameter 1 to be a string or object that implements "
+                        "Psr\\Http\\Message\\UriInterface, %s given", zend_zval_type_name(uri));
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
 PHP_METHOD(Factory, createRequest)
 {
-    zval *method, *uri;
+    zend_string *method = NULL;
+    zval *uri = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-        Z_PARAM_ZVAL_STRING(method)
+        Z_PARAM_STR(method)
         Z_PARAM_ZVAL(uri)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_0(return_value, HttpMessage_Request_ce);
-    zend_call_method_with_1_params(return_value, HttpMessage_Request_ce, NULL, "withMethod", return_value, method);
-    zend_call_method_with_1_params(return_value, HttpMessage_Request_ce, NULL, "withUri", return_value, uri);
+    if (uri_param_as_object(uri) == FAILURE) return;
+
+    NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 0);
+    zend_update_property_str(HttpMessage_Request_ce, return_value, ZEND_STRL("method"), method);
+    zend_update_property(HttpMessage_Request_ce, return_value, ZEND_STRL("uri"), uri);
 }
 
 PHP_METHOD(Factory, createResponse)
 {
-    zval *code = NULL, *reasonPhrase = NULL;
+    zend_long code = 200;
+    zend_bool code_is_null = 0;
+    zend_string *phrase = NULL;
+    const char *suggested_phrase;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 2)
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL_LONG(code)
-        Z_PARAM_ZVAL_STRING(reasonPhrase)
+        Z_PARAM_LONG_EX(code, code_is_null, 0, 0)
+        Z_PARAM_STR(phrase)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_0(return_value, HttpMessage_Response_ce);
-
-    if (code != NULL) {
-        zend_call_method_with_2_params(return_value, HttpMessage_Response_ce, NULL, "withStatus", return_value, code,
-               reasonPhrase);
-    }
+    NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Response_ce, 0);
+    response_set_status(return_value, !code_is_null ? code : 200, phrase);
 }
 
 PHP_METHOD(Factory, createServerRequest)
 {
-    zval *method, *uri, *serverParams = NULL;
+    zend_string *method = NULL;
+    zval *uri = NULL, *serverParams = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 3)
-        Z_PARAM_ZVAL_STRING(method)
+        Z_PARAM_STR(method)
         Z_PARAM_ZVAL(uri)
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL_ARRAY_EX(serverParams, 1, 0)
+        Z_PARAM_ARRAY_EX(serverParams, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_1(return_value, HttpMessage_ServerRequest_ce, serverParams);
-    zend_call_method_with_1_params(return_value, HttpMessage_ServerRequest_ce, NULL, "withMethod", return_value,
-            method);
-    zend_call_method_with_1_params(return_value, HttpMessage_ServerRequest_ce, NULL, "withUri", return_value, uri);
+    if (uri_param_as_object(uri) == FAILURE) return;
+
+    if (serverParams == NULL) {
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_ServerRequest_ce, 0);
+    } else {
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_ServerRequest_ce, 1, serverParams);
+    }
+
+    zend_update_property_str(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("method"), method);
+    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("uri"), uri);
 }
 
 PHP_METHOD(Factory, createStream)
 {
-    zval *content;
+    php_stream *stream;
+    zval resource;
+    zend_string *content = NULL;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_ZVAL_STRING(content)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STR(content)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_0(return_value, HttpMessage_Stream_ce);
-    zend_call_method_with_1_params(return_value, HttpMessage_Stream_ce, NULL, "write", NULL, content);
+    if (open_temp_stream(&resource) == FAILURE) return;
+
+    if (content != NULL && ZSTR_LEN(content) > 0) {
+        php_stream_from_zval(stream, &resource);
+        php_stream_write(stream, ZSTR_VAL(content), ZSTR_LEN(content));
+    }
+
+    NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Stream_ce, 1, &resource);
 }
 
 PHP_METHOD(Factory, createStreamFromFile)
 {
-    char *file;
-    size_t file_len;
+    char *file = NULL, *mode = NULL;
+    size_t file_len = 0, mode_len = 0;
     php_stream *stream;
     zval resource;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_STRING(file, file_len)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STRING(mode, mode_len)
     ZEND_PARSE_PARAMETERS_END();
 
     file[file_len] = '\0';
-    stream = php_stream_open_wrapper(file, "r+", 0, NULL);
+    stream = php_stream_open_wrapper(file, mode != NULL ? mode : "r", 0, NULL);
 
     if (stream == NULL) {
-        zend_throw_error(NULL, "Failed to open 'php://temp' stream");
+        zend_throw_error(NULL, "Failed to open '%s' stream", file);
         return;
     }
 
     php_stream_to_zval(stream, &resource);
-    NEW_OBJECT_CONSTRUCT_1(return_value, HttpMessage_Stream_ce, &resource);
+    NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Stream_ce, 1, &resource);
 }
 
 PHP_METHOD(Factory, createStreamFromResource)
 {
-    zval *resource;
+    zval *resource = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_ZVAL(resource)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_1(return_value, HttpMessage_Stream_ce, resource);
+    NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Stream_ce, 1, resource);
 }
 
 PHP_METHOD(Factory, createUploadedFile)
@@ -148,7 +190,7 @@ PHP_METHOD(Factory, createUploadedFile)
     zend_long size = -1, error = 0;
     zend_string *clientFilename = NULL, *clientMediaType = NULL;
     zend_bool size_is_null = 1;
-    zend_class_entry *stream_interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\streaminterface"));
+    zend_class_entry *stream_interface = HTTP_MESSAGE_PSR_INTERFACE("stream");
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 5)
         Z_PARAM_OBJECT_OF_CLASS(stream, stream_interface)
@@ -166,41 +208,45 @@ PHP_METHOD(Factory, createUploadedFile)
 
 PHP_METHOD(Factory, createUri)
 {
-    zval *uri = NULL;
+    zend_string *uri = NULL;
+    zval zuri;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 0)
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL_STRING_EX(uri, 1, 0)
+        Z_PARAM_STR_EX(uri, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    NEW_OBJECT_CONSTRUCT_1(return_value, HttpMessage_Request_ce, uri);
+    if (uri == NULL) {
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 0);
+    } else {
+        ZVAL_STR(&zuri, uri);
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 1, &zuri);
+    }
 }
 
 /* Define HttpMessage\Factory class */
 
 static const zend_function_entry request_functions[] = {
-        HTTP_MESSAGE_ME_EX(Factory, RequestFactory, createRequest)
-        HTTP_MESSAGE_ME_EX(Factory, ResponseFactory, createResponse)
-        HTTP_MESSAGE_ME_EX(Factory, ServerRequestFactory, createServerRequest)
-        HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStream)
-        HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStreamFromFile)
-        HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStreamFromResource)
-        HTTP_MESSAGE_ME_EX(Factory, UploadedFileFactory, createUploadedFile)
-        HTTP_MESSAGE_ME_EX(Factory, UriFactory, createUri)
-        PHP_FE_END
+    HTTP_MESSAGE_ME_EX(Factory, RequestFactory, createRequest)
+    HTTP_MESSAGE_ME_EX(Factory, ResponseFactory, createResponse)
+    HTTP_MESSAGE_ME_EX(Factory, ServerRequestFactory, createServerRequest)
+    HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStream)
+    HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStreamFromFile)
+    HTTP_MESSAGE_ME_EX(Factory, StreamFactory, createStreamFromResource)
+    HTTP_MESSAGE_ME_EX(Factory, UploadedFileFactory, createUploadedFile)
+    HTTP_MESSAGE_ME_EX(Factory, UriFactory, createUri)
+    PHP_FE_END
 };
 
 PHP_MINIT_FUNCTION(http_message_factory)
 {
     zend_class_entry ce;
-    zend_class_entry *request_factory = get_internal_ce(ZEND_STRL("psr\\http\\message\\requestfactoryinterface"));
-    zend_class_entry *response_factory = get_internal_ce(ZEND_STRL("psr\\http\\message\\responsefactoryinterface"));
-    zend_class_entry *serverrequest_factory
-        = get_internal_ce(ZEND_STRL("psr\\http\\message\\serverrequestfactoryinterface"));
-    zend_class_entry *stream_factory = get_internal_ce(ZEND_STRL("psr\\http\\message\\streamfactoryinterface"));
-    zend_class_entry *uploadedfile_factory
-        = get_internal_ce(ZEND_STRL("psr\\http\\message\\uploadedfilefactoryinterface"));
-    zend_class_entry *uri_factory = get_internal_ce(ZEND_STRL("psr\\http\\message\\urifactoryinterface"));
+    zend_class_entry *request_factory = HTTP_MESSAGE_PSR_INTERFACE("requestfactory");
+    zend_class_entry *response_factory = HTTP_MESSAGE_PSR_INTERFACE("responsefactory");
+    zend_class_entry *serverrequest_factory = HTTP_MESSAGE_PSR_INTERFACE("serverrequestfactory");
+    zend_class_entry *stream_factory = HTTP_MESSAGE_PSR_INTERFACE("streamfactory");
+    zend_class_entry *uploadedfile_factory = HTTP_MESSAGE_PSR_INTERFACE("uploadedfilefactory");
+    zend_class_entry *uri_factory = HTTP_MESSAGE_PSR_INTERFACE("urifactory");
 
     ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(request_factory, "Factory", "RequestFactory");
     ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(response_factory, "Factory", "ResponseFactory");

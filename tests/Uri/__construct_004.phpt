@@ -4,20 +4,20 @@ Create Uri with username and password
 <?php
 var_dump(new HttpMessage\Uri('https://acme:secure@www.example.com'));
 ?>
---EXPECT--
-object(HttpMessage\Uri)#1 (7) {
-  ["scheme":protected]=>
+--EXPECTF--
+object(HttpMessage\Uri)#%d (7) {
+  ["scheme":"HttpMessage\Uri":private]=>
   string(5) "https"
-  ["userInfo":protected]=>
+  ["userInfo":"HttpMessage\Uri":private]=>
   string(11) "acme:secure"
-  ["host":protected]=>
+  ["host":"HttpMessage\Uri":private]=>
   string(15) "www.example.com"
-  ["port":protected]=>
+  ["port":"HttpMessage\Uri":private]=>
   NULL
-  ["path":protected]=>
+  ["path":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["query":protected]=>
+  ["query":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["fragment":protected]=>
+  ["fragment":"HttpMessage\Uri":private]=>
   string(0) ""
 }

@@ -33,41 +33,63 @@
 #endif
 
 #include "php.h"
+#include "ext/psr/psr_http_message.h"
+#include "ext/spl/spl_exceptions.h"
 #include "php_http_message.h"
 #include "macros.h"
+#include "response.h"
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
-#include "http_status_codes.h"
-#include "ext/psr/psr_http_message.h"
 
 #if HAVE_HTTP_MESSAGE
 
 zend_class_entry *HttpMessage_Response_ce;
 
-
-/* Helper function to get reason phrase from status code */
-
-static int status_comp(const void *a, const void *b)
+int response_set_status(zval *obj, zend_long code, zend_string *phrase)
 {
-    const http_response_status_code_pair *pa = (const http_response_status_code_pair *) a;
-    const http_response_status_code_pair *pb = (const http_response_status_code_pair *) b;
+    const char *suggested_phrase;
 
-    if (pa->code < pb->code) {
-        return -1;
-    } else if (pa->code > pb->code) {
-        return 1;
+    if (code < 100 || code > 999) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Invalid HTTP status code %ld", code);
+        return FAILURE;
     }
 
-    return 0;
+    zend_update_property_long(HttpMessage_Response_ce, obj, ZEND_STRL("statusCode"), code);
+
+    if (phrase != NULL) {
+        zend_update_property_str(HttpMessage_Response_ce, obj, ZEND_STRL("reasonPhrase"), phrase);
+    } else {
+        suggested_phrase = get_status_string((int)code);
+        zend_update_property_stringl(
+                HttpMessage_Response_ce, obj, ZEND_STRL("reasonPhrase"),
+                suggested_phrase, strlen(suggested_phrase)
+        );
+    }
+
+    return SUCCESS;
 }
 
-static const char *get_status_string(int code)
+/* __construct */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageServerRequest_construct, 0, 0, 0)
+    ZEND_ARG_TYPE_INFO(0, statusCode, IS_LONG, 0)
+    ZEND_ARG_TYPE_INFO(0, reasonPhrase, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(Response, __construct)
 {
-    http_response_status_code_pair needle = {code, NULL}, *result = NULL;
+    zend_long code = 0;
+    zend_string *phrase = NULL;
 
-    result = bsearch(&needle, http_status_map, http_status_map_len, sizeof(needle), status_comp);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 2)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(code);
+        Z_PARAM_STR_EX(phrase, 1, 0)
+    ZEND_PARSE_PARAMETERS_END();
 
-    return result ? result->str : "";
+    if (code > 0) {
+        response_set_status(getThis(), code, phrase);
+    }
 }
 
 
@@ -93,32 +115,18 @@ PHP_METHOD(Response, getReasonPhrase)
 
 PHP_METHOD(Response, withStatus)
 {
-    zend_long code;
-    char *phrase;
-    size_t phrase_len = 0;
-    const char *suggested_phrase;
+    zend_long code = 0;
+    zend_string *phrase = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_LONG(code)
         Z_PARAM_OPTIONAL
-        Z_PARAM_STRING(phrase, phrase_len)
+        Z_PARAM_STR_EX(phrase, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
 
-    zend_update_property_long(HttpMessage_Response_ce, return_value, ZEND_STRL("statusCode"), code);
-
-    if (phrase_len > 0) {
-        zend_update_property_stringl(
-                HttpMessage_Response_ce, return_value, ZEND_STRL("reasonPhrase"), phrase, phrase_len
-        );
-    } else {
-        suggested_phrase = get_status_string((int)code);
-        zend_update_property_stringl(
-                HttpMessage_Response_ce, return_value, ZEND_STRL("reasonPhrase"),
-                suggested_phrase, strlen(suggested_phrase)
-        );
-    }
+    response_set_status(return_value, code, phrase);
 }
 
 
@@ -134,7 +142,7 @@ static const zend_function_entry response_functions[] = {
 PHP_MINIT_FUNCTION(http_message_response)
 {
     zend_class_entry ce;
-    zend_class_entry *interface = get_internal_ce(ZEND_STRL("psr\\http\\message\\responseinterface"));
+    zend_class_entry *interface = HTTP_MESSAGE_PSR_INTERFACE("response");
 
     ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(interface, "Response");
     if (HttpMessage_Message_ce == NULL) return FAILURE;
@@ -145,8 +153,8 @@ PHP_MINIT_FUNCTION(http_message_response)
     zend_class_implements(HttpMessage_Response_ce, 1, interface);
 
     /* Properties */
-    zend_declare_property_long(HttpMessage_Response_ce, ZEND_STRL("statusCode"), 0, ZEND_ACC_PROTECTED);
-    zend_declare_property_string(HttpMessage_Response_ce, ZEND_STRL("reasonPhrase"), "", ZEND_ACC_PROTECTED);
+    zend_declare_property_long(HttpMessage_Response_ce, ZEND_STRL("statusCode"), 0, ZEND_ACC_PRIVATE);
+    zend_declare_property_string(HttpMessage_Response_ce, ZEND_STRL("reasonPhrase"), "", ZEND_ACC_PRIVATE);
 
     return SUCCESS;
 }

@@ -15,12 +15,8 @@ var_dump(file_get_contents($target));
 ?>
 --CLEAN--
 <?php
-if (file_exists(sys_get_temp_dir() . '/uploadedfile') {
-    unlink(sys_get_temp_dir() . '/uploadedfile');
-}
-if (file_exists(sys_get_temp_dir() . '/moved') {
-    unlink(sys_get_temp_dir() . '/moved');
-}
+if (file_exists(sys_get_temp_dir() . '/uploadedfile') unlink(sys_get_temp_dir() . '/uploadedfile');
+if (file_exists(sys_get_temp_dir() . '/movedfile') unlink(sys_get_temp_dir() . '/movedfile');
 ?>
 --EXPECT--
 string(3) "foo"

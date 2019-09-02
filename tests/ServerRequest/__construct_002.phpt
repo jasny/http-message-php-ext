@@ -26,10 +26,10 @@ var_dump($request);
 
 ?>
 --EXPECTF--
-object(HttpMessage\ServerRequest)#1 (12) {
-  ["protocolVersion":protected]=>
+object(HttpMessage\ServerRequest)#%d (13) {
+  ["protocolVersion":"HttpMessage\Message":private]=>
   string(3) "1.1"
-  ["headers":protected]=>
+  ["headers":"HttpMessage\Message":private]=>
   array(1) {
     ["Host"]=>
     array(1) {
@@ -37,33 +37,33 @@ object(HttpMessage\ServerRequest)#1 (12) {
       string(11) "example.com"
     }
   }
-  ["body":protected]=>
-  object(HttpMessage\Stream)#2 (1) {
-    ["stream":protected]=>
+  ["body":"HttpMessage\Message":private]=>
+  object(HttpMessage\Stream)#%d (1) {
+    ["stream":"HttpMessage\Stream":private]=>
     resource(%d) of type (stream)
   }
-  ["requestTarget":protected]=>
+  ["requestTarget":"HttpMessage\Request":private]=>
   NULL
-  ["method":protected]=>
-  string(4) "POST"
-  ["uri":protected]=>
-  object(HttpMessage\Uri)#3 (7) {
-    ["scheme":protected]=>
+  ["method":"HttpMessage\Request":private]=>
+  string(0) ""
+  ["uri":"HttpMessage\Request":private]=>
+  object(HttpMessage\Uri)#%d (7) {
+    ["scheme":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["userInfo":protected]=>
+    ["userInfo":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["host":protected]=>
+    ["host":"HttpMessage\Uri":private]=>
     string(11) "example.com"
-    ["port":protected]=>
+    ["port":"HttpMessage\Uri":private]=>
     NULL
-    ["path":protected]=>
+    ["path":"HttpMessage\Uri":private]=>
     string(6) "/foos/"
-    ["query":protected]=>
+    ["query":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["fragment":protected]=>
+    ["fragment":"HttpMessage\Uri":private]=>
     string(0) ""
   }
-  ["serverParams":protected]=>
+  ["serverParams":"HttpMessage\ServerRequest":private]=>
   array(3) {
     ["REQUEST_METHOD"]=>
     string(4) "POST"
@@ -72,41 +72,41 @@ object(HttpMessage\ServerRequest)#1 (12) {
     ["REQUEST_URI"]=>
     string(6) "/foos/"
   }
-  ["cookieParams":protected]=>
+  ["cookieParams":"HttpMessage\ServerRequest":private]=>
   array(1) {
     ["session"]=>
     int(999)
   }
-  ["queryParams":protected]=>
+  ["queryParams":"HttpMessage\ServerRequest":private]=>
   array(2) {
     ["id"]=>
     string(2) "42"
     ["persist"]=>
     string(3) "yes"
   }
-  ["uploadedFiles":protected]=>
+  ["uploadedFiles":"HttpMessage\ServerRequest":private]=>
   array(1) {
     ["document"]=>
-    object(HttpMessage\UploadedFile)#4 (8) {
-      ["stream":protected]=>
+    object(HttpMessage\UploadedFile)#%d (8) {
+      ["stream":"HttpMessage\UploadedFile":private]=>
       NULL
-      ["file":protected]=>
-      string(%d) "%s/uploadedfile"
-      ["size":protected]=>
+      ["file":"HttpMessage\UploadedFile":private]=>
+      string(%d) "%suploadedfile"
+      ["size":"HttpMessage\UploadedFile":private]=>
       int(2822)
-      ["error":protected]=>
+      ["error":"HttpMessage\UploadedFile":private]=>
       int(0)
-      ["clientFilename":protected]=>
+      ["clientFilename":"HttpMessage\UploadedFile":private]=>
       string(12) "document.pdf"
-      ["clientMediaType":protected]=>
+      ["clientMediaType":"HttpMessage\UploadedFile":private]=>
       string(15) "application/pdf"
-      ["moved":protected]=>
+      ["moved":"HttpMessage\UploadedFile":private]=>
       bool(false)
-      ["checkUploaded":protected]=>
+      ["checkUploaded":"HttpMessage\UploadedFile":private]=>
       bool(false)
     }
   }
-  ["parsedBody":protected]=>
+  ["parsedBody":"HttpMessage\ServerRequest":private]=>
   array(3) {
     ["id"]=>
     int(42)
@@ -120,7 +120,9 @@ object(HttpMessage\ServerRequest)#1 (12) {
       int(44)
     }
   }
-  ["attributes":protected]=>
+  ["attributes":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
+  ["method"]=>
+  string(4) "POST"
 }
