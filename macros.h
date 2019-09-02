@@ -33,6 +33,8 @@
 #ifndef HTTP_MESSAGE_MACROS_H
 #define HTTP_MESSAGE_MACROS_H
 
+#define EXPAND( x ) x
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -68,17 +70,10 @@ ZEND_END_ARG_INFO()
         object_init_ex(zval, ce); \
         if (EXPECTED(zval != NULL)) object_properties_init(Z_OBJ_P(zval), ce)
 
-#ifndef PHP_WIN32
 #define NEW_OBJECT_CONSTRUCT(zval, ce, argc, ...) \
         NEW_OBJECT(zval, ce); \
         if (EXPECTED(zval != NULL)) \
-            zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, ## __VA_ARGS__)
-#else
-#define NEW_OBJECT_CONSTRUCT(zval, ce, argc, ...) \
-        NEW_OBJECT(zval, ce); \
-        if (EXPECTED(zval != NULL)) \
-            zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, __VA_ARGS__)
-#endif
+            EXPAND(zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, ## __VA_ARGS__))
 
 #define IS_STREAM_RESOURCE(zstream) \
         ( \
