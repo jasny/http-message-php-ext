@@ -32,8 +32,8 @@ script:
 after_failure:
   - |
     for FILE in $(find tests -name '*.diff'); do
-      echo $FILE
-      cat FILE
+      echo "$FILE"
+      cat "$FILE"
       echo
     done
 
