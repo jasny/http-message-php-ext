@@ -1,17 +1,17 @@
 --TEST--
-Factory::createStreamFromFile() with mode
+Factory::createStreamFromFile() with invalid args
 --FILE--
 <?php
 $factory = new HttpMessage\Factory();
 
 try {
-    $stream = $factory->createStreamFromFile([]);
+    $factory->createStreamFromFile([]);
 } catch (TypeError $e) {
     echo $e->getMessage(), "\n";
 }
 
 try {
-    $stream = $factory->createStreamFromFile(__FILE__, []);
+    $factory->createStreamFromFile(__FILE__, []);
 } catch (TypeError $e) {
     echo $e->getMessage(), "\n";
 }

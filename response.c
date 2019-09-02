@@ -50,7 +50,7 @@ int response_set_status(zval *obj, zend_long code, zend_string *phrase)
     const char *suggested_phrase;
 
     if (code < 100 || code > 999) {
-        zend_throw_exception(spl_ce_InvalidArgumentException, "Invalid HTTP status code %ld", code);
+        zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, "Invalid HTTP status code %ld", code);
         return FAILURE;
     }
 

@@ -119,6 +119,19 @@ static zend_always_inline zend_class_entry* get_internal_ce(const char *class_na
     return temp_ce;
 }
 
+static zend_always_inline void custom_parameter_type_error(int num, char *expected, zval *arg)
+{
+    const char *space;
+    const char *class_name;
+
+    if (EG(exception)) {
+        return;
+    }
+    class_name = get_active_class_name(&space);
+    zend_type_error("%s%s%s() expects parameter %d to be %s, %s given",
+                    class_name, space, get_active_function_name(), num, expected, zend_zval_type_name(arg));
+}
+
 #define ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(ce, className, psrClassName) \
     if (UNEXPECTED(ce == NULL)) { \
         zend_error(E_CORE_WARNING, \

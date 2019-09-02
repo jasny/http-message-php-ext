@@ -335,11 +335,17 @@ PHP_METHOD(UploadedFile, __construct)
     } else if (Z_TYPE_P(fileOrStream) != IS_NULL) {
         stream_interface = HTTP_MESSAGE_PSR_INTERFACE("stream");
 
+        if (UNEXPECTED(stream_interface == NULL)) {
+            zend_throw_error(NULL, "Psr\\Http\\Message\\StreamInterface not found");
+            return;
+        }
+
         if (UNEXPECTED(
-                Z_TYPE_P(fileOrStream) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(fileOrStream), stream_interface)
+            Z_TYPE_P(fileOrStream) != IS_OBJECT ||
+            !instanceof_function(Z_OBJCE_P(fileOrStream), stream_interface)
         )) {
-            zend_type_error("Expected parameter 1 to be a string or object that implements "
-                            "Psr\\Http\\Message\\StreamInterface, %s given", zend_zval_type_name(fileOrStream));
+            custom_parameter_type_error(1,
+                    "a string or object that implements Psr\\Http\\Message\\StreamInterface", fileOrStream);
             return;
         }
 

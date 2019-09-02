@@ -42,6 +42,7 @@
 #include "zend_interfaces.h"
 #include "zend_string.h"
 #include "ext/psr/psr_http_factory.h"
+#include "ext/spl/spl_exceptions.h"
 
 #if HAVE_HTTP_MESSAGE
 
@@ -61,8 +62,7 @@ int uri_param_as_object(zval *uri)
         ZVAL_COPY(&uri_str, uri);
         NEW_OBJECT_CONSTRUCT(uri, HttpMessage_Uri_ce, 1, &uri_str);
     } else if (UNEXPECTED(Z_TYPE_P(uri) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(uri), uri_interface))) {
-        zend_type_error("Expected parameter 1 to be a string or object that implements "
-                        "Psr\\Http\\Message\\UriInterface, %s given", zend_zval_type_name(uri));
+        custom_parameter_type_error(1, "a string or object that implements Psr\\Http\\Message\\UriInterface", uri);
         return FAILURE;
     }
 
@@ -91,7 +91,6 @@ PHP_METHOD(Factory, createResponse)
     zend_long code = 200;
     zend_bool code_is_null = 0;
     zend_string *phrase = NULL;
-    const char *suggested_phrase;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 2)
         Z_PARAM_OPTIONAL
@@ -165,7 +164,7 @@ PHP_METHOD(Factory, createStreamFromFile)
     stream = php_stream_open_wrapper(file, mode != NULL ? mode : "r", 0, NULL);
 
     if (stream == NULL) {
-        zend_throw_error(NULL, "Failed to open '%s' stream", file);
+        zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Failed to open '%s' stream", file);
         return;
     }
 

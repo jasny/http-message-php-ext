@@ -103,7 +103,7 @@ PHP_METHOD(Stream, __construct)
         stream = php_stream_open_wrapper(file, mode != NULL ? mode : "r", 0, NULL);
 
         if (stream == NULL) {
-            zend_throw_error(NULL, "Failed to open '%s' stream", file);
+            zend_throw_exception_ex(spl_ce_RuntimeException, 0, "Failed to open '%s' stream", file);
             return;
         }
 
