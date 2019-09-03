@@ -12,11 +12,11 @@ $stream->close();
 var_dump($stream);
 ?>
 --EXPECTF--
-object(HttpMessage\Stream)#1 (1) {
-  ["stream":protected]=>
+object(HttpMessage\Stream)#%d (1) {
+  ["stream":"HttpMessage\Stream":private]=>
   resource(%d) of type (Unknown)
 }
-object(HttpMessage\Stream)#1 (1) {
-  ["stream":protected]=>
+object(HttpMessage\Stream)#%d (1) {
+  ["stream":"HttpMessage\Stream":private]=>
   resource(%d) of type (Unknown)
 }

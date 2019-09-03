@@ -52,6 +52,7 @@ extern PHP_MINIT_FUNCTION(http_message_response);
 extern PHP_MINIT_FUNCTION(http_message_stream);
 extern PHP_MINIT_FUNCTION(http_message_uri);
 extern PHP_MINIT_FUNCTION(http_message_uploadedfile);
+extern PHP_MINIT_FUNCTION(http_message_factory);
 
 extern zend_module_entry http_message_module_entry;
 
@@ -62,8 +63,6 @@ extern zend_class_entry *HttpMessage_Response_ce;
 extern zend_class_entry *HttpMessage_Stream_ce;
 extern zend_class_entry *HttpMessage_Uri_ce;
 extern zend_class_entry *HttpMessage_UploadedFile_ce;
-
-void create_uploaded_files(zval *objects, HashTable *files);
-void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t pass_len);
+extern zend_class_entry *HttpMessage_Factory_ce;
 
 #endif

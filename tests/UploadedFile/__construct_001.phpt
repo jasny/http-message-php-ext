@@ -19,22 +19,22 @@ var_dump($upload->getClientMediaType());
 unlink(sys_get_temp_dir() . '/uploadedfile');
 ?>
 --EXPECTF--
-object(HttpMessage\UploadedFile)#1 (8) {
-  ["stream":protected]=>
+object(HttpMessage\UploadedFile)#%d (8) {
+  ["stream":"HttpMessage\UploadedFile":private]=>
   NULL
-  ["file":protected]=>
+  ["file":"HttpMessage\UploadedFile":private]=>
   string(%d) "%s/uploadedfile"
-  ["size":protected]=>
+  ["size":"HttpMessage\UploadedFile":private]=>
   int(99)
-  ["error":protected]=>
+  ["error":"HttpMessage\UploadedFile":private]=>
   int(0)
-  ["clientFilename":protected]=>
+  ["clientFilename":"HttpMessage\UploadedFile":private]=>
   string(10) "myfile.txt"
-  ["clientMediaType":protected]=>
+  ["clientMediaType":"HttpMessage\UploadedFile":private]=>
   string(10) "text/plain"
-  ["moved":protected]=>
+  ["moved":"HttpMessage\UploadedFile":private]=>
   bool(false)
-  ["checkUploaded":protected]=>
+  ["checkUploaded":"HttpMessage\UploadedFile":private]=>
   bool(false)
 }
 int(99)

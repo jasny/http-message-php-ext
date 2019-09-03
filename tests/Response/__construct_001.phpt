@@ -8,20 +8,20 @@ var_dump($response);
 var_dump($response->getBody()->getMetadata('uri'));
 ?>
 --EXPECTF--
-object(HttpMessage\Response)#1 (5) {
-  ["protocolVersion":protected]=>
+object(HttpMessage\Response)#%d (5) {
+  ["protocolVersion":"HttpMessage\Message":private]=>
   string(3) "1.1"
-  ["headers":protected]=>
+  ["headers":"HttpMessage\Message":private]=>
   array(0) {
   }
-  ["body":protected]=>
-  object(HttpMessage\Stream)#2 (1) {
-    ["stream":protected]=>
+  ["body":"HttpMessage\Message":private]=>
+  object(HttpMessage\Stream)#%d (1) {
+    ["stream":"HttpMessage\Stream":private]=>
     resource(%d) of type (stream)
   }
-  ["statusCode":protected]=>
+  ["statusCode":"HttpMessage\Response":private]=>
   int(0)
-  ["reasonPhrase":protected]=>
+  ["reasonPhrase":"HttpMessage\Response":private]=>
   string(0) ""
 }
 string(10) "php://temp"

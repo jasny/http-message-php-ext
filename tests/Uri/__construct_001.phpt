@@ -4,20 +4,20 @@ Create Uri without arguments
 <?php
 var_dump(new HttpMessage\Uri());
 ?>
---EXPECT--
-object(HttpMessage\Uri)#1 (7) {
-  ["scheme":protected]=>
+--EXPECTF--
+object(HttpMessage\Uri)#%d (7) {
+  ["scheme":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["userInfo":protected]=>
+  ["userInfo":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["host":protected]=>
+  ["host":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["port":protected]=>
+  ["port":"HttpMessage\Uri":private]=>
   NULL
-  ["path":protected]=>
+  ["path":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["query":protected]=>
+  ["query":"HttpMessage\Uri":private]=>
   string(0) ""
-  ["fragment":protected]=>
+  ["fragment":"HttpMessage\Uri":private]=>
   string(0) ""
 }

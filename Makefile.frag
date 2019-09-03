@@ -12,7 +12,7 @@ PHP_TEST_SHARED_EXTENSIONS =  ` \
 	fi`
 
 clean-tests:
-	rm -f tests/*.diff tests/*.exp tests/*.log tests/*.out tests/*.php tests/*.sh
+	rm -f tests/*/*.diff tests/*/*.exp tests/*/*.log tests/*/*.out tests/*/*.php tests/*/*.sh
 
 mrproper: clean
 	rm -rf autom4te.cache build modules vendor

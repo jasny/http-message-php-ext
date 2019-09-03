@@ -24,22 +24,22 @@ var_dump($request->getUri());
 var_dump($request->getHeaders());
 
 ?>
---EXPECT--
-string(4) "POST"
-object(HttpMessage\Uri)#3 (7) {
-  ["scheme":protected]=>
+--EXPECTF--
+string(0) ""
+object(HttpMessage\Uri)#%d (7) {
+  ["scheme":"HttpMessage\Uri":private]=>
   string(4) "http"
-  ["userInfo":protected]=>
+  ["userInfo":"HttpMessage\Uri":private]=>
   string(11) "john:secret"
-  ["host":protected]=>
+  ["host":"HttpMessage\Uri":private]=>
   string(11) "example.com"
-  ["port":protected]=>
+  ["port":"HttpMessage\Uri":private]=>
   NULL
-  ["path":protected]=>
+  ["path":"HttpMessage\Uri":private]=>
   string(6) "/foos/"
-  ["query":protected]=>
+  ["query":"HttpMessage\Uri":private]=>
   string(5) "bar=1"
-  ["fragment":protected]=>
+  ["fragment":"HttpMessage\Uri":private]=>
   string(0) ""
 }
 array(6) {

@@ -8,53 +8,53 @@ var_dump($request);
 
 ?>
 --EXPECTF--
-object(HttpMessage\ServerRequest)#1 (12) {
-  ["protocolVersion":protected]=>
+object(HttpMessage\ServerRequest)#%d (12) {
+  ["protocolVersion":"HttpMessage\Message":private]=>
   string(3) "1.1"
-  ["headers":protected]=>
+  ["headers":"HttpMessage\Message":private]=>
   array(0) {
   }
-  ["body":protected]=>
-  object(HttpMessage\Stream)#2 (1) {
-    ["stream":protected]=>
+  ["body":"HttpMessage\Message":private]=>
+  object(HttpMessage\Stream)#%d (1) {
+    ["stream":"HttpMessage\Stream":private]=>
     resource(%d) of type (stream)
   }
-  ["requestTarget":protected]=>
+  ["requestTarget":"HttpMessage\Request":private]=>
   NULL
-  ["method":protected]=>
+  ["method":"HttpMessage\Request":private]=>
   string(0) ""
-  ["uri":protected]=>
-  object(HttpMessage\Uri)#3 (7) {
-    ["scheme":protected]=>
+  ["uri":"HttpMessage\Request":private]=>
+  object(HttpMessage\Uri)#%d (7) {
+    ["scheme":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["userInfo":protected]=>
+    ["userInfo":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["host":protected]=>
+    ["host":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["port":protected]=>
+    ["port":"HttpMessage\Uri":private]=>
     NULL
-    ["path":protected]=>
+    ["path":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["query":protected]=>
+    ["query":"HttpMessage\Uri":private]=>
     string(0) ""
-    ["fragment":protected]=>
+    ["fragment":"HttpMessage\Uri":private]=>
     string(0) ""
   }
-  ["serverParams":protected]=>
+  ["serverParams":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
-  ["cookieParams":protected]=>
+  ["cookieParams":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
-  ["queryParams":protected]=>
+  ["queryParams":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
-  ["uploadedFiles":protected]=>
+  ["uploadedFiles":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
-  ["parsedBody":protected]=>
+  ["parsedBody":"HttpMessage\ServerRequest":private]=>
   NULL
-  ["attributes":protected]=>
+  ["attributes":"HttpMessage\ServerRequest":private]=>
   array(0) {
   }
 }

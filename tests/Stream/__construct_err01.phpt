@@ -1,5 +1,5 @@
 --TEST--
-Create Stream error: closed stream
+Create Stream with closed stream
 --FILE--
 <?php
 $resource = fopen('php://memory', 'w+');

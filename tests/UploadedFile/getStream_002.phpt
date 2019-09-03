@@ -28,8 +28,8 @@ if (file_exists(sys_get_temp_dir() . '/uploadedfile') {
 }
 ?>
 --EXPECTF--
-object(HttpMessage\Stream)#3 (1) {
-  ["stream":protected]=>
+object(HttpMessage\Stream)#%d (1) {
+  ["stream":"HttpMessage\Stream":private]=>
   resource(%d) of type (stream)
 }
 string(%d) "%s/uploadedfile"

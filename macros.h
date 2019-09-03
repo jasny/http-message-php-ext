@@ -1,6 +1,7 @@
 /*
   +----------------------------------------------------------------------+
   | HTTP Message PHP extension                                           |
+  | Generic macros for this library                                      |
   +----------------------------------------------------------------------+
   | Copyright (c) 2019 Arnold Daniels                                    |
   +----------------------------------------------------------------------+
@@ -32,6 +33,8 @@
 #ifndef HTTP_MESSAGE_MACROS_H
 #define HTTP_MESSAGE_MACROS_H
 
+#define EXPAND( x ) x
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -54,8 +57,23 @@ ZEND_END_ARG_INFO()
 #define SET_URI_PROPERTY(className, property, val) SET_STR_PROPERTY(className, property, val)
 #endif
 
+#define HTTP_MESSAGE_ME_EX(className, interfaceName, method) \
+        PHP_ME(className, method, arginfo_PsrHttpMessage ## interfaceName ## Interface_ ## method, ZEND_ACC_PUBLIC)
+
 #define HTTP_MESSAGE_ME(className, method) \
-        PHP_ME(className, method, arginfo_PsrHttpMessage ## className ## Interface_ ## method, ZEND_ACC_PUBLIC)
+        HTTP_MESSAGE_ME_EX(className, className, method)
+
+#define HTTP_MESSAGE_PSR_INTERFACE(interfaceName) \
+        get_internal_ce(ZEND_STRL("psr\\http\\message\\" interfaceName "interface"))
+
+#define NEW_OBJECT(zval, ce) \
+        object_init_ex(zval, ce); \
+        if (EXPECTED(zval != NULL)) object_properties_init(Z_OBJ_P(zval), ce)
+
+#define NEW_OBJECT_CONSTRUCT(zval, ce, argc, ...) \
+        NEW_OBJECT(zval, ce); \
+        if (EXPECTED(zval != NULL)) \
+            EXPAND(zend_call_method_with_## argc ##_params(zval, ce, &ce->constructor, "__construct", NULL, ## __VA_ARGS__))
 
 #define IS_STREAM_RESOURCE(zstream) \
         ( \
@@ -88,6 +106,8 @@ ZEND_END_ARG_INFO()
 
 #define STRLEN_NULL(str) str != NULL ? strlen(str) : 0
 
+#define STR_CLOSE(str, len) str[len] = '\0'  // Is buffer big enough? yolo!
+
 static zend_always_inline zend_class_entry* get_internal_ce(const char *class_name, size_t class_name_len)
 {
     zend_class_entry* temp_ce;
@@ -99,12 +119,28 @@ static zend_always_inline zend_class_entry* get_internal_ce(const char *class_na
     return temp_ce;
 }
 
-#define RETURN_HTTP_MESSAGE_INTERFACE_NOT_FOUND(className) \
-    { \
+static zend_always_inline void custom_parameter_type_error(int num, char *expected, zval *arg)
+{
+    const char *space;
+    const char *class_name;
+
+    if (EG(exception)) {
+        return;
+    }
+    class_name = get_active_class_name(&space);
+    zend_type_error("%s%s%s() expects parameter %d to be %s, %s given",
+                    class_name, space, get_active_function_name(), num, expected, zend_zval_type_name(arg));
+}
+
+#define ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(ce, className, psrClassName) \
+    if (UNEXPECTED(ce == NULL)) { \
         zend_error(E_CORE_WARNING, \
                 "Failed to initialize 'HttpMessage\\%s': 'Psr\\Http\\Message\\%sInterace' not found", \
-                className, className); \
+                className, psrClassName); \
         return FAILURE; \
     }
+
+#define ASSERT_HTTP_MESSAGE_INTERFACE_FOUND(ce, className) \
+    ASSERT_HTTP_MESSAGE_INTERFACE_FOUND_EX(ce, className, className)
 
 #endif //HTTP_MESSAGE_MACROS_H
