@@ -3,7 +3,7 @@
 # PSR-7 HTTP Message as PHP extension
 
 [![Build Status](https://travis-ci.org/improved-php-library/http-message.svg?branch=master)](https://travis-ci.org/improved-php-library/http-message)
-[![Build status](https://ci.appveyor.com/api/projects/status/7rof1vr8mv4kam17/branch/master?svg=true)](https://ci.appveyor.com/project/jasny/http_message/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/7rof1vr8mv4kam17/branch/master?svg=true)](https://ci.appveyor.com/project/jasny/http-message/branch/master)
 
 [PSR-7 HTTP Message](https://www.php-fig.org/psr/psr-7/) implementation as PHP extension written in C.
 
