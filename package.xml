@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>http_message</name>
  <channel>pecl.php.net</channel>
  <summary>PSR-7 HTTP Message implementation</summary>
@@ -10,10 +10,10 @@
   <email>jasny@php.net</email>
   <active>yes</active>
  </lead>
- <date>2019-07-28</date>
+ <date>2019-09-05</date>
  <version>
-  <release>0.1.1</release>
-  <api>0.1.0</api>
+  <release>0.2.0</release>
+  <api>0.2.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -21,171 +21,242 @@
  </stability>
  <license uri="https://opensource.org/licenses/MIT">MIT License</license>
  <notes>
-Fixed default value issue with ServerRequest::getAttribute(). The method only accepted one argument.
+Added Factory class that implements all PSR-17 interfaces.
+All properties private.
+Allow filename and mode for Stream constructor.
+Allow StreamInterface object for UploadedFile constructor.
+Move uploaded file copies a stream if stream is supplied.
+Fixes and cleanup.
  </notes>
  <contents>
   <dir name="/">
-   <file name="CREDITS" role="doc" />
-   <file name="LICENSE" role="doc" />
-   <file name="README.md" role="doc" />
-   <file name="Makefile.frag" role="src" />
-   <file name="config.m4" role="src" />
-   <file name="config.w32" role="src" />
-   <file name="http_message.c" role="src" />
-   <file name="macros.h" role="src" />
-   <file name="message.c" role="src" />
-   <file name="php_http_message.h" role="src" />
-   <file name="request.c" role="src" />
-   <file name="response.c" role="src" />
-   <file name="server_request.c" role="src" />
-   <file name="stream.c" role="src" />
-   <file name="uploaded_file.c" role="src" />
-   <file name="uri.c" role="src" />
-   <file name="autoconf/pecl.m4" role="src" />
-
-   <file name="tests/Message/body_001.phpt" role="test" />
-   <file name="tests/Message/body_err01.phpt" role="test" />
-   <file name="tests/Message/headers_001.phpt" role="test" />
-   <file name="tests/Message/headers_002.phpt" role="test" />
-   <file name="tests/Message/headers_err01.phpt" role="test" />
-   <file name="tests/Message/headers_err02.phpt" role="test" />
-   <file name="tests/Message/headers_err03.phpt" role="test" />
-   <file name="tests/Message/headers_err04.phpt" role="test" />
-   <file name="tests/Message/headers_err05.phpt" role="test" />
-   <file name="tests/Message/protocolVersion_001.phpt" role="test" />
-   <file name="tests/Message/protocolVersion_002.phpt" role="test" />
-   <file name="tests/Message/protocolVersion_err01.phpt" role="test" />
-   <file name="tests/Request/__construct_001.phpt" role="test" />
-   <file name="tests/Request/method_001.phpt" role="test" />
-   <file name="tests/Request/method_err01.phpt" role="test" />
-   <file name="tests/Request/requestTarget_001.phpt" role="test" />
-   <file name="tests/Request/requestTarget_002.phpt" role="test" />
-   <file name="tests/Request/requestTarget_err01.phpt" role="test" />
-   <file name="tests/Request/uri_001.phpt" role="test" />
-   <file name="tests/Request/uri_err01.phpt" role="test" />
-   <file name="tests/Response/__construct_001.phpt" role="test" />
-   <file name="tests/Response/status_001.phpt" role="test" />
-   <file name="tests/Response/status_002.phpt" role="test" />
-   <file name="tests/Response/status_003.phpt" role="test" />
-   <file name="tests/Response/status_err01.phpt" role="test" />
-   <file name="tests/ServerRequest/attributes_001.phpt" role="test" />
-   <file name="tests/ServerRequest/attributes_err01.phpt" role="test" />
-   <file name="tests/ServerRequest/__construct_001.phpt" role="test" />
-   <file name="tests/ServerRequest/__construct_002.phpt" role="test" />
-   <file name="tests/ServerRequest/__construct_003.phpt" role="test" />
-   <file name="tests/ServerRequest/__construct_004.phpt" role="test" />
-   <file name="tests/ServerRequest/__construct_005.phpt" role="test" />
-   <file name="tests/ServerRequest/cookieParams_001.phpt" role="test" />
-   <file name="tests/ServerRequest/cookieParams_err01.phpt" role="test" />
-   <file name="tests/ServerRequest/parsedBody_001.phpt" role="test" />
-   <file name="tests/ServerRequest/parsedBody_err01.phpt" role="test" />
-   <file name="tests/ServerRequest/queryParams_001.phpt" role="test" />
-   <file name="tests/ServerRequest/queryParams_err01.phpt" role="test" />
-   <file name="tests/Stream/close_001.phpt" role="test" />
-   <file name="tests/Stream/close_002.phpt" role="test" />
-   <file name="tests/Stream/close_003.phpt" role="test" />
-   <file name="tests/Stream/__construct_001.phpt" role="test" />
-   <file name="tests/Stream/__construct_002.phpt" role="test" />
-   <file name="tests/Stream/__construct_err01.phpt" role="test" />
-   <file name="tests/Stream/detach_001.phpt" role="test" />
-   <file name="tests/Stream/detach_002.phpt" role="test" />
-   <file name="tests/Stream/detach_003.phpt" role="test" />
-   <file name="tests/Stream/eof_001.phpt" role="test" />
-   <file name="tests/Stream/eof_002.phpt" role="test" />
-   <file name="tests/Stream/eof_003.phpt" role="test" />
-   <file name="tests/Stream/getContents_001.phpt" role="test" />
-   <file name="tests/Stream/getContents_002.phpt" role="test" />
-   <file name="tests/Stream/getContents_err01.phpt" role="test" />
-   <file name="tests/Stream/getMetadata_001.phpt" role="test" />
-   <file name="tests/Stream/getMetadata_002.phpt" role="test" />
-   <file name="tests/Stream/getSize_001.phpt" role="test" />
-   <file name="tests/Stream/isReadable_001.phpt" role="test" />
-   <file name="tests/Stream/isReadable_002.phpt" role="test" />
-   <file name="tests/Stream/isSeekable_001.phpt" role="test" />
-   <file name="tests/Stream/isSeekable_002.phpt" role="test" />
-   <file name="tests/Stream/isWritable_001.phpt" role="test" />
-   <file name="tests/Stream/isWritable_002.phpt" role="test" />
-   <file name="tests/Stream/read_001.phpt" role="test" />
-   <file name="tests/Stream/read_err01.phpt" role="test" />
-   <file name="tests/Stream/read_err02.phpt" role="test" />
-   <file name="tests/Stream/read_err03.phpt" role="test" />
-   <file name="tests/Stream/rewind_001.phpt" role="test" />
-   <file name="tests/Stream/seek_001.phpt" role="test" />
-   <file name="tests/Stream/seek_err01.phpt" role="test" />
-   <file name="tests/Stream/seek_err02.phpt" role="test" />
-   <file name="tests/Stream/seek_err03.phpt" role="test" />
-   <file name="tests/Stream/seek_err04.phpt" role="test" />
-   <file name="tests/Stream/tell_001.phpt" role="test" />
-   <file name="tests/Stream/__toString_001.phpt" role="test" />
-   <file name="tests/Stream/__toString_002.phpt" role="test" />
-   <file name="tests/Stream/__toString_003.phpt" role="test" />
-   <file name="tests/Stream/write_001.phpt" role="test" />
-   <file name="tests/Stream/write_err01.phpt" role="test" />
-   <file name="tests/Stream/write_err02.phpt" role="test" />
-   <file name="tests/Stream/write_err03.phpt" role="test" />
-   <file name="tests/UploadedFile/__construct_001.phpt" role="test" />
-   <file name="tests/UploadedFile/__construct_002.phpt" role="test" />
-   <file name="tests/UploadedFile/__construct_003.phpt" role="test" />
-   <file name="tests/UploadedFile/__construct_004.phpt" role="test" />
-   <file name="tests/UploadedFile/getStream_001.phpt" role="test" />
-   <file name="tests/UploadedFile/getStream_002.phpt" role="test" />
-   <file name="tests/UploadedFile/getStream_err01.phpt" role="test" />
-   <file name="tests/UploadedFile/getStream_err02.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_001.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_002.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_err01.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_err02.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_err03.phpt" role="test" />
-   <file name="tests/UploadedFile/moveTo_err04.phpt" role="test" />
-   <file name="tests/Uri/authority_001.phpt" role="test" />
-   <file name="tests/Uri/authority_002.phpt" role="test" />
-   <file name="tests/Uri/authority_003.phpt" role="test" />
-   <file name="tests/Uri/__construct_001.phpt" role="test" />
-   <file name="tests/Uri/__construct_002.phpt" role="test" />
-   <file name="tests/Uri/__construct_003.phpt" role="test" />
-   <file name="tests/Uri/__construct_004.phpt" role="test" />
-   <file name="tests/Uri/__construct_005.phpt" role="test" />
-   <file name="tests/Uri/__construct_006.phpt" role="test" />
-   <file name="tests/Uri/__construct_007.phpt" role="test" />
-   <file name="tests/Uri/__construct_008.phpt" role="test" />
-   <file name="tests/Uri/__construct_err01.phpt" role="test" />
-   <file name="tests/Uri/__construct_err02.phpt" role="test" />
-   <file name="tests/Uri/fragment_001.phpt" role="test" />
-   <file name="tests/Uri/fragment_002.phpt" role="test" />
-   <file name="tests/Uri/fragment_err01.phpt" role="test" />
-   <file name="tests/Uri/fragment_err02.phpt" role="test" />
-   <file name="tests/Uri/host_001.phpt" role="test" />
-   <file name="tests/Uri/host_002.phpt" role="test" />
-   <file name="tests/Uri/host_error.phpt" role="test" />
-   <file name="tests/Uri/path_001.phpt" role="test" />
-   <file name="tests/Uri/path_002.phpt" role="test" />
-   <file name="tests/Uri/path_err01.phpt" role="test" />
-   <file name="tests/Uri/path_err02.phpt" role="test" />
-   <file name="tests/Uri/port_001.phpt" role="test" />
-   <file name="tests/Uri/port_002.phpt" role="test" />
-   <file name="tests/Uri/port_err01.phpt" role="test" />
-   <file name="tests/Uri/port_err02.phpt" role="test" />
-   <file name="tests/Uri/query_001.phpt" role="test" />
-   <file name="tests/Uri/query_002.phpt" role="test" />
-   <file name="tests/Uri/query_err01.phpt" role="test" />
-   <file name="tests/Uri/query_err02.phpt" role="test" />
-   <file name="tests/Uri/scheme_001.phpt" role="test" />
-   <file name="tests/Uri/scheme_002.phpt" role="test" />
-   <file name="tests/Uri/scheme_err01.phpt" role="test" />
-   <file name="tests/Uri/scheme_err02.phpt" role="test" />
-   <file name="tests/Uri/__toString_001.phpt" role="test" />
-   <file name="tests/Uri/__toString_002.phpt" role="test" />
-   <file name="tests/Uri/__toString_003.phpt" role="test" />
-   <file name="tests/Uri/__toString_004.phpt" role="test" />
-   <file name="tests/Uri/__toString_005.phpt" role="test" />
-   <file name="tests/Uri/__toString_006.phpt" role="test" />
-   <file name="tests/Uri/__toString_007.phpt" role="test" />
-   <file name="tests/Uri/__toString_008.phpt" role="test" />
-   <file name="tests/Uri/__toString_009.phpt" role="test" />
-   <file name="tests/Uri/userInfo_001.phpt" role="test" />
-   <file name="tests/Uri/userInfo_002.phpt" role="test" />
-   <file name="tests/Uri/userInfo_err01.phpt" role="test" />
-   <file name="tests/Uri/userInfo_err02.phpt" role="test" />
+   <file name="config.m4" role="src"/>
+   <file name="config.w32" role="src"/>
+   <file name="CREDITS" role="doc"/>
+   <file name="factory.c" role="src"/>
+   <file name="http_message.c" role="src"/>
+   <file name="LICENSE" role="doc"/>
+   <file name="macros.h" role="src"/>
+   <file name="Makefile.frag" role="src"/>
+   <file name="message.c" role="src"/>
+   <file name="php_http_message.h" role="src"/>
+   <file name="README.md" role="doc"/>
+   <file name="request.c" role="src"/>
+   <file name="response.c" role="src"/>
+   <file name="response.h" role="src"/>
+   <file name="server_request.c" role="src"/>
+   <file name="stream.c" role="src"/>
+   <file name="stream.h" role="src"/>
+   <file name="uploaded_file.c" role="src"/>
+   <file name="uploaded_file.h" role="src"/>
+   <file name="uri.c" role="src"/>
+   <dir name="autoconf">
+    <file name="pecl.m4" role="src"/>
+   </dir>
+   <dir name="tests">
+    <dir name="Factory">
+     <file name="createRequest_001.phpt" role="test"/>
+     <file name="createRequest_002.phpt" role="test"/>
+     <file name="createResponse_001.phpt" role="test"/>
+     <file name="createResponse_002.phpt" role="test"/>
+     <file name="createResponse_003.phpt" role="test"/>
+     <file name="createResponse_004.phpt" role="test"/>
+     <file name="createResponse_err01.phpt" role="test"/>
+     <file name="createResponse_err02.phpt" role="test"/>
+     <file name="createServerRequest_001.phpt" role="test"/>
+     <file name="createServerRequest_002.phpt" role="test"/>
+     <file name="createServerRequest_003.phpt" role="test"/>
+     <file name="createServerRequest_err01.phpt" role="test"/>
+     <file name="createStream_001.phpt" role="test"/>
+     <file name="createStream_002.phpt" role="test"/>
+     <file name="createStream_err01.phpt" role="test"/>
+     <file name="createStreamFromFile_001.phpt" role="test"/>
+     <file name="createStreamFromFile_002.phpt" role="test"/>
+     <file name="createStreamFromFile_003.phpt" role="test"/>
+     <file name="createStreamFromFile_err01.phpt" role="test"/>
+     <file name="createStreamFromFile_err02.phpt" role="test"/>
+     <file name="createStreamFromResource_001.phpt" role="test"/>
+     <file name="createStreamFromResource_err01.phpt" role="test"/>
+     <file name="createStreamFromResource_err02.phpt" role="test"/>
+     <file name="createUploadedFile_001.phpt" role="test"/>
+     <file name="createUploadedFile_002.phpt" role="test"/>
+     <file name="createUploadedFile_003.phpt" role="test"/>
+     <file name="createUploadedFile_err01.phpt" role="test"/>
+     <file name="createUploadedFile_err02.phpt" role="test"/>
+    </dir>
+    <dir name="Message">
+     <file name="body_001.phpt" role="test"/>
+     <file name="body_err01.phpt" role="test"/>
+     <file name="headers_001.phpt" role="test"/>
+     <file name="headers_002.phpt" role="test"/>
+     <file name="headers_err01.phpt" role="test"/>
+     <file name="headers_err02.phpt" role="test"/>
+     <file name="headers_err03.phpt" role="test"/>
+     <file name="headers_err04.phpt" role="test"/>
+     <file name="headers_err05.phpt" role="test"/>
+     <file name="protocolVersion_001.phpt" role="test"/>
+     <file name="protocolVersion_002.phpt" role="test"/>
+     <file name="protocolVersion_err01.phpt" role="test"/>
+    </dir>
+    <dir name="Request">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="method_001.phpt" role="test"/>
+     <file name="method_err01.phpt" role="test"/>
+     <file name="requestTarget_001.phpt" role="test"/>
+     <file name="requestTarget_002.phpt" role="test"/>
+     <file name="requestTarget_err01.phpt" role="test"/>
+     <file name="uri_001.phpt" role="test"/>
+     <file name="uri_err01.phpt" role="test"/>
+    </dir>
+    <dir name="Response">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="status_001.phpt" role="test"/>
+     <file name="status_002.phpt" role="test"/>
+     <file name="status_003.phpt" role="test"/>
+     <file name="status_004.phpt" role="test"/>
+     <file name="status_err01.phpt" role="test"/>
+     <file name="status_err02.phpt" role="test"/>
+    </dir>
+    <dir name="ServerRequest">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="__construct_002.phpt" role="test"/>
+     <file name="__construct_003.phpt" role="test"/>
+     <file name="__construct_004.phpt" role="test"/>
+     <file name="__construct_005.phpt" role="test"/>
+     <file name="__construct_err01.phpt" role="test"/>
+     <file name="attributes_001.phpt" role="test"/>
+     <file name="attributes_002.phpt" role="test"/>
+     <file name="attributes_err01.phpt" role="test"/>
+     <file name="cookieParams_001.phpt" role="test"/>
+     <file name="cookieParams_err01.phpt" role="test"/>
+     <file name="parsedBody_001.phpt" role="test"/>
+     <file name="parsedBody_err01.phpt" role="test"/>
+     <file name="queryParams_001.phpt" role="test"/>
+     <file name="queryParams_err01.phpt" role="test"/>
+    </dir>
+    <dir name="Stream">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="__construct_002.phpt" role="test"/>
+     <file name="__construct_003.phpt" role="test"/>
+     <file name="__construct_004.phpt" role="test"/>
+     <file name="__construct_err01.phpt" role="test"/>
+     <file name="__construct_err02.phpt" role="test"/>
+     <file name="__construct_err03.phpt" role="test"/>
+     <file name="__toString_001.phpt" role="test"/>
+     <file name="__toString_002.phpt" role="test"/>
+     <file name="__toString_003.phpt" role="test"/>
+     <file name="close_001.phpt" role="test"/>
+     <file name="close_002.phpt" role="test"/>
+     <file name="close_003.phpt" role="test"/>
+     <file name="detach_001.phpt" role="test"/>
+     <file name="detach_002.phpt" role="test"/>
+     <file name="detach_003.phpt" role="test"/>
+     <file name="eof_001.phpt" role="test"/>
+     <file name="eof_002.phpt" role="test"/>
+     <file name="eof_003.phpt" role="test"/>
+     <file name="getContents_001.phpt" role="test"/>
+     <file name="getContents_002.phpt" role="test"/>
+     <file name="getContents_err01.phpt" role="test"/>
+     <file name="getMetadata_001.phpt" role="test"/>
+     <file name="getMetadata_002.phpt" role="test"/>
+     <file name="getMetadata_003.phpt" role="test"/>
+     <file name="getSize_001.phpt" role="test"/>
+     <file name="isReadable_001.phpt" role="test"/>
+     <file name="isReadable_002.phpt" role="test"/>
+     <file name="isSeekable_001.phpt" role="test"/>
+     <file name="isSeekable_002.phpt" role="test"/>
+     <file name="isWritable_001.phpt" role="test"/>
+     <file name="isWritable_002.phpt" role="test"/>
+     <file name="read_001.phpt" role="test"/>
+     <file name="read_err01.phpt" role="test"/>
+     <file name="read_err02.phpt" role="test"/>
+     <file name="read_err03.phpt" role="test"/>
+     <file name="rewind_001.phpt" role="test"/>
+     <file name="seek_001.phpt" role="test"/>
+     <file name="seek_err01.phpt" role="test"/>
+     <file name="seek_err02.phpt" role="test"/>
+     <file name="seek_err03.phpt" role="test"/>
+     <file name="seek_err04.phpt" role="test"/>
+     <file name="tell_001.phpt" role="test"/>
+     <file name="write_001.phpt" role="test"/>
+     <file name="write_err01.phpt" role="test"/>
+     <file name="write_err02.phpt" role="test"/>
+     <file name="write_err03.phpt" role="test"/>
+    </dir>
+    <dir name="UploadedFile">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="__construct_002.phpt" role="test"/>
+     <file name="__construct_003.phpt" role="test"/>
+     <file name="__construct_004.phpt" role="test"/>
+     <file name="__construct_005.phpt" role="test"/>
+     <file name="__construct_err01.phpt" role="test"/>
+     <file name="__construct_err02.phpt" role="test"/>
+     <file name="getStream_001.phpt" role="test"/>
+     <file name="getStream_002.phpt" role="test"/>
+     <file name="getStream_err01.phpt" role="test"/>
+     <file name="getStream_err02.phpt" role="test"/>
+     <file name="getStream_err03.phpt" role="test"/>
+     <file name="moveTo_001.phpt" role="test"/>
+     <file name="moveTo_002.phpt" role="test"/>
+     <file name="moveTo_003.phpt" role="test"/>
+     <file name="moveTo_err01.phpt" role="test"/>
+     <file name="moveTo_err02.phpt" role="test"/>
+     <file name="moveTo_err03.phpt" role="test"/>
+     <file name="moveTo_err04.phpt" role="test"/>
+     <file name="moveTo_err05.phpt" role="test"/>
+    </dir>
+    <dir name="Uri">
+     <file name="__construct_001.phpt" role="test"/>
+     <file name="__construct_002.phpt" role="test"/>
+     <file name="__construct_003.phpt" role="test"/>
+     <file name="__construct_004.phpt" role="test"/>
+     <file name="__construct_005.phpt" role="test"/>
+     <file name="__construct_006.phpt" role="test"/>
+     <file name="__construct_007.phpt" role="test"/>
+     <file name="__construct_008.phpt" role="test"/>
+     <file name="__construct_err01.phpt" role="test"/>
+     <file name="__construct_err02.phpt" role="test"/>
+     <file name="__toString_001.phpt" role="test"/>
+     <file name="__toString_002.phpt" role="test"/>
+     <file name="__toString_003.phpt" role="test"/>
+     <file name="__toString_004.phpt" role="test"/>
+     <file name="__toString_005.phpt" role="test"/>
+     <file name="__toString_006.phpt" role="test"/>
+     <file name="__toString_007.phpt" role="test"/>
+     <file name="__toString_008.phpt" role="test"/>
+     <file name="__toString_009.phpt" role="test"/>
+     <file name="authority_001.phpt" role="test"/>
+     <file name="authority_002.phpt" role="test"/>
+     <file name="authority_003.phpt" role="test"/>
+     <file name="fragment_001.phpt" role="test"/>
+     <file name="fragment_002.phpt" role="test"/>
+     <file name="fragment_err01.phpt" role="test"/>
+     <file name="fragment_err02.phpt" role="test"/>
+     <file name="host_001.phpt" role="test"/>
+     <file name="host_002.phpt" role="test"/>
+     <file name="host_error.phpt" role="test"/>
+     <file name="path_001.phpt" role="test"/>
+     <file name="path_002.phpt" role="test"/>
+     <file name="path_err01.phpt" role="test"/>
+     <file name="path_err02.phpt" role="test"/>
+     <file name="port_001.phpt" role="test"/>
+     <file name="port_002.phpt" role="test"/>
+     <file name="port_err01.phpt" role="test"/>
+     <file name="port_err02.phpt" role="test"/>
+     <file name="query_001.phpt" role="test"/>
+     <file name="query_002.phpt" role="test"/>
+     <file name="query_err01.phpt" role="test"/>
+     <file name="query_err02.phpt" role="test"/>
+     <file name="scheme_001.phpt" role="test"/>
+     <file name="scheme_002.phpt" role="test"/>
+     <file name="scheme_err01.phpt" role="test"/>
+     <file name="scheme_err02.phpt" role="test"/>
+     <file name="userInfo_001.phpt" role="test"/>
+     <file name="userInfo_002.phpt" role="test"/>
+     <file name="userInfo_err01.phpt" role="test"/>
+     <file name="userInfo_err02.phpt" role="test"/>
+    </dir>
+   </dir>
   </dir>
  </contents>
  <dependencies>
@@ -203,9 +274,29 @@ Fixed default value issue with ServerRequest::getAttribute(). The method only ac
   </required>
  </dependencies>
  <providesextension>http_message</providesextension>
- <extsrcrelease />
-
+ <extsrcrelease/>
  <changelog>
+  <release>
+   <date>2019-09-05</date>
+   <time>01:05:20</time>
+   <version>
+    <release>0.2.0</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Added Factory class that implements all PSR-17 interfaces.
+All properties private.
+Allow filename and mode for Stream constructor.
+Allow StreamInterface object for UploadedFile constructor.
+Move uploaded file copies a stream if stream is supplied.
+Fixes and cleanup.
+   </notes>
+  </release>
   <release>
    <date>2019-07-28</date>
    <time>14:50:00</time>
@@ -222,7 +313,6 @@ Fixed default value issue with ServerRequest::getAttribute(). The method only ac
 Fixed default value issue with ServerRequest::getAttribute(). The method only accepted one argument.
    </notes>
   </release>
-
   <release>
    <date>2019-07-10</date>
    <time>12:00:00</time>
@@ -239,8 +329,5 @@ Fixed default value issue with ServerRequest::getAttribute(). The method only ac
 Initial release.
    </notes>
   </release>
-
  </changelog>
-
 </package>
-

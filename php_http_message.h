@@ -31,7 +31,7 @@
 #ifndef PHP_HTTP_MESSAGE_H
 #define PHP_HTTP_MESSAGE_H 1
 
-#define PHP_HTTP_MESSAGE_VERSION "0.1.1"
+#define PHP_HTTP_MESSAGE_VERSION "0.2.0"
 #define PHP_HTTP_MESSAGE_EXTNAME "http_message"
 
 #ifdef PHP_WIN32
