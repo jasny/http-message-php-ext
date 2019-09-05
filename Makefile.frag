@@ -20,3 +20,6 @@ mrproper: clean
 		configure configure.ac install-sh libtool ltmain.sh Makefile Makefile.fragments Makefile.global \
 		Makefile.objects missing mkinstalldirs run-tests.php
 
+package.xml: php_$(PHP_PECL_EXTENSION).h
+	$(PHP_EXECUTABLE) build-packagexml.php
+
