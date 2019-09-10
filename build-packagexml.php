@@ -41,11 +41,27 @@ $release = new Release();
 // 2. Process php_{extname}.h
 (function () use ($package, $release): void {
     $extname = (string)$package->name ?: getenv('PHP_PECL_EXTENSION') ?: null;
-    $filename = $extname !== null ? "php_{$extname}.h" : (glob('php_*.h')[0] ?? null);
 
-    if (!file_exists($filename)) {
-        throw new RuntimeException("{$filename} not found");
+    if ($extname !== null) {
+        $filename = "php_{$extname}.h";
+
+        if (!file_exists($filename)) {
+            throw new RuntimeException("{$filename} not found");
+        }
+    } else {
+        $filename = glob('php_*.h')[0] ?? null;
+
+        if ($filename === null) {
+            throw new RuntimeException("Couldn't find the main header file (php_*.h)");
+        }
+
+        $extname = preg_replace('/^php_(.+)\.h$/', '$1', $filename);
     }
+
+    if ((string)$package->name === '') {
+        $package->name = $extname;
+    }
+
 
     $macroPrefix = strtoupper(pathinfo($filename, PATHINFO_FILENAME));
     $contents = file_get_contents($filename);
@@ -55,20 +71,23 @@ $release = new Release();
     $macros = array_combine($matches['key'], $matches['value']);
 
     // Package name
-    if (!isset($macros['EXTNAME'])) {
-        throw new RuntimeException("$filename does not contain '{$macroPrefix}_EXTNAME' macro");
+    if (isset($macros['EXTNAME'])) {
+        if ((string)$package->name !== '' && (string)$package->name !== $macros['EXTNAME']) {
+            throw new RuntimeException("Package name '{$package->name}' (package.xml) doesn't match "
+                . "{$macroPrefix}_EXTNAME '{$macros['EXTNAME']}' ($filename)");
+        }
     }
-    if ((string)$package->name !== '' && (string)$package->name !== $macros['EXTNAME']) {
-        throw new RuntimeException("Package name '{$package->name}' (package.xml) doesn't match "
-            . "{$macroPrefix}_EXTNAME '{$macros['EXTNAME']}' ($filename)");
-    }
-    $package->name = $macros['EXTNAME'];
 
     // Release version
     if (!isset($macros['VERSION'])) {
         throw new RuntimeException("$filename does not contain {$macroPrefix}_VERSION macro");
     }
     $release->version = $macros['VERSION'];
+
+    if (strpos($release->version, 'dev') !== 0) {
+        throw new RuntimeException("Development versions shouldn't be released ({$macros['VERSION']}). "
+            . "Please change {$macroPrefix}_VERSION in $filename.");
+    }
     if ($release->existsIn($package->changelog)) {
         throw new RuntimeException("Version {$macros['VERSION']} already released. "
             . "Please change {$macroPrefix}_VERSION in $filename.");
