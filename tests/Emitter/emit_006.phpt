@@ -1,16 +1,16 @@
 --TEST--
-Emitter::emit() with a response status
---INI--
+Emitter::emit() with a response with response status
 --FILE--
 <?php
 $emitter = new HttpMessage\Emitter();
 $response = (new HttpMessage\Response())
-    ->withStatus(200, "Ok");
-$response->getBody()->write("Hello World");
+    ->withStatus(404)
+    ->withHeader("Foo", "Bar");
 
 $emitter->emit($response);
+
 ?>
 --EXPECTHEADERS--
-HTTP/1.1 200 OK
+HTTP/1.1 404 Not Found
+Foo: Bar
 --EXPECT--
-Hello World
