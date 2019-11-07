@@ -66,7 +66,7 @@ void add_header(zval *object, zend_string *name, zend_string *value, zend_bool a
         ZVAL_DEREF(header_values);
         array_init(header_values);
     }
-    add_next_index_str(header_values, value);
+    add_next_index_str(header_values, zend_string_copy(value));
 
     ZVAL_ARR(headers_prop, headers);
 }
@@ -181,7 +181,7 @@ PHP_METHOD(Message, getHeaderLine)
 
 PHP_METHOD(Message, withHeader)
 {
-    zend_string *name, *value;
+    zend_string *name = NULL, *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
         Z_PARAM_STR(name)
@@ -195,7 +195,7 @@ PHP_METHOD(Message, withHeader)
 
 PHP_METHOD(Message, withAddedHeader)
 {
-    zend_string *name, *value;
+    zend_string *name = NULL, *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
         Z_PARAM_STR(name)
@@ -211,7 +211,7 @@ PHP_METHOD(Message, withoutHeader)
 {
     zval rv, *headers_prop;
     HashTable *headers;
-    zend_string *name;
+    zend_string *name = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_STR(name)

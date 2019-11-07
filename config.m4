@@ -12,7 +12,7 @@ if test "$PHP_HTTP_MESSAGE" != "no"; then
 	PECL_HAVE_PHP_EXT([psr], [PECL_HAVE_PHP_EXT_HEADER([psr])], [AC_MSG_ERROR([please install and enable the psr extension])])
 
     AC_DEFINE(HAVE_HTTP_MESSAGE, 1, [Whether you have http_message])
-    PHP_NEW_EXTENSION(http_message, http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c factory.c, $ext_shared)
+    PHP_NEW_EXTENSION(http_message, http_message.c message.c request.c server_request.c response.c stream.c uri.c uploaded_file.c factory.c emitter.c, $ext_shared)
 
 	PHP_ADD_MAKEFILE_FRAGMENT
 	PHP_INSTALL_HEADERS([ext/http_message], [php_http_message.h])

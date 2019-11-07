@@ -1,5 +1,5 @@
 PHP_TEST_SHARED_EXTENSIONS =  ` \
-	echo "-d extension=$(EXTENSION_DIR)/psr.so"; \
+	echo "-d extension=$(EXTENSION_DIR)/psr.so" "-d zend_extension=$(EXTENSION_DIR)/xdebug.so"; \
 	if test "x$(PHP_MODULES)" != "x"; then \
 		for i in $(PHP_MODULES)""; do \
 			. $$i; $(top_srcdir)/build/shtool echo -n -- " -d extension=$$dlname"; \

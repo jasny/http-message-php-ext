@@ -11,5 +11,6 @@ new HttpMessage\ServerRequest();
 new HttpMessage\Response();
 
 new HttpMessage\Factory();
+new HttpMessage\Emitter();
 
 echo "ok";

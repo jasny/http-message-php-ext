@@ -225,7 +225,7 @@ PHP_METHOD(Factory, createUri)
 
 /* Define HttpMessage\Factory class */
 
-static const zend_function_entry request_functions[] = {
+static const zend_function_entry methods[] = {
     HTTP_MESSAGE_ME_EX(Factory, RequestFactory, createRequest)
     HTTP_MESSAGE_ME_EX(Factory, ResponseFactory, createResponse)
     HTTP_MESSAGE_ME_EX(Factory, ServerRequestFactory, createServerRequest)
@@ -261,7 +261,7 @@ PHP_MINIT_FUNCTION(http_message_factory)
         return FAILURE;
     }
 
-    INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Factory", request_functions);
+    INIT_NS_CLASS_ENTRY(ce, "HttpMessage", "Factory", methods);
 
     HttpMessage_Factory_ce = zend_register_internal_class(&ce);
     zend_class_implements(HttpMessage_Factory_ce, 6, request_factory, response_factory, serverrequest_factory,

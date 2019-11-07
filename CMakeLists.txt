@@ -4,7 +4,17 @@ project(http_message C)
 add_compile_definitions(HAVE_HTTP_MESSAGE)
 
 set(SOURCE_FILES php_http_message
-        http_message.c message.c request.c uri.c server_request.c response.c stream.c uploaded_file.c factory.c)
+        http_message.c
+        message.c
+        request.c
+        server_request.c
+        response.c
+        uri.c
+        stream.c
+        uploaded_file.c
+        factory.c
+        emitter.c
+)
 
 execute_process (
         COMMAND php-config --include-dir
