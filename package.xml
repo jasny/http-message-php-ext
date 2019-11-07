@@ -10,9 +10,9 @@
   <email>jasny@php.net</email>
   <active>yes</active>
  </lead>
- <date>2019-09-05</date>
+ <date>2019-11-07</date>
  <version>
-  <release>0.2.0</release>
+  <release>0.2.1</release>
   <api>0.2.0</api>
  </version>
  <stability>
@@ -21,18 +21,18 @@
  </stability>
  <license uri="https://opensource.org/licenses/MIT">MIT License</license>
  <notes>
-Added Factory class that implements all PSR-17 interfaces.
-All properties private.
-Allow filename and mode for Stream constructor.
-Allow StreamInterface object for UploadedFile constructor.
-Move uploaded file copies a stream if stream is supplied.
-Fixes and cleanup.
+Added `HttpMessage\Emitter`.
+Emitter outputs header and body.
+XDebug is needed to test emitter.
+
+Fixed segfault for `withHeader()` when using a non-string var.
  </notes>
  <contents>
   <dir name="/">
    <file name="config.m4" role="src"/>
    <file name="config.w32" role="src"/>
    <file name="CREDITS" role="doc"/>
+   <file name="emitter.c" role="src"/>
    <file name="factory.c" role="src"/>
    <file name="http_message.c" role="src"/>
    <file name="LICENSE" role="doc"/>
@@ -54,6 +54,15 @@ Fixes and cleanup.
     <file name="pecl.m4" role="src"/>
    </dir>
    <dir name="tests">
+    <dir name="Emitter">
+     <file name="emit_001.phpt" role="test"/>
+     <file name="emit_002.phpt" role="test"/>
+     <file name="emit_003.phpt" role="test"/>
+     <file name="emit_004.phpt" role="test"/>
+     <file name="emit_005.phpt" role="test"/>
+     <file name="emit_006.phpt" role="test"/>
+     <file name="emit_007.phpt" role="test"/>
+    </dir>
     <dir name="Factory">
      <file name="createRequest_001.phpt" role="test"/>
      <file name="createRequest_002.phpt" role="test"/>
@@ -89,6 +98,7 @@ Fixes and cleanup.
      <file name="body_err01.phpt" role="test"/>
      <file name="headers_001.phpt" role="test"/>
      <file name="headers_002.phpt" role="test"/>
+     <file name="headers_003.phpt" role="test"/>
      <file name="headers_err01.phpt" role="test"/>
      <file name="headers_err02.phpt" role="test"/>
      <file name="headers_err03.phpt" role="test"/>
@@ -276,6 +286,26 @@ Fixes and cleanup.
  <providesextension>http_message</providesextension>
  <extsrcrelease/>
  <changelog>
+  <release>
+   <date>2019-11-07</date>
+   <time>01:45:11</time>
+   <version>
+    <release>0.2.1</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Added `HttpMessage\Emitter`.
+Emitter outputs header and body.
+XDebug is needed to test emitter.
+
+Fixed segfault for `withHeader()` when using a non-string var.
+   </notes>
+  </release>
   <release>
    <date>2019-09-05</date>
    <time>01:05:20</time>
