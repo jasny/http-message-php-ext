@@ -210,16 +210,16 @@ PHP_METHOD(Factory, createUri)
     zend_string *uri = NULL;
     zval zuri;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 0)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 0, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_STR_EX(uri, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
     if (uri == NULL) {
-        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 0);
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Uri_ce, 0);
     } else {
         ZVAL_STR(&zuri, uri);
-        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 1, &zuri);
+        NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Uri_ce, 1, &zuri);
     }
 }
 

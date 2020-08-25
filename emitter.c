@@ -70,7 +70,7 @@ int read_response_body(zval *response, zval *contents)
     ZVAL_NULL(&body);
     ZVAL_NULL(contents);
 
-    zend_call_method_with_0_params(response, NULL, NULL, "getBody",&body);
+    zend_call_method_with_0_params(response, NULL, NULL, "getBody", &body);
 
     if (EXPECTED(Z_TYPE(body) == IS_OBJECT)) {
         zend_call_method_with_0_params(&body, NULL, NULL, "__toString", contents);
@@ -95,9 +95,9 @@ void emit_status(zval *response)
     ZVAL_NULL(&reason_phrase);
 
     zend_call_method_with_0_params(response, NULL, NULL, "getProtocolVersion", &version);
-    zend_call_method_with_0_params(response, NULL, NULL, "getStatusCode",&status_code);
-    zend_call_method_with_0_params(response, NULL, NULL, "getReasonPhrase",&reason_phrase);
-
+    zend_call_method_with_0_params(response, NULL, NULL, "getStatusCode", &status_code);
+    zend_call_method_with_0_params(response, NULL, NULL, "getReasonPhrase", &reason_phrase);
+    
     code = Z_LVAL(status_code);
 
     if (Z_STRLEN(reason_phrase) > 0) {
@@ -110,7 +110,7 @@ void emit_status(zval *response)
 
     ctr.line_len = Z_STRLEN(version) + phrase_len + 10;
     ctr.line = emalloc(ctr.line_len);
-    zend_sprintf(ctr.line, "HTTP/%.*s %3lu %.*s", Z_STRLEN(version), Z_STRVAL(version), code, phrase_len, phrase);
+    zend_sprintf(ctr.line, "HTTP/%.*s %3lu %.*s", (int)Z_STRLEN(version), Z_STRVAL(version), code, (int)phrase_len, phrase);
     ctr.response_code = code;
 
     sapi_header_op(SAPI_HEADER_REPLACE, &ctr);
@@ -125,7 +125,7 @@ void emit_header(zend_string *header_name, zend_array *header_lines)
     sapi_header_line ctr = {NULL, 0, 0};
     ctr.line = emalloc(256);
 
-    ZEND_HASH_FOREACH_VAL(header_lines, header_line){
+    ZEND_HASH_FOREACH_VAL(header_lines, header_line) {
         ctr.line_len = ZSTR_LEN(header_name) + Z_STRLEN_P(header_line) + 2;
 
         // Reuse ctr: resize if needed.
@@ -153,7 +153,7 @@ void emit_headers(zval *response)
 
     ZEND_HASH_FOREACH_KEY_VAL(Z_ARR(headers), index, header_name, header_lines) {
         if (UNEXPECTED(header_name == NULL)) {
-            zend_error(E_WARNING, "Unexpected response header key '%d': header names should not be numeric", index);
+            zend_error(E_WARNING, "Unexpected response header key '%ld': header names should not be numeric", index);
             continue;
         }
 
