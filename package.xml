@@ -10,9 +10,9 @@
   <email>jasny@php.net</email>
   <active>yes</active>
  </lead>
- <date>2019-11-07</date>
+ <date>2020-08-25</date>
  <version>
-  <release>0.2.1</release>
+  <release>0.2.2</release>
   <api>0.2.0</api>
  </version>
  <stability>
@@ -21,11 +21,7 @@
  </stability>
  <license uri="https://opensource.org/licenses/MIT">MIT License</license>
  <notes>
-Added `HttpMessage\Emitter`.
-Emitter outputs header and body.
-XDebug is needed to test emitter.
-
-Fixed segfault for `withHeader()` when using a non-string var.
+Fixed HttpMessage\Factory::createUri()
  </notes>
  <contents>
   <dir name="/">
@@ -92,6 +88,8 @@ Fixed segfault for `withHeader()` when using a non-string var.
      <file name="createUploadedFile_003.phpt" role="test"/>
      <file name="createUploadedFile_err01.phpt" role="test"/>
      <file name="createUploadedFile_err02.phpt" role="test"/>
+     <file name="createUri_001.phpt" role="test"/>
+     <file name="createUri_002.phpt" role="test"/>
     </dir>
     <dir name="Message">
      <file name="body_001.phpt" role="test"/>
@@ -286,6 +284,22 @@ Fixed segfault for `withHeader()` when using a non-string var.
  <providesextension>http_message</providesextension>
  <extsrcrelease/>
  <changelog>
+  <release>
+   <date>2020-08-25</date>
+   <time>11:20:40</time>
+   <version>
+    <release>0.2.2</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Fixed HttpMessage\Factory::createUri()
+   </notes>
+  </release>
   <release>
    <date>2019-11-07</date>
    <time>01:45:11</time>
