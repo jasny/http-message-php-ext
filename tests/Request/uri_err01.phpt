@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\Request::withUri() expects exactly 1 parameter, 0 given
-Argument 1 passed to HttpMessage\Request::withUri() must implement interface Psr\Http\Message\UriInterface, string given
+%sttpMessage\Request::withUri()%sPsr\Http\Message\UriInterface, string given

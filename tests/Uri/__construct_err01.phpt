@@ -8,5 +8,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-Argument 1 passed to HttpMessage\Uri::__construct() must be of the type string, array given
+--EXPECTF--
+%sttpMessage\Uri::__construct()%s string, array given

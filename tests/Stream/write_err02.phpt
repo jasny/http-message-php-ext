@@ -11,5 +11,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Stream::write() expects parameter 1 to be string, array given
+--EXPECTF--
+HttpMessage\Stream::write()%s string, array given

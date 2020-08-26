@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\Request::withMethod() expects exactly 1 parameter, 0 given
-HttpMessage\Request::withMethod() expects parameter 1 to be string, array given
+HttpMessage\Request::withMethod()%sstring, array given

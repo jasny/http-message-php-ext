@@ -82,8 +82,8 @@ PHP_METHOD(Factory, createRequest)
     if (uri_param_as_object(uri) == FAILURE) return;
 
     NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_Request_ce, 0);
-    zend_update_property_str(HttpMessage_Request_ce, return_value, ZEND_STRL("method"), method);
-    zend_update_property(HttpMessage_Request_ce, return_value, ZEND_STRL("uri"), uri);
+    zend_update_property_str(HttpMessage_Request_ce, PROPERTY_ARG(return_value), ZEND_STRL("method"), method);
+    zend_update_property(HttpMessage_Request_ce, PROPERTY_ARG(return_value), ZEND_STRL("uri"), uri);
 }
 
 PHP_METHOD(Factory, createResponse)
@@ -122,8 +122,8 @@ PHP_METHOD(Factory, createServerRequest)
         NEW_OBJECT_CONSTRUCT(return_value, HttpMessage_ServerRequest_ce, 1, serverParams);
     }
 
-    zend_update_property_str(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("method"), method);
-    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("uri"), uri);
+    zend_update_property_str(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("method"), method);
+    zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("uri"), uri);
 }
 
 PHP_METHOD(Factory, createStream)

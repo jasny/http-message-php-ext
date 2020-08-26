@@ -41,10 +41,10 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\UploadedFile::__construct() expects parameter 1 to be a string or object that implements Psr\Http\Message\StreamInterface, array given
-HttpMessage\UploadedFile::__construct() expects parameter 1 to be a string or object that implements Psr\Http\Message\StreamInterface, object given
-Argument 2 passed to HttpMessage\UploadedFile::__construct() must be of the type int or null, array given
-Argument 3 passed to HttpMessage\UploadedFile::__construct() must be of the type int, array given
-Argument 4 passed to HttpMessage\UploadedFile::__construct() must be of the type string or null, array given
-Argument 5 passed to HttpMessage\UploadedFile::__construct() must be of the type string or null, array given
+HttpMessage\UploadedFile::__construct() expects parameter 1 to be a string or object that implements Psr\Http\Message\StreamInterface, %s given
+%sttpMessage\UploadedFile::__construct()%s, array given
+%sttpMessage\UploadedFile::__construct()%s, array given
+%sttpMessage\UploadedFile::__construct()%s, array given
+%sttpMessage\UploadedFile::__construct()%s, array given

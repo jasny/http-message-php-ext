@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\ServerRequest::withQueryParams() expects exactly 1 parameter, 0 given
-Argument 1 passed to HttpMessage\ServerRequest::withQueryParams() must be of the type array, string given
+%sttpMessage\ServerRequest::withQueryParams()%s array, string given

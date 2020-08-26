@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
-Argument 1 passed to HttpMessage\Factory::createResponse() must be of the type int, string given
-Argument 2 passed to HttpMessage\Factory::createResponse() must be of the type string, array given
+--EXPECTF--
+%sttpMessage\Factory::createResponse()%sint, string given
+%sttpMessage\Factory::createResponse()%sstring, array given

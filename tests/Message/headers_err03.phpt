@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
-HttpMessage\Message::withoutHeader() expects parameter 1 to be string, array given
+--EXPECTF--
+HttpMessage\Message::withoutHeader()%sstring, array given
 HttpMessage\Message::withoutHeader() expects exactly 1 parameter, 0 given

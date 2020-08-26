@@ -18,5 +18,5 @@ try {
 }
 ?>
 --EXPECTF--
-HttpMessage\Stream::read() expects parameter 1 to be int, string given
+HttpMessage\Stream::read()%s int, string given
 Length parameter must be equal or greater than 0

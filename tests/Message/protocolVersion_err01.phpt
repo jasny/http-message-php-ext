@@ -16,6 +16,6 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\Message::withProtocolVersion() expects exactly 1 parameter, 0 given
-HttpMessage\Message::withProtocolVersion() expects parameter 1 to be string, array given
+HttpMessage\Message::withProtocolVersion()%sstring, array given

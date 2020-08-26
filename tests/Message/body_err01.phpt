@@ -18,6 +18,6 @@ try {
 }
 
 ?>
---EXPECT--
-Argument 1 passed to HttpMessage\Message::withBody() must implement interface Psr\Http\Message\StreamInterface, resource given
+--EXPECTF--
+%sttpMessage\Message::withBody()%s Psr\Http\Message\StreamInterface, resource given
 HttpMessage\Message::withBody() expects exactly 1 parameter, 0 given

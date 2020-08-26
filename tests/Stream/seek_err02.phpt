@@ -18,5 +18,5 @@ try {
 }
 ?>
 --EXPECTF--
-HttpMessage\Stream::seek() expects parameter 1 to be int, string given
-HttpMessage\Stream::seek() expects parameter 2 to be int, string given
+HttpMessage\Stream::seek()%s int, string given
+HttpMessage\Stream::seek()%s int, string given

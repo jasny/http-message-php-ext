@@ -11,5 +11,5 @@ try {
 }
 
 ?>
---EXPECT--
-Argument 1 passed to HttpMessage\Factory::createStream() must be of the type string, array given
+--EXPECTF--
+%sttpMessage\Factory::createStream()%sstring, array given
