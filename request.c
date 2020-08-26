@@ -47,8 +47,10 @@ zend_class_entry *HttpMessage_Request_ce = NULL;
 
 /* __construct */
 
+/* unused
 ZEND_BEGIN_ARG_INFO_EX(arginfo_Request_construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
+*/
 
 PHP_METHOD(Request, __construct)
 {
@@ -129,12 +131,10 @@ PHP_METHOD(Request, getMethod)
 
 PHP_METHOD(Request, withMethod)
 {
-    int u;
     zend_string *value = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
         Z_PARAM_STR(value)
-        u = _i + 5;
     ZEND_PARSE_PARAMETERS_END();
 
     ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));

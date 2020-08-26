@@ -115,6 +115,7 @@ void init_headers_from_params(zval *object, HashTable *serverParams)
     headers = Z_ARR_P(zend_read_property(HttpMessage_Message_ce, object, ZEND_STRL("headers"), 0, &rv));
 
     ZEND_HASH_FOREACH_KEY_VAL(serverParams, index, key, val) {
+        (void)index; /* NOOP, to avoid unused warning */
         if (UNEXPECTED(key == NULL)) continue;
 
         if (ZSTR_LEN(key) > 5 && strncmp("HTTP_", ZSTR_VAL(key), 5) == 0 && EXPECTED(Z_TYPE_P(val) == IS_STRING)) {

@@ -71,10 +71,12 @@ int response_set_status(zval *obj, zend_long code, zend_string *phrase)
 
 /* __construct */
 
+/* unused
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageServerRequest_construct, 0, 0, 0)
     ZEND_ARG_TYPE_INFO(0, statusCode, IS_LONG, 0)
     ZEND_ARG_TYPE_INFO(0, reasonPhrase, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+*/
 
 PHP_METHOD(Response, __construct)
 {
