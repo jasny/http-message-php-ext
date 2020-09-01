@@ -70,10 +70,10 @@ int read_response_body(zval *response, zval *contents)
     ZVAL_NULL(&body);
     ZVAL_NULL(contents);
 
-    zend_call_method_with_0_params(response, NULL, NULL, "getBody", &body);
+    zend_call_method_with_0_params(PROPERTY_ARG(response), NULL, NULL, "getBody", &body);
 
     if (EXPECTED(Z_TYPE(body) == IS_OBJECT)) {
-        zend_call_method_with_0_params(&body, NULL, NULL, "__toString", contents);
+        zend_call_method_with_0_params(PROPERTY_ARG(&body), NULL, NULL, "__toString", contents);
     }
 
     if (UNEXPECTED(Z_TYPE_P(contents) != IS_STRING)) {
@@ -94,9 +94,9 @@ void emit_status(zval *response)
     ZVAL_NULL(&status_code);
     ZVAL_NULL(&reason_phrase);
 
-    zend_call_method_with_0_params(response, NULL, NULL, "getProtocolVersion", &version);
-    zend_call_method_with_0_params(response, NULL, NULL, "getStatusCode", &status_code);
-    zend_call_method_with_0_params(response, NULL, NULL, "getReasonPhrase", &reason_phrase);
+    zend_call_method_with_0_params(PROPERTY_ARG(response), NULL, NULL, "getProtocolVersion", &version);
+    zend_call_method_with_0_params(PROPERTY_ARG(response), NULL, NULL, "getStatusCode", &status_code);
+    zend_call_method_with_0_params(PROPERTY_ARG(response), NULL, NULL, "getReasonPhrase", &reason_phrase);
     
     code = Z_LVAL(status_code);
 
@@ -110,12 +110,12 @@ void emit_status(zval *response)
 
     ctr.line_len = Z_STRLEN(version) + phrase_len + 10;
     ctr.line = emalloc(ctr.line_len);
-    zend_sprintf(ctr.line, "HTTP/%.*s %3lu %.*s", (int)Z_STRLEN(version), Z_STRVAL(version), code, (int)phrase_len, phrase);
+    zend_sprintf((char *)ctr.line, "HTTP/%.*s %3lu %.*s", (int)Z_STRLEN(version), Z_STRVAL(version), code, (int)phrase_len, phrase);
     ctr.response_code = code;
 
     sapi_header_op(SAPI_HEADER_REPLACE, &ctr);
 
-    efree(ctr.line);
+    efree((char *)ctr.line);
 }
 
 void emit_header(zend_string *header_name, zend_array *header_lines)
@@ -130,16 +130,16 @@ void emit_header(zend_string *header_name, zend_array *header_lines)
 
         // Reuse ctr: resize if needed.
         if (ctr.line_len >= max_header_size) {
-            efree(ctr.line);
+            efree((char *)ctr.line);
             max_header_size = (ctr.line_len + 255) - ((ctr.line_len + 255) % 256);
             ctr.line = emalloc(max_header_size);
         }
 
-        zend_sprintf(ctr.line, "%s: %s", ZSTR_VAL(header_name), Z_STRVAL_P(header_line));
+        zend_sprintf((char *)ctr.line, "%s: %s", ZSTR_VAL(header_name), Z_STRVAL_P(header_line));
         sapi_header_op(SAPI_HEADER_ADD, &ctr);
     } ZEND_HASH_FOREACH_END();
 
-    efree(ctr.line);
+    efree((char *)ctr.line);
 }
 
 void emit_headers(zval *response)
@@ -149,7 +149,7 @@ void emit_headers(zval *response)
     zend_string *header_name;
     zend_long index;
 
-    zend_call_method_with_0_params(response, NULL, NULL, "getHeaders", &headers);
+    zend_call_method_with_0_params(PROPERTY_ARG(response), NULL, NULL, "getHeaders", &headers);
 
     ZEND_HASH_FOREACH_KEY_VAL(Z_ARR(headers), index, header_name, header_lines) {
         if (UNEXPECTED(header_name == NULL)) {

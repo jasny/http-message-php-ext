@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
-HttpMessage\Message::getHeaderLine() expects parameter 1 to be string, array given
+--EXPECTF--
+HttpMessage\Message::getHeaderLine()%sstring, array given
 HttpMessage\Message::getHeaderLine() expects exactly 1 parameter, 0 given

@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\ServerRequest::withAttribute() expects exactly 2 parameters, 1 given
-HttpMessage\ServerRequest::withAttribute() expects parameter 1 to be string, array given
+HttpMessage\ServerRequest::withAttribute()%s string, array given

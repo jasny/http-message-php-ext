@@ -17,6 +17,6 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\ServerRequest::withCookieParams() expects exactly 1 parameter, 0 given
-Argument 1 passed to HttpMessage\ServerRequest::withCookieParams() must be of the type array, string given
+%sttpMessage\ServerRequest::withCookieParams()%s array, string given

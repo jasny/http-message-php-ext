@@ -23,7 +23,7 @@ try {
 }
 
 ?>
---EXPECT--
+--EXPECTF--
 HttpMessage\Response::withStatus() expects at least 1 parameter, 0 given
-HttpMessage\Response::withStatus() expects parameter 1 to be int, string given
-HttpMessage\Response::withStatus() expects parameter 2 to be string, array given
+HttpMessage\Response::withStatus()%sint, string given
+HttpMessage\Response::withStatus()%sstring, array given

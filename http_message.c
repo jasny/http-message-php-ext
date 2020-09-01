@@ -45,21 +45,6 @@ static const zend_module_dep deps[] = {
     {NULL, NULL, NULL}
 };
 
-zend_module_entry http_message_module_entry = {
-    STANDARD_MODULE_HEADER_EX,
-    NULL,
-    deps,
-    PHP_HTTP_MESSAGE_EXTNAME,
-    NULL,
-    PHP_MINIT(http_message),
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    PHP_HTTP_MESSAGE_VERSION,
-    STANDARD_MODULE_PROPERTIES
-};
-
 PHP_MINIT_FUNCTION(http_message)
 {
     int success =
@@ -75,6 +60,21 @@ PHP_MINIT_FUNCTION(http_message)
 
     return ZEND_NORMALIZE_BOOL(success);
 }
+
+zend_module_entry http_message_module_entry = {
+    STANDARD_MODULE_HEADER_EX,
+    NULL,
+    deps,
+    PHP_HTTP_MESSAGE_EXTNAME,
+    NULL,
+    PHP_MINIT(http_message),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    PHP_HTTP_MESSAGE_VERSION,
+    STANDARD_MODULE_PROPERTIES
+};
 
 #ifdef COMPILE_DL_HTTP_MESSAGE
 ZEND_GET_MODULE(http_message)

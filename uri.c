@@ -53,7 +53,7 @@ void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t
     }
 
     if (pass_len == 0) {
-        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("userInfo"), user, user_len);
+        zend_update_property_stringl(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("userInfo"), user, user_len);
     } else {
         userinfo = emalloc(user_len + pass_len + 2);
         if (UNEXPECTED(userinfo == NULL)) return; // Memory issue
@@ -62,7 +62,7 @@ void uri_set_userinfo(zval *uri, char *user, size_t user_len, char *pass, size_t
         pass[pass_len] = '\0';
         sprintf(userinfo, "%s:%s", user, pass);
 
-        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("userInfo"), userinfo, user_len + pass_len + 1);
+        zend_update_property_stringl(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("userInfo"), userinfo, user_len + pass_len + 1);
 
         efree(userinfo);
     }
@@ -100,7 +100,7 @@ PHP_METHOD(Uri, __construct)
         SET_URI_PROPERTY(HttpMessage_Uri_ce, "fragment", info->fragment);
 
         if (info->port > 0) {
-            zend_update_property_long(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), info->port);
+            zend_update_property_long(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("port"), info->port);
         }
 
 #if PHP_VERSION_ID < 70300
@@ -124,13 +124,13 @@ PHP_METHOD(Uri, __toString)
     char *path_ptr;
     size_t path_len = 0;
 
-    scheme = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("scheme"), 0, &rv);
-    userinfo = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("userInfo"), 0, &rv);
-    host = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("host"), 0, &rv);
-    port = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), 0, &rv);
-    path = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("path"), 0, &rv);
-    query = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("query"), 0, &rv);
-    fragment = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("fragment"), 0, &rv);
+    scheme = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("scheme"), 0, &rv);
+    userinfo = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("userInfo"), 0, &rv);
+    host = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("host"), 0, &rv);
+    port = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("port"), 0, &rv);
+    path = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("path"), 0, &rv);
+    query = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("query"), 0, &rv);
+    fragment = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("fragment"), 0, &rv);
 
     smart_str_alloc(&buf, 0, 0);
 
@@ -194,7 +194,7 @@ PHP_METHOD(Uri, getScheme)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("scheme"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("scheme"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -207,9 +207,9 @@ PHP_METHOD(Uri, withScheme)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("scheme"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("scheme"), value);
 }
 
 
@@ -220,9 +220,9 @@ PHP_METHOD(Uri, getAuthority)
     zval rv, *userinfo, *host, *port;
     smart_str buf = {0};
 
-    userinfo = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("userInfo"), 0, &rv);
-    host = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("host"), 0, &rv);
-    port = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), 0, &rv);
+    userinfo = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("userInfo"), 0, &rv);
+    host = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("host"), 0, &rv);
+    port = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("port"), 0, &rv);
 
     if (Z_STRLEN_P(host) == 0) {
         RETURN_EMPTY_STRING();
@@ -251,7 +251,7 @@ PHP_METHOD(Uri, getUserInfo)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("userInfo"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("userInfo"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -264,9 +264,9 @@ PHP_METHOD(Uri, withUserInfo)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("userInfo"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("userInfo"), value);
 }
 
 
@@ -276,7 +276,7 @@ PHP_METHOD(Uri, getHost)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("host"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("host"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -289,9 +289,9 @@ PHP_METHOD(Uri, withHost)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("host"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("host"), value);
 }
 
 
@@ -301,7 +301,7 @@ PHP_METHOD(Uri, getPort)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("port"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("port"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -315,12 +315,12 @@ PHP_METHOD(Uri, withPort)
         Z_PARAM_LONG_EX(value, value_is_null,1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
     if (!value_is_null) {
-        zend_update_property_long(HttpMessage_Uri_ce, return_value, ZEND_STRL("port"), value);
+        zend_update_property_long(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("port"), value);
     } else {
-        zend_update_property_null(HttpMessage_Uri_ce, return_value, ZEND_STRL("port"));
+        zend_update_property_null(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("port"));
     }
 }
 
@@ -331,7 +331,7 @@ PHP_METHOD(Uri, getPath)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("path"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("path"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -344,9 +344,9 @@ PHP_METHOD(Uri, withPath)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("path"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("path"), value);
 }
 
 
@@ -356,7 +356,7 @@ PHP_METHOD(Uri, getQuery)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("query"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("query"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -369,9 +369,9 @@ PHP_METHOD(Uri, withQuery)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("query"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("query"), value);
 }
 
 
@@ -381,7 +381,7 @@ PHP_METHOD(Uri, getFragment)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Uri_ce, getThis(), ZEND_STRL("fragment"), 0, &rv);
+    value = zend_read_property(HttpMessage_Uri_ce, PROPERTY_ARG(getThis()), ZEND_STRL("fragment"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -394,9 +394,9 @@ PHP_METHOD(Uri, withFragment)
         Z_PARAM_STR(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property_str(HttpMessage_Uri_ce, return_value, ZEND_STRL("fragment"), value);
+    zend_update_property_str(HttpMessage_Uri_ce, PROPERTY_ARG(return_value), ZEND_STRL("fragment"), value);
 }
 
 

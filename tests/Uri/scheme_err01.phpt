@@ -8,5 +8,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Uri::withScheme() expects parameter 1 to be string, array given
+--EXPECTF--
+HttpMessage\Uri::withScheme()%s string, array given

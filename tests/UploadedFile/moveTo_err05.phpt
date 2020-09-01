@@ -18,5 +18,5 @@ if (file_exists(sys_get_temp_dir() . '/movedfile') {
 }
 ?>
 --EXPECTF--
-Warning: HttpMessage\UploadedFile::moveTo(%s): failed to open stream: No such file or directory in %s on line %d
+Warning: HttpMessage\UploadedFile::moveTo(%s): %sailed to open stream: No such file or directory in %s on line %d
 Failed to move uploaded file '%s/UploadedFile/not/exist' to '%s/movedfile'

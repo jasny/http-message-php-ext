@@ -42,9 +42,6 @@
 # define PHP_HTTP_MESSAGE_API
 #endif
 
-static PHP_MINFO_FUNCTION(http_message);
-static PHP_MINIT_FUNCTION(http_message);
-
 extern PHP_MINIT_FUNCTION(http_message_message);
 extern PHP_MINIT_FUNCTION(http_message_request);
 extern PHP_MINIT_FUNCTION(http_message_serverrequest);

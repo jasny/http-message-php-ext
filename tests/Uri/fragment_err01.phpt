@@ -8,5 +8,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Uri::withFragment() expects parameter 1 to be string, array given
+--EXPECTF--
+HttpMessage\Uri::withFragment()%s string, array given

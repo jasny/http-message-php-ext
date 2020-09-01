@@ -9,4 +9,4 @@ try {
 }
 ?>
 --EXPECTF--
-HttpMessage\Uri::withPort() expects parameter 1 to be int, array given
+HttpMessage\Uri::withPort()%sint, array given

@@ -54,14 +54,14 @@ int response_set_status(zval *obj, zend_long code, zend_string *phrase)
         return FAILURE;
     }
 
-    zend_update_property_long(HttpMessage_Response_ce, obj, ZEND_STRL("statusCode"), code);
+    zend_update_property_long(HttpMessage_Response_ce, PROPERTY_ARG(obj), ZEND_STRL("statusCode"), code);
 
     if (phrase != NULL) {
-        zend_update_property_str(HttpMessage_Response_ce, obj, ZEND_STRL("reasonPhrase"), phrase);
+        zend_update_property_str(HttpMessage_Response_ce, PROPERTY_ARG(obj), ZEND_STRL("reasonPhrase"), phrase);
     } else {
         suggested_phrase = get_status_string((int)code);
         zend_update_property_stringl(
-                HttpMessage_Response_ce, obj, ZEND_STRL("reasonPhrase"),
+                HttpMessage_Response_ce, PROPERTY_ARG(obj), ZEND_STRL("reasonPhrase"),
                 suggested_phrase, strlen(suggested_phrase)
         );
     }
@@ -71,10 +71,12 @@ int response_set_status(zval *obj, zend_long code, zend_string *phrase)
 
 /* __construct */
 
+/* unused
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageServerRequest_construct, 0, 0, 0)
     ZEND_ARG_TYPE_INFO(0, statusCode, IS_LONG, 0)
     ZEND_ARG_TYPE_INFO(0, reasonPhrase, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+*/
 
 PHP_METHOD(Response, __construct)
 {
@@ -99,7 +101,7 @@ PHP_METHOD(Response, getStatusCode)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Response_ce, getThis(), ZEND_STRL("statusCode"), 0, &rv);
+    value = zend_read_property(HttpMessage_Response_ce, PROPERTY_ARG(getThis()), ZEND_STRL("statusCode"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -108,7 +110,7 @@ PHP_METHOD(Response, getReasonPhrase)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_Response_ce, getThis(), ZEND_STRL("reasonPhrase"), 0, &rv);
+    value = zend_read_property(HttpMessage_Response_ce, PROPERTY_ARG(getThis()), ZEND_STRL("reasonPhrase"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -124,7 +126,7 @@ PHP_METHOD(Response, withStatus)
         Z_PARAM_STR_EX(phrase, 1, 0)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
     response_set_status(return_value, code, phrase);
 }

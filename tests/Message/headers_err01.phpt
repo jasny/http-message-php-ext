@@ -23,7 +23,7 @@ try {
 }
 
 ?>
---EXPECT--
-HttpMessage\Message::withHeader() expects parameter 2 to be string, array given
+--EXPECTF--
+HttpMessage\Message::withHeader()%sstring, array given
 HttpMessage\Message::withHeader() expects exactly 2 parameters, 1 given
-HttpMessage\Message::withHeader() expects parameter 1 to be string, array given
+HttpMessage\Message::withHeader()%sstring, array given

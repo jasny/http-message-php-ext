@@ -112,9 +112,10 @@ void init_headers_from_params(zval *object, HashTable *serverParams)
     zend_long index;
     zend_string *key;
 
-    headers = Z_ARR_P(zend_read_property(HttpMessage_Message_ce, object, ZEND_STRL("headers"), 0, &rv));
+    headers = Z_ARR_P(zend_read_property(HttpMessage_Message_ce, PROPERTY_ARG(object), ZEND_STRL("headers"), 0, &rv));
 
     ZEND_HASH_FOREACH_KEY_VAL(serverParams, index, key, val) {
+        (void)index; /* NOOP, to avoid unused warning */
         if (UNEXPECTED(key == NULL)) continue;
 
         if (ZSTR_LEN(key) > 5 && strncmp("HTTP_", ZSTR_VAL(key), 5) == 0 && EXPECTED(Z_TYPE_P(val) == IS_STRING)) {
@@ -139,10 +140,10 @@ void init_uri_from_params(zval *object, HashTable *serverParams)
     zend_long port = -1, default_port = -1;
     zend_bool is_http;
 
-    uri = zend_read_property(HttpMessage_Request_ce, object, ZEND_STRL("uri"), 0, &rv);
+    uri = zend_read_property(HttpMessage_Request_ce, PROPERTY_ARG(object), ZEND_STRL("uri"), 0, &rv);
 
     request_target = zend_hash_str_find(serverParams, ZEND_STRL("REQUEST_URI"));
-    zend_call_method(uri, HttpMessage_Uri_ce, &HttpMessage_Uri_ce->constructor, ZEND_STRL("__construct"), NULL,
+    zend_call_method(PROPERTY_ARG(uri), HttpMessage_Uri_ce, &HttpMessage_Uri_ce->constructor, ZEND_STRL("__construct"), NULL,
              request_target == NULL ? 0 : 1, request_target, NULL);
 
     COPY_PROPERTY_FROM_ARRAY(serverParams, "HTTP_HOST", uri, HttpMessage_Uri_ce, "host", IS_STRING, tmp);
@@ -163,14 +164,14 @@ void init_uri_from_params(zval *object, HashTable *serverParams)
         // do nothing
     } else if (Z_STRCMP(https, "off", 0) == 0) {
         default_port = 80;
-        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("scheme"), ZEND_STRL("http"));
+        zend_update_property_stringl(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("scheme"), ZEND_STRL("http"));
     } else {
         default_port = 443;
-        zend_update_property_stringl(HttpMessage_Uri_ce, uri, ZEND_STRL("scheme"), ZEND_STRL("https"));
+        zend_update_property_stringl(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("scheme"), ZEND_STRL("https"));
     }
 
     if (port != default_port && port > 0) {
-        zend_update_property_long(HttpMessage_Uri_ce, uri, ZEND_STRL("port"), port);
+        zend_update_property_long(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("port"), port);
     }
 
     user = zend_hash_str_find(serverParams, ZEND_STRL("PHP_AUTH_USER"));
@@ -206,7 +207,7 @@ PHP_METHOD(ServerRequest, __construct)
 
     /* parent::__construct() */
     zend_call_method_with_0_params(
-            getThis(), HttpMessage_Request_ce, &HttpMessage_Request_ce->constructor, "__construct", NULL
+            PROPERTY_ARG(getThis()), HttpMessage_Request_ce, &HttpMessage_Request_ce->constructor, "__construct", NULL
     );
 
     SET_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "serverParams", serverParams, rv);
@@ -214,14 +215,14 @@ PHP_METHOD(ServerRequest, __construct)
     SET_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "queryParams", queryParams, rv);
 
     if (files != NULL) {
-        uploadedFiles = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("uploadedFiles"), 0, &rv);
+        uploadedFiles = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("uploadedFiles"), 0, &rv);
         create_uploaded_files(uploadedFiles, Z_ARR_P(files));
     } else {
         INIT_ARRAY_PROPERTY(HttpMessage_ServerRequest_ce, "uploadedFiles", rv);
     }
 
     if (post != NULL) {
-        zend_update_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("parsedBody"), post);
+        zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("parsedBody"), post);
     }
 
     if (serverParams != NULL) {
@@ -241,7 +242,7 @@ PHP_METHOD(ServerRequest, getServerParams)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("serverParams"), 0, &rv);
+    value = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("serverParams"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -253,7 +254,7 @@ PHP_METHOD(ServerRequest, getCookieParams)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("cookieParams"), 0, &rv);
+    value = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("cookieParams"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -266,9 +267,9 @@ PHP_METHOD(ServerRequest, withCookieParams)
         Z_PARAM_ARRAY(value);
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("cookieParams"), value);
+    zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("cookieParams"), value);
 }
 
 
@@ -278,7 +279,7 @@ PHP_METHOD(ServerRequest, getQueryParams)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("queryParams"), 0, &rv);
+    value = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("queryParams"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -291,9 +292,9 @@ PHP_METHOD(ServerRequest, withQueryParams)
         Z_PARAM_ARRAY(value);
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("queryParams"), value);
+    zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("queryParams"), value);
 }
 
 
@@ -303,7 +304,7 @@ PHP_METHOD(ServerRequest, getUploadedFiles)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("uploadedFiles"), 0, &rv);
+    value = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("uploadedFiles"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -320,9 +321,9 @@ PHP_METHOD(ServerRequest, withUploadedFiles)
         return;
     }
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("uploadedFiles"), value);
+    zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("uploadedFiles"), value);
 }
 
 
@@ -332,7 +333,7 @@ PHP_METHOD(ServerRequest, getParsedBody)
 {
     zval rv, *value;
 
-    value = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("parsedBody"), 0, &rv);
+    value = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("parsedBody"), 0, &rv);
 
     RETURN_ZVAL(value, 1, 0);
 }
@@ -345,12 +346,12 @@ PHP_METHOD(ServerRequest, withParsedBody)
         Z_PARAM_ARRAY_OR_OBJECT_EX(value, 1, 0);
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
     if (EXPECTED(value != NULL)) {
-        zend_update_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("parsedBody"), value);
+        zend_update_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("parsedBody"), value);
     } else {
-        zend_update_property_null(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("parsedBody"));
+        zend_update_property_null(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("parsedBody"));
     }
 }
 
@@ -361,7 +362,7 @@ PHP_METHOD(ServerRequest, getAttributes)
 {
     zval rv, *attributes;
 
-    attributes = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
+    attributes = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("attributes"), 0, &rv);
 
     RETURN_ZVAL(attributes, 1, 0);
 }
@@ -377,7 +378,7 @@ PHP_METHOD(ServerRequest, getAttribute)
         Z_PARAM_ZVAL(default_value)
     ZEND_PARSE_PARAMETERS_END();
 
-    attributes = zend_read_property(HttpMessage_ServerRequest_ce, getThis(), ZEND_STRL("attributes"), 0, &rv);
+    attributes = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(getThis()), ZEND_STRL("attributes"), 0, &rv);
 
     value = zend_hash_find(Z_ARRVAL_P(attributes), name);
 
@@ -402,9 +403,9 @@ PHP_METHOD(ServerRequest, withAttribute)
         Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    attributes_prop = zend_read_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("attributes"), 0, &rv);
+    attributes_prop = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("attributes"), 0, &rv);
     attributes = zend_array_dup(Z_ARR_P(attributes_prop));
 
     zend_symtable_update(attributes, name, value);
@@ -421,9 +422,9 @@ PHP_METHOD(ServerRequest, withoutAttribute)
         Z_PARAM_STR(name)
     ZEND_PARSE_PARAMETERS_END();
 
-    ZVAL_OBJ(return_value, zend_objects_clone_obj(getThis()));
+    ZVAL_OBJ(return_value, zend_objects_clone_obj(PROPERTY_ARG(getThis())));
 
-    attributes_prop = zend_read_property(HttpMessage_ServerRequest_ce, return_value, ZEND_STRL("attributes"), 0, &rv);
+    attributes_prop = zend_read_property(HttpMessage_ServerRequest_ce, PROPERTY_ARG(return_value), ZEND_STRL("attributes"), 0, &rv);
     attributes = zend_array_dup(Z_ARR_P(attributes_prop));
 
     zend_symtable_del(attributes, name);

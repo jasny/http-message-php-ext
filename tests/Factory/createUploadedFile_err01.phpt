@@ -42,10 +42,10 @@ try {
 }
 
 ?>
---EXPECT--
-Argument 1 passed to HttpMessage\Factory::createUploadedFile() must implement interface Psr\Http\Message\StreamInterface, string given
-Argument 1 passed to HttpMessage\Factory::createUploadedFile() must implement interface Psr\Http\Message\StreamInterface, instance of stdClass given
-Argument 2 passed to HttpMessage\Factory::createUploadedFile() must be of the type int or null, array given
-Argument 3 passed to HttpMessage\Factory::createUploadedFile() must be of the type int, array given
-Argument 4 passed to HttpMessage\Factory::createUploadedFile() must be of the type string or null, array given
-Argument 5 passed to HttpMessage\Factory::createUploadedFile() must be of the type string or null, array given
+--EXPECTF--
+%sttpMessage\Factory::createUploadedFile()%s Psr\Http\Message\StreamInterface, string given
+%sttpMessage\Factory::createUploadedFile()%s Psr\Http\Message\StreamInterface,%sstdClass given
+%sttpMessage\Factory::createUploadedFile()%s, array given
+%sttpMessage\Factory::createUploadedFile()%sint, array given
+%sttpMessage\Factory::createUploadedFile()%s, array given
+%sttpMessage\Factory::createUploadedFile()%s, array given
