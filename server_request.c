@@ -138,7 +138,7 @@ void init_uri_from_params(zval *object, HashTable *serverParams)
 {
     zval rv, *uri, *tmp, *request_target, *protocol, *https, *user, *pass;
     zend_long port = -1, default_port = -1;
-    zend_bool is_http;
+    zend_bool is_http, is_https;
 
     uri = zend_read_property(HttpMessage_Request_ce, PROPERTY_ARG(object), ZEND_STRL("uri"), 0, &rv);
 
@@ -156,13 +156,14 @@ void init_uri_from_params(zval *object, HashTable *serverParams)
 
     protocol = zend_hash_str_find(serverParams, ZEND_STRL("SERVER_PROTOCOL"));
     https = zend_hash_str_find(serverParams, ZEND_STRL("HTTPS"));
+    is_https = https != NULL && Z_STRCMP(https, "off", 0) != 0;
     is_http = protocol != NULL && Z_TYPE_P(protocol) == IS_STRING
         ? (strncmp("HTTP/", Z_STRVAL_P(protocol), 5) == 0)
-        : (port > 0 && port == (Z_STRCMP(https, "off", 0) == 0 ? 80 : 443));
+        : (port > 0 && port == (is_https ? 443 : 80));
 
     if (!is_http) {
         // do nothing
-    } else if (Z_STRCMP(https, "off", 0) == 0) {
+    } else if (!is_https) {
         default_port = 80;
         zend_update_property_stringl(HttpMessage_Uri_ce, PROPERTY_ARG(uri), ZEND_STRL("scheme"), ZEND_STRL("http"));
     } else {
