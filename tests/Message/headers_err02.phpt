@@ -25,5 +25,5 @@ try {
 ?>
 --EXPECTF--
 HttpMessage\Message::withAddedHeader()%sstring, array given
-HttpMessage\Message::withAddedHeader() expects exactly 2 parameters, 1 given
+HttpMessage\Message::withAddedHeader() expects exactly 2 %s, 1 given
 HttpMessage\Message::withAddedHeader()%sstring, array given

@@ -8,5 +8,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Uri::withScheme() expects exactly 1 parameter, 0 given
+--EXPECTF--
+HttpMessage\Uri::withScheme() expects exactly 1 %s, 0 given

@@ -18,5 +18,5 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\ServerRequest::withAttribute() expects exactly 2 parameters, 1 given
+HttpMessage\ServerRequest::withAttribute() expects exactly 2 %s, 1 given
 HttpMessage\ServerRequest::withAttribute()%s string, array given

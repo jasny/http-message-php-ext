@@ -17,5 +17,5 @@ try {
 }
 ?>
 --EXPECTF--
-HttpMessage\Message::withProtocolVersion() expects exactly 1 parameter, 0 given
+HttpMessage\Message::withProtocolVersion() expects exactly 1 %s, 0 given
 HttpMessage\Message::withProtocolVersion()%sstring, array given

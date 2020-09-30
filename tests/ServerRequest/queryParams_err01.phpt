@@ -18,5 +18,5 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\ServerRequest::withQueryParams() expects exactly 1 parameter, 0 given
+HttpMessage\ServerRequest::withQueryParams() expects exactly 1 %s, 0 given
 %sttpMessage\ServerRequest::withQueryParams()%s array, string given

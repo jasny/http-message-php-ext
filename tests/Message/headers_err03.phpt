@@ -19,4 +19,4 @@ try {
 ?>
 --EXPECTF--
 HttpMessage\Message::withoutHeader()%sstring, array given
-HttpMessage\Message::withoutHeader() expects exactly 1 parameter, 0 given
+HttpMessage\Message::withoutHeader() expects exactly 1 %s, 0 given

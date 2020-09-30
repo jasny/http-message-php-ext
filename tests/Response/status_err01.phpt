@@ -24,6 +24,6 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\Response::withStatus() expects at least 1 parameter, 0 given
+HttpMessage\Response::withStatus() expects at least 1 %s, 0 given
 HttpMessage\Response::withStatus()%sint, string given
 HttpMessage\Response::withStatus()%sstring, array given
