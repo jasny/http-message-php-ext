@@ -19,4 +19,4 @@ try {
 ?>
 --EXPECTF--
 HttpMessage\Message::getHeaderLine()%sstring, array given
-HttpMessage\Message::getHeaderLine() expects exactly 1 parameter, 0 given
+HttpMessage\Message::getHeaderLine() expects exactly 1 %s, 0 given

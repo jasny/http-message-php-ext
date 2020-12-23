@@ -18,5 +18,5 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\Request::withRequestTarget() expects exactly 1 parameter, 0 given
+HttpMessage\Request::withRequestTarget() expects exactly 1 %s, 0 given
 HttpMessage\Request::withRequestTarget()%sstring, array given

@@ -18,5 +18,5 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\ServerRequest::withCookieParams() expects exactly 1 parameter, 0 given
+HttpMessage\ServerRequest::withCookieParams() expects exactly 1 %s, 0 given
 %sttpMessage\ServerRequest::withCookieParams()%s array, string given

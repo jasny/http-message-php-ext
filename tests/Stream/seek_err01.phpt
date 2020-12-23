@@ -11,5 +11,5 @@ try {
     echo $e->getMessage();
 }
 ?>
---EXPECT--
-HttpMessage\Stream::seek() expects at least 1 parameter, 0 given
+--EXPECTF--
+HttpMessage\Stream::seek() expects at least 1 %s, 0 given

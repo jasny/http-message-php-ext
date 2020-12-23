@@ -30,7 +30,7 @@ try {
 
 ?>
 --EXPECTF--
-HttpMessage\Factory::createServerRequest() expects at least 2 parameters, 0 given
-HttpMessage\Factory::createServerRequest() expects at least 2 parameters, 1 given
+HttpMessage\Factory::createServerRequest() expects at least 2 %s, 0 given
+HttpMessage\Factory::createServerRequest() expects at least 2 %s, 1 given
 HttpMessage\Factory::createServerRequest() expects parameter 1 to be a string or object that implements Psr\Http\Message\UriInterface, array given
 %sttpMessage\Factory::createServerRequest()%sarray, string given

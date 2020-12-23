@@ -11,5 +11,5 @@ try {
     echo $e->getMessage(), "\n";
 }
 ?>
---EXPECT--
-HttpMessage\Stream::write() expects exactly 1 parameter, 0 given
+--EXPECTF--
+HttpMessage\Stream::write() expects exactly 1 %s, 0 given
