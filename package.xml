@@ -48,6 +48,7 @@ Fixed HttpMessage\Factory::createUri()
    <file name="uri.c" role="src"/>
    <dir name="autoconf">
     <file name="pecl.m4" role="src"/>
+    <file name="php-executable.m4" role="src"/>
    </dir>
    <dir name="tests">
     <dir name="Emitter">
