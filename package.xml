@@ -10,18 +10,18 @@
   <email>jasny@php.net</email>
   <active>yes</active>
  </lead>
- <date>2020-08-25</date>
+ <date>2020-12-27</date>
  <version>
-  <release>0.2.2</release>
-  <api>0.2.0</api>
+  <release>1.0.0</release>
+  <api>1.0.0</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>stable</release>
+  <api>stable</api>
  </stability>
  <license uri="https://opensource.org/licenses/MIT">MIT License</license>
  <notes>
-Fixed HttpMessage\Factory::createUri()
+Release as v1.0.0
  </notes>
  <contents>
   <dir name="/">
@@ -285,6 +285,22 @@ Fixed HttpMessage\Factory::createUri()
  <providesextension>http_message</providesextension>
  <extsrcrelease/>
  <changelog>
+  <release>
+   <date>2020-12-27</date>
+   <time>00:57:18</time>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="https://opensource.org/licenses/MIT">MIT License</license>
+   <notes>
+Release as v1.0.0
+   </notes>
+  </release>
   <release>
    <date>2020-08-25</date>
    <time>11:20:40</time>

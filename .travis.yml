@@ -52,6 +52,6 @@ deploy:
   file: "$RELEASE_PACKAGE"
   skip_cleanup: true
   name: "$TRAVIS_TAG"
-  prerelease: true
+  prerelease: false
   on:
     tags: true

@@ -140,7 +140,7 @@ deploy:
     secure: 9kSFTreufYy0WOpd+eYAFa+2IjSxe1idbVAzehcTS/womadyGxVG6qTKpJnXDmTh
   artifact: '$(RELEASE_ZIPBALL).zip'
   draft: false
-  prerelease: true
+  prerelease: false
   force_update: true
   on:
     branch: master
