@@ -19,4 +19,4 @@ try {
 ?>
 --EXPECTF--
 HttpMessage\Request::withUri() expects exactly 1 %s, 0 given
-%sttpMessage\Request::withUri()%sPsr\Http\Message\UriInterface, string given
+%sttpMessage\Request::withUri()%s\Http\Message\UriInterface, string given

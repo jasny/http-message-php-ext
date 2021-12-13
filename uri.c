@@ -113,8 +113,11 @@ PHP_METHOD(Uri, __construct)
 
 
 /* __toString */
-
+#if PHP_VERSION_ID >= 80000 && PHP_PSR_VERSION_ID >= 10200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_HttpMessageUri_toString, 0, 0, IS_STRING, 0)
+#else
 ZEND_BEGIN_ARG_INFO_EX(arginfo_HttpMessageUri_toString, 0, 0, 0)
+#endif
 ZEND_END_ARG_INFO()
 
 PHP_METHOD(Uri, __toString)

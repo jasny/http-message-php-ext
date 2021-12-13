@@ -43,8 +43,8 @@ try {
 
 ?>
 --EXPECTF--
-%sttpMessage\Factory::createUploadedFile()%s Psr\Http\Message\StreamInterface, string given
-%sttpMessage\Factory::createUploadedFile()%s Psr\Http\Message\StreamInterface,%sstdClass given
+%sttpMessage\Factory::createUploadedFile()%s\Http\Message\StreamInterface, string given
+%sttpMessage\Factory::createUploadedFile()%s\Http\Message\StreamInterface,%sstdClass given
 %sttpMessage\Factory::createUploadedFile()%s, array given
 %sttpMessage\Factory::createUploadedFile()%sint, array given
 %sttpMessage\Factory::createUploadedFile()%s, array given
