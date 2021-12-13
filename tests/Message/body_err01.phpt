@@ -19,5 +19,5 @@ try {
 
 ?>
 --EXPECTF--
-%sttpMessage\Message::withBody()%s Psr\Http\Message\StreamInterface, resource given
+%sttpMessage\Message::withBody()%s\Http\Message\StreamInterface, resource given
 HttpMessage\Message::withBody() expects exactly 1 %s, 0 given
